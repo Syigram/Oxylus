@@ -1,6 +1,6 @@
 
-#include "image_allocator.h"
-#include "mem_info.h"
+#include <oxylus/memory/image_allocator.h>
+#include <oxylus/memory/mem_info.h>
 #include <iostream>
 
 int ImageAllocator::CalcBatchSize(){

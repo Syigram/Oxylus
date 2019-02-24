@@ -1,5 +1,5 @@
-#include "helper.h"
-#include "mem_info.h"
+#include <oxylus/memory/helper.h>
+#include <oxylus/memory/mem_info.h>
 
 #include <iostream>
 #include <regex>
