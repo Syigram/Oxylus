@@ -59,10 +59,10 @@ public:
   };
 
   void Print(){
-    std::cout << "MemTotal: " << _memTotal << '\n';
-    std::cout << "MemAvailable: " << _memAvailable << '\n';
-    std::cout << "MemFree: " << _memFree << '\n';
-    std::cout << "BatchSize: " << _batchSize << '\n';
+    std::cout << "MemTotal: " << _memTotal << '\t';
+    std::cout << "MemAvailable: " << _memAvailable << '\t';
+    std::cout << "MemFree: " << _memFree << '\t';
+    std::cout << "BatchSize: " << _batchSize << '\t';
     std::cout << "IdProcess: " << _idProcess << '\n';
   }
 

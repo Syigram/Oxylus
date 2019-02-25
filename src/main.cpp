@@ -1,6 +1,8 @@
 #include <oxylus/memory/mem_info.h>
 #include <oxylus/memory/image_allocator.h>
 #include <oxylus/comm/mpi_memory_message.h>
+#include <oxylus/configuration/config.h>
+
 
 #include <string>
 #include <boost/mpi.hpp>
@@ -15,22 +17,14 @@ namespace mpi = boost::mpi;
 int main(int argc, char const *argv[]) {
   boost::mpi::environment env;
   boost::mpi::communicator world;
+  
   int rank = world.rank();
   int worldSize = world.size();
-  if (rank == 0){
-    std::cout << "Retrieving available memory from all nodes in the cluster..." << '\n';
-  }
-  else{
-    std::cout << "Somos esclavos, lel lel" << '\n';
-  }
 
   MemInfo memInfo;
   memInfo.SetMemoryInformation(rank);
   MPIMemoryMessage message = memInfo.GetAllMemoryInformation();
   message.SetIdProcess(rank);
-  std::cout << "here" << message.GetMemTotal() << '\n';
-  message.Print();
-  // std::cout << "here2" << '\n';
   if (rank == 0){
     std::vector<MPIMemoryMessage> memoryMessageVector;
     memoryMessageVector.resize(worldSize);
@@ -38,10 +32,11 @@ int main(int argc, char const *argv[]) {
     int i = 0;
     for (MPIMemoryMessage mess : memoryMessageVector){
       std::cout << "Printing for process: " << i++ << '\n';
+      int batchSize = mess.GetMemAvailable() / IMAGE_AVG_SIZE;
+      std::cout << "BatchSize = " << batchSize << '\n';
       mess.Print();
     }
   } else{
-    std::cout << "Slave #" << rank << "sending memory message..." << '\n';
     mpi::gather(world, message, 0);
   }
 
