@@ -1,6 +1,6 @@
 #include <oxylus/memory/mem_info.h>
-#include <oxylus/memory/image_allocator.h>
-#include <oxylus/comm/mpi_memory_message.h>
+#include <oxylus/memory/image_allocation_message.h>
+#include <oxylus/mpi_message/memory_message.h>
 #include <oxylus/configuration/config.h>
 
 
@@ -17,20 +17,20 @@ namespace mpi = boost::mpi;
 int main(int argc, char const *argv[]) {
   boost::mpi::environment env;
   boost::mpi::communicator world;
-  
+
   int rank = world.rank();
   int worldSize = world.size();
 
   MemInfo memInfo;
   memInfo.SetMemoryInformation(rank);
-  MPIMemoryMessage message = memInfo.GetAllMemoryInformation();
+  MemoryMessage message = memInfo.GetAllMemoryInformation();
   message.SetIdProcess(rank);
   if (rank == 0){
-    std::vector<MPIMemoryMessage> memoryMessageVector;
+    std::vector<MemoryMessage> memoryMessageVector;
     memoryMessageVector.resize(worldSize);
-    mpi::gather<MPIMemoryMessage>(world, message, memoryMessageVector, 0);
+    mpi::gather<MemoryMessage>(world, message, memoryMessageVector, 0);
     int i = 0;
-    for (MPIMemoryMessage mess : memoryMessageVector){
+    for (MemoryMessage mess : memoryMessageVector){
       std::cout << "Printing for process: " << i++ << '\n';
       int batchSize = mess.GetMemAvailable() / IMAGE_AVG_SIZE;
       std::cout << "BatchSize = " << batchSize << '\n';

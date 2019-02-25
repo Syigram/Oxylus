@@ -9,7 +9,7 @@ private:
   mpi::communicator world;
 
 public:
-  MPIComm (arguments);
+  MPIComm ();
   void SendInitialMessage(std::string message);
   void ReceiveInitalMessage(std::string message);
   virtual ~MPIComm ();

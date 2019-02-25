@@ -4,7 +4,7 @@
 #include <iostream>
 #include <oxylus/configuration/Serialization.h>
 
-class MPIMemoryMessage {
+class MemoryMessage {
 private:
   /* data */
   int _idProcess;
@@ -66,7 +66,7 @@ public:
     std::cout << "IdProcess: " << _idProcess << '\n';
   }
 
-  MPIMemoryMessage (){
+  MemoryMessage (){
     _idProcess = 0;
     _memFree = 0;
     _memTotal = 0;
@@ -74,7 +74,7 @@ public:
     _batchSize = 0;
   };
 
-  virtual ~MPIMemoryMessage (){};
+  virtual ~MemoryMessage (){};
 };
 
 #endif

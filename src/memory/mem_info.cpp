@@ -40,8 +40,8 @@ int MemInfo::GetMemoryValue(MemType type){
 
 }
 
-MPIMemoryMessage MemInfo::GetAllMemoryInformation(){
-  MPIMemoryMessage message;
+MemoryMessage MemInfo::GetAllMemoryInformation(){
+  MemoryMessage message;
   message.SetMemAvailable(_memAvailable);
   message.SetMemTotal(_memTotal);
   message.SetMemFree(_memFree);
