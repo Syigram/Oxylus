@@ -4,12 +4,16 @@
 #include <iostream>
 #include <regex>
 
-void MemInfo::SetMemoryInformation(){
+// void MemInfo::SetMemoryInformation(){
+void MemInfo::SetMemoryInformation(int idProcess){
+  std::cout << "====== Process #" << idProcess << "======" << '\n';
   std::cout << "[INFO] | Retrieving memory information...." << '\n';
   this->_memTotal = GetMemoryValue(TOTAL);
   this->_memAvailable = GetMemoryValue(AVAILABLE);
   this->_memFree = GetMemoryValue(FREE);
   std::cout << "[SUCCESS] | Memory information set!" << '\n';
+  std::cout << "----- Process #" << idProcess << "-----" << '\n';
+
 }
 
 int MemInfo::GetMemoryValue(MemType type){
@@ -34,6 +38,14 @@ int MemInfo::GetMemoryValue(MemType type){
   std::cout << "[INFO] | Memory" << mem_type_str << ": " << result << " kB" << '\n';
   return result;
 
+}
+
+MPIMemoryMessage MemInfo::GetAllMemoryInformation(){
+  MPIMemoryMessage message;
+  message.SetMemAvailable(_memAvailable);
+  message.SetMemTotal(_memTotal);
+  message.SetMemFree(_memFree);
+  return message;
 }
 
 

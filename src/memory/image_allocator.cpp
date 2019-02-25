@@ -4,12 +4,12 @@
 #include <iostream>
 
 int ImageAllocator::CalcBatchSize(){
-  MemInfo memInfo;
-  memInfo.SetMemoryInformation();
-  int memAvailable = memInfo.GetMemAvailable();
-  int totalImages = memAvailable / IMAGE_AVG_SIZE;
-  std::cout << "Creo que puedo recibir: " << totalImages << " imagenes.\n";
-  return totalImages;
+  // MemInfo memInfo;
+  // memInfo.SetMemoryInformation();
+  // int memAvailable = memInfo.GetMemAvailable();
+  // int totalImages = memAvailable / IMAGE_AVG_SIZE;
+  // std::cout << "Creo que puedo recibir: " << totalImages << " imagenes.\n";
+  // return totalImages;
 }
 
 int ImageAllocator::GetMaxBatchSize(){
