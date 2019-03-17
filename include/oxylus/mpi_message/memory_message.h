@@ -59,11 +59,11 @@ public:
   };
 
   void Print(){
+    std::cout << "IdProcess: " << _idProcess << '\t';
     std::cout << "MemTotal: " << _memTotal << '\t';
     std::cout << "MemAvailable: " << _memAvailable << '\t';
     std::cout << "MemFree: " << _memFree << '\t';
-    std::cout << "BatchSize: " << _batchSize << '\t';
-    std::cout << "IdProcess: " << _idProcess << '\n';
+    std::cout << "BatchSize: " << _batchSize << '\n';
   }
 
   MemoryMessage (){
