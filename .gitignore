@@ -26,6 +26,9 @@
 # Temporary files
 *~
 
+# bin
+bin/oxylus
+
 ### CMake ###
 CMakeCache.txt
 CMakeFiles
@@ -37,7 +40,6 @@ install_manifest.txt
 compile_commands.json
 CTestTestfile.cmake
 build/
-cmake/
 
 ### Visual Studio Code ###
 .settings/
@@ -52,3 +54,6 @@ doc/doxygen_*
 
 ### Oxylus' Config File ###
 include/oxylus/OxylusConfig.hpp
+
+# Doxygen template
+templates/header.h
