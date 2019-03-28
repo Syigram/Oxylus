@@ -1,8 +1,12 @@
+
 #ifndef MEMORY_MESSAGE_H
 #define MEMORY_MESSAGE_H
 #include <string>
 #include <iostream>
+
+
 #include <oxylus/configuration/Serialization.h>
+#include <oxylus/memory/mem_info.h>
 
 class MemoryMessage {
 private:
@@ -29,41 +33,52 @@ private:
 public:
   void SetIdProcess(int idProcess){
     this->_idProcess = idProcess;
-  };
+  }
   void SetMemAvailable(int memAvailable){
     this->_memAvailable = memAvailable;
-  };
+  }
   void SetMemTotal(int memTotal){
     this->_memTotal = memTotal;
-  };
+  }
   void SetMemFree(int memFree){
     this->_memFree = memFree;
-  };
+  }
   void SetBatchSize(int batchSize){
     this->_batchSize = batchSize;
-  };
+  }
   int GetIdProcess(){
     return this->_idProcess;
-  };
+  }
   int GetMemFree(){
     return this->_memFree;
-  };
+  }
   int GetBatchSize(){
     return this->_batchSize;
-  };
+  }
   int GetMemAvailable(){
     return this->_memAvailable;
-  };
+  }
   int GetMemTotal(){
     return this->_memTotal;
-  };
+  }
+
+  int CreateMemoryMessage(int idProcess){
+    MemInfo memInfo;
+    this->_idProcess = idProcess;
+    this->_memTotal = memInfo.GetMemTotal();
+    this->_memAvailable = memInfo.GetMemAvailable();
+    this->_memFree = memInfo.GetMemFree();
+    return 0;
+  }
 
   void Print(){
+    std::cout << "====Printing memory message ======" << '\n';
     std::cout << "IdProcess: " << _idProcess << '\t';
     std::cout << "MemTotal: " << _memTotal << '\t';
     std::cout << "MemAvailable: " << _memAvailable << '\t';
     std::cout << "MemFree: " << _memFree << '\t';
     std::cout << "BatchSize: " << _batchSize << '\n';
+    std::cout << "-----Printing memory message------" << '\n';
   }
 
   MemoryMessage (){
@@ -72,9 +87,13 @@ public:
     _memTotal = 0;
     _memAvailable = 0;
     _batchSize = 0;
-  };
+  }
 
-  virtual ~MemoryMessage (){};
+  MemoryMessage(int idProcess){
+    CreateMemoryMessage(idProcess);
+  }
+
+  virtual ~MemoryMessage (){}
 };
 
 #endif

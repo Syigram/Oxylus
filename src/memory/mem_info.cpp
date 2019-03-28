@@ -4,16 +4,17 @@
 #include <iostream>
 #include <regex>
 
+MemInfo::MemInfo(){
+  this->SetMemoryInformation();
+}
+
 // void MemInfo::SetMemoryInformation(){
-void MemInfo::SetMemoryInformation(int idProcess){
-  std::cout << "====== Process #" << idProcess << "======" << '\n';
+void MemInfo::SetMemoryInformation(){
   std::cout << "[INFO] | Retrieving memory information...." << '\n';
   this->_memTotal = GetMemoryValue(TOTAL);
   this->_memAvailable = GetMemoryValue(AVAILABLE);
   this->_memFree = GetMemoryValue(FREE);
   std::cout << "[SUCCESS] | Memory information set!" << '\n';
-  std::cout << "----- Process #" << idProcess << "-----" << '\n';
-
 }
 
 int MemInfo::GetMemoryValue(MemType type){
@@ -40,13 +41,13 @@ int MemInfo::GetMemoryValue(MemType type){
 
 }
 
-MemoryMessage MemInfo::GetAllMemoryInformation(){
-  MemoryMessage message;
-  message.SetMemAvailable(_memAvailable);
-  message.SetMemTotal(_memTotal);
-  message.SetMemFree(_memFree);
-  return message;
-}
+/* MemoryMessage MemInfo::GetAllMemoryInformation(){ */
+/*   MemoryMessage message; */
+/*   message.SetMemAvailable(_memAvailable); */
+/*   message.SetMemTotal(_memTotal); */
+/*   message.SetMemFree(_memFree); */
+/*   return message; */
+/* } */
 
 
 int MemInfo::GetMemTotal(){

@@ -1,11 +1,20 @@
 #ifndef IMAGE_ALLOCATION_MESSAGE_H
 #define IMAGE_ALLOCATION_MESSAGE_H
 
+#include <string>
+#include <iostream>
+
 #include <oxylus/configuration/Serialization.h>
 
 
 class ImageAllocationMessage {
 private:
+
+    /* data */
+    int _idProcess;
+    int _indexStart;
+    int _indexEnd;
+    int _batchSize;
 
   /* --- Serialization --- */
     friend class boost::serialization::access;
@@ -17,11 +26,6 @@ private:
         ar & _indexEnd;
         ar & _batchSize;
     }
-    /* data */
-    int _idProcess;
-    int _indexStart;
-    int _indexEnd;
-    int _batchSize;
     /* ==== Serialization ==== */
 
 public:
@@ -75,7 +79,7 @@ public:
     _indexEnd = copyObj.GetIndexEnd();
     _batchSize = copyObj.GetBatchSize();
   }
-  virtual ~ImageAllocationMessage (){};
+  virtual ~ImageAllocationMessage (){}
 };
 
 #endif

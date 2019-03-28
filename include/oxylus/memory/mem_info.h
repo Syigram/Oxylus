@@ -1,6 +1,6 @@
 #ifndef MEM_INFO_H
 
-#include <oxylus/mpi_message/memory_message.h>
+/* #include <oxylus/mpi_message/memory_message.h> */
 
 #include <string>
 
@@ -21,12 +21,12 @@ private:
 
 public:
   int GetMemoryValue(MemType type);
-  void SetMemoryInformation(int idProcess);
-  MemoryMessage GetAllMemoryInformation();
+  void SetMemoryInformation();
+  /* MemoryMessage GetAllMemoryInformation(); */
   int GetMemTotal();
   int GetMemAvailable();
   int GetMemFree();
-  MemInfo (){};
+  MemInfo ();
   // virtual ~MemInfo ();
 };
 
