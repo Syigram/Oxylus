@@ -53,11 +53,7 @@ int main(int argc, char const *argv[]) {
   ImageAllocationMessage imageAllocScatter;
 
   mpi::gather<MemoryMessage>(world, memMessage, memoryMessageVector, 0);
-
-  world.barrier();
-//  if (rank == MPI_MASTER)
   ImageAllocVect imageAllocVector = ExtractMemoryMessageInfo(memoryMessageVector);
-
   mpi::scatter(world, imageAllocVector, imageAllocScatter, 0);
   std::cout << "---------------- Scatter begin ----------------" << '\n';
   imageAllocScatter.Print();
