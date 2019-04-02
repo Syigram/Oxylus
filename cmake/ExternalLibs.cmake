@@ -10,7 +10,7 @@
 ## date:   2018-08-31                                 ##
 ########################################################
 
-find_package (Boost COMPONENTS system filesystem program_options serialization mpi REQUIRED)
+find_package (Boost COMPONENTS system filesystem program_options serialization mpi log date_time REQUIRED)
 
 if (Boost_FOUND)
   include_directories (${Boost_INCLUDE_DIR})
@@ -33,7 +33,7 @@ if (MPI_FOUND)
   if (MPI_CXX_HEADER_DIR)
     include_directories (${MPI_CXX_HEADER_DIR})
   else ()
-    include_directories (${MPI_CXX_INCLUDE_PATH})    
+    include_directories (${MPI_CXX_INCLUDE_PATH})
   endif()
 endif (MPI_FOUND)
 
