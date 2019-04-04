@@ -1,4 +1,4 @@
-#include "helper.h"
+#include <oxylus/memory/helper.h>
 
 
 #include <array>
@@ -35,3 +35,32 @@ int Helper::extract_integer_from_str(std::string input){
   stream >> result;
   return result;
 }
+
+
+int Helper::ImageFileCounter(std::string basePath, int start, int end){
+  while (start < end){
+    std::string fileName = ImageFileNameHandler(basePath, start);
+    std::cout << fileName << std::endl;
+    start++;
+  }
+  return 0;
+}
+
+
+
+std::string Helper::ImageFileNameHandler(std::string basePath, int number){
+  std::string numberStr = std::to_string(number);
+  if (number < 10)
+    return basePath + "000000" + numberStr;
+  else if (number < 100)
+    return basePath + "00000" + numberStr;
+  else if (number < 1000)
+    return basePath + "0000" + numberStr;
+  else if (number < 10000)
+    return basePath + "000" + numberStr;
+  else if (number < 100000)
+    return basePath + "00" + numberStr;
+}
+
+
+

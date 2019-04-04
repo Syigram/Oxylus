@@ -1,9 +1,14 @@
-#include "helper.h"
-#include "mem_info.h"
+#include <oxylus/memory/helper.h>
+#include <oxylus/memory/mem_info.h>
 
 #include <iostream>
 #include <regex>
 
+MemInfo::MemInfo(){
+  this->SetMemoryInformation();
+}
+
+// void MemInfo::SetMemoryInformation(){
 void MemInfo::SetMemoryInformation(){
   std::cout << "[INFO] | Retrieving memory information...." << '\n';
   this->_memTotal = GetMemoryValue(TOTAL);
@@ -35,6 +40,14 @@ int MemInfo::GetMemoryValue(MemType type){
   return result;
 
 }
+
+/* MemoryMessage MemInfo::GetAllMemoryInformation(){ */
+/*   MemoryMessage message; */
+/*   message.SetMemAvailable(_memAvailable); */
+/*   message.SetMemTotal(_memTotal); */
+/*   message.SetMemFree(_memFree); */
+/*   return message; */
+/* } */
 
 
 int MemInfo::GetMemTotal(){

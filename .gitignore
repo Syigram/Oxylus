@@ -1,0 +1,59 @@
+### C++ ###
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Temporary files
+*~
+
+# bin
+bin/oxylus
+
+### CMake ###
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Testing
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+build/
+
+### Visual Studio Code ###
+.settings/
+.vscode/
+tsconfig.json
+jsconfig.json
+
+### Doxygen ###
+doc/html/
+doc/latex
+doc/doxygen_*
+
+### Oxylus' Config File ###
+include/oxylus/OxylusConfig.hpp
+
+# Doxygen template
+templates/header.h

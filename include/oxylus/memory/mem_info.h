@@ -1,5 +1,7 @@
 #ifndef MEM_INFO_H
 
+/* #include <oxylus/mpi_message/memory_message.h> */
+
 #include <string>
 
 enum MemType{
@@ -11,6 +13,7 @@ enum MemType{
 class MemInfo {
 private:
   /* data */
+  int _idProcess;
   int _memTotal;
   int _memAvailable;
   int _memFree;
@@ -19,10 +22,11 @@ private:
 public:
   int GetMemoryValue(MemType type);
   void SetMemoryInformation();
+  /* MemoryMessage GetAllMemoryInformation(); */
   int GetMemTotal();
   int GetMemAvailable();
   int GetMemFree();
-  MemInfo (){};
+  MemInfo ();
   // virtual ~MemInfo ();
 };
 
