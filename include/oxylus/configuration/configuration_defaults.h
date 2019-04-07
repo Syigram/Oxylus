@@ -14,5 +14,6 @@
 #define YELLOW 6
 #define WHITE 7
 
+#define FILEPATH_CONFIG "/home/agonzalez/tfg/oxylus_github/build/config.ini"
 
 #endif
