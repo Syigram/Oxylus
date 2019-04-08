@@ -28,6 +28,8 @@ set( OXYLUS_LIBRARIES "")
 # add_subdirectory (scheduler)
 # add_subdirectory (training)
 add_subdirectory (memory)
+add_subdirectory (image)
+add_subdirectory (configuration)
 
 set_property(GLOBAL PROPERTY oxylus_libs_property "${OXYLUS_LIBRARIES}")
 

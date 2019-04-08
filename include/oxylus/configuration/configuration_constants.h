@@ -1,12 +1,23 @@
 
-#ifndef CONFIGURATION_PARAMETERS_H
-#define CONFIGURATION_PARAMETERS_H
+#ifndef CONFIGURATION_CONSTANTS_H
+#define CONFIGURATION_CONSTANTS_H
 
-
+#include <string>
 
 namespace rdf  {
   namespace bpc  {
-    const char * CONFIGFILE_PATH = "/home/agonzalez/tfg/oxylus_github/build/config.ini";
+    namespace defaults {
+
+      const std::string CONFIGFILE_PATH = "/home/agonzalez/tfg/oxylus_github/build/config.ini";
+      const int IMAGES_ROWS = 300;
+      const int IMAGES_COLS = 200;
+      const int IMAGES_NUMBER = 100;
+
+    }
+
+
+    namespace constants  {
+
 
     const int IMAGE_AVG_SIZE = 100;
 
@@ -19,6 +30,8 @@ namespace rdf  {
     const int MAGENTA = 5;
     const int YELLOW = 6;
     const int WHITE = 7;
+
+    }
   }
 }
 

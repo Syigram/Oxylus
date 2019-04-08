@@ -1,21 +1,32 @@
-#ifndef PROGRAM_CONFIG_H
-#define PROGRAM_CONFIG_H
-
-#include <oxylus/configuration/config_parser.h>
-
-class ProgramConfiguration {
-  public:
-    ProgramConfiguration();
-    ProgramConfiguration(std::string configurationFile);
-    ~ProgramConfiguration(){};
-
-  private:
-    int imagesRows;
-    int imagesCols;
-    int imagesNumber;
+#ifndef CONFIGURATION_OBJECT_H
+#define CONFIGURATION_OBJECT_H
 
 
-    ConfigParser configParser;
-}
+#include <oxylus/configuration/configuration_parser.h>
 
-#endif /* PROGRAM_CONFI
+namespace rdf  {
+
+  class ConfigurationObject {
+    public:
+      ConfigurationObject();
+      ConfigurationObject(std::string configurationFile);
+      int GetImagesRows();
+      int GetImagesCols();
+      int GetImagesNumber();
+      ~ConfigurationObject(){};
+
+    private:
+      std::shared_ptr<ConfigurationParser> configParser;
+      int imagesRows;
+      int imagesCols;
+      int imagesNumber;
+
+      int LoadConfiguration();
+      int SetImagesRows();
+      int SetImagesCols();
+      int SetImagesNumber();
+  };
+
+} /* rdf */
+
+#endif /* CONFIGURATION_OBJECT_H */

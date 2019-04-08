@@ -15,12 +15,14 @@
 #include <iostream>
 #include <vector>
 
-#include <oxylus/configuration/config.h>
+#include <oxylus/configuration/configuration_constants.h>
 #include <oxylus/memory/mem_info.h>
 #include <oxylus/memory/file_reader.h>
 #include <oxylus/mpi_message/image_allocation_message.h>
 #include <oxylus/mpi_message/memory_message.h>
 #include <oxylus/memory/helper.h>
+#include <oxylus/configuration/configuration_object.h>
+
 #define MPI_MASTER 0
 namespace mpi = boost::mpi;
 namespace logging = boost::log;
@@ -31,6 +33,7 @@ namespace expr = boost::log::expressions;
 typedef std::vector<ImageAllocationMessage> ImageAllocVect;
 typedef std::vector<MemoryMessage> MemAllocVect;
 
+using namespace std;
 
 
 ImageAllocVect ExtractMemoryMessageInfo(MemAllocVect messages){
@@ -40,7 +43,7 @@ ImageAllocVect ExtractMemoryMessageInfo(MemAllocVect messages){
   int i = 0;
   for(it = messages.begin(); it != messages.end(); it++, i++){
     ImageAllocationMessage imageAllocMsg;
-    int batchSize = it->GetMemAvailable() / IMAGE_AVG_SIZE;
+    int batchSize = it->GetMemAvailable() / rdf::bpc::constants::IMAGE_AVG_SIZE;
     int start = counter;
     int end = counter + batchSize;
     imageAllocMsg.SetBatchSize(batchSize);
@@ -88,10 +91,26 @@ int main(int argc, char const *argv[]) {
   /* BOOST_LOG_SEV(info) << "Info test"; */
   /* BOOST_LOG_TRIVIAL(trace) << "Finished run"; */
   /* BOOST_LOG_TRIVIAL(error) << "ERRor test"; */
+  ImageAllocationMessage imageAllocMsg(1, 20, 40, 20);
+
+  int indexStart = imageAllocMsg.GetIndexStart();
+  int indexEnd = imageAllocMsg.GetIndexEnd();
+
+  rdf::ConfigurationObject config;
+
+  cout << "rows: " << config.GetImagesRows() << endl;
+  cout << "cols: " << config.GetImagesCols() << endl;
+  cout << "images: " << config.GetImagesNumber() << endl;
 
 
-  FileReader reader;
-  reader.ReadImages(1, 1001);
+  /* FileReader::ReadImageTest("test.png"); */
+
+  /* FileReader reader; */
+  /* reader.ReadImages(indexStart, indexEnd); */
+
+  /* ImageOperations::RandomPointsSelection(200,200,1000); */
+
+
 
   /* std::string base = "Data_"; */
   /* Helper help; */
@@ -128,5 +147,4 @@ void first_gather_and_scatter_working(){
   mpi::scatter(world, imageAllocVector, imageAllocScatter, 0);
   std::cout << "---------------- Scatter begin ----------------" << '\n';
   imageAllocScatter.Print();
-
 }
