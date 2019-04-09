@@ -62,3 +62,4 @@ int MemInfo::GetMemAvailable(){
 int MemInfo::GetMemFree(){
   return this->_memFree;
 }
+

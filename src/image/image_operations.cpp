@@ -4,6 +4,8 @@
 #include <oxylus/image/image_operations.h>
 #include <oxylus/memory/helper.h>
 
+using namespace rdf::bpc;
+
 ImageOperations::ImageOperations(){
 
 }
@@ -33,6 +35,10 @@ void ImageOperations::PrintPalette(MapPalette palette){
   }
 }
 
+PointsVector ImageOperations::GenerateRandomPoints(cv::Mat& image, int rows, int cols, int n) {
+
+
+}
 
 std::set<std::pair<int,int>> ImageOperations::RandomPointsSelection(int rows, int cols, int numberOfPoints) {
   std::pair<std::set<std::pair<int,int>>::iterator,bool> ret;

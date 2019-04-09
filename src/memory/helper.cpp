@@ -20,6 +20,11 @@ std::string Helper::run_shell_cmd(const char* cmd) {
     return result;
 }
 
+/* int Helper::PrintIterable(auto iterable) { */
+/*   for (auto elem : iterable) { */
+/*     std::cout << elem << std::endl; */
+/*   } */
+/* } */
 
 int Helper::extract_integer_from_str(std::string input){
   std::string temp_str = "";

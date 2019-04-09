@@ -8,7 +8,6 @@ ConfigurationObject::ConfigurationObject() {
   std::shared_ptr<ConfigurationParser> configParser(new ConfigurationParser());
   this->configParser = configParser;
   LoadConfiguration();
-
 }
 
 
@@ -21,15 +20,18 @@ ConfigurationObject::ConfigurationObject(std::string filename) {
 
 int ConfigurationObject::SetImagesCols() {
   this->imagesCols = configParser->LoadImagesCols();
+  return 0;
 }
 
 
 int ConfigurationObject::SetImagesRows() {
   this->imagesRows = configParser->LoadImagesRows();
+  return 0;
 }
 
 int ConfigurationObject::SetImagesNumber() {
   this->imagesNumber = configParser->LoadImagesNumber();
+  return 0;
 }
 
 int ConfigurationObject::GetImagesCols() {
@@ -48,4 +50,5 @@ int ConfigurationObject::LoadConfiguration()  {
   SetImagesCols();
   SetImagesRows();
   SetImagesNumber();
+  return 0;
 }

@@ -1,21 +1,45 @@
 #ifndef IMAGE_STRUCTURE_H
 #define IMAGE_STRUCTURE_H
 
-#include <map>
+/* #include <map> */
 #include <set>
+#include <vector>
 
-class ImageStructure {
-  private:
-    /* data */
-    cv::Mat labelsImage;
-    cv::Mat depthImage;
+#include <opencv2/core/core.hpp>
+#include <opencv2/core/types.hpp>
 
-    vector<int> treesId; /* this vector contains the id of the trees that use
-                            this image for training */
+#include <oxylus/configuration/configuration_object.h>
+#include <oxylus/image/point_structure.h>
 
-    std::set<std::pair<int,int>> setOfPoints;
+#define KILOBYTE 1024
 
-    int rows;
-    int cols;
+namespace rdf  {
+
+  class ImageStructure {
+    public:
+      ImageStructure();
+      ImageStructure(ConfigurationObject* configObject);
+      int GetRows();
+      int GetCols();
+      int GetSizeOf();
+    private:
+      /* data */
+      cv::Mat_<uchar> labelImage;
+      cv::Mat_<ushort> depthImage;
+
+      std::vector<int> treesId; /* this vector contains the id of the trees that use
+                              this image for training */
+
+      PointsVector pointsVector;
+      std::set<std::pair<int,int>> setOfPoints;
+
+      /* std::string labefilename; */
+      int imageId;
+      int rows;
+      int cols;
+      int pointsSize;
+  };
+
 }
+
 #endif /* IMAGE_STRUCTURE_H */

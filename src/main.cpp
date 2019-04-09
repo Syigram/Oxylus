@@ -16,6 +16,7 @@
 #include <vector>
 
 #include <oxylus/configuration/configuration_constants.h>
+#include <oxylus/image/image_structure.h>
 #include <oxylus/memory/mem_info.h>
 #include <oxylus/memory/file_reader.h>
 #include <oxylus/mpi_message/image_allocation_message.h>
@@ -24,6 +25,7 @@
 #include <oxylus/configuration/configuration_object.h>
 
 #define MPI_MASTER 0
+
 namespace mpi = boost::mpi;
 namespace logging = boost::log;
 namespace keywords = boost::log::keywords;
@@ -102,9 +104,23 @@ int main(int argc, char const *argv[]) {
   cout << "cols: " << config.GetImagesCols() << endl;
   cout << "images: " << config.GetImagesNumber() << endl;
 
+  MemInfo info;
 
-  /* FileReader::ReadImageTest("test.png"); */
 
+  FileReader::ReadImageTest("testl.png");
+  FileReader::ReadImageTest("testd.png");
+
+  rdf::ImageStructure first_struct(&config);
+
+  int get_size_of_first = first_struct.GetSizeOf();
+
+  int mem = info.GetMemAvailable();
+  int total =  mem / get_size_of_first;
+
+
+  cout << "(GetSizeOf) ImageStructure: " << get_size_of_first << endl;
+  cout << "Total space: " << mem << endl;
+  cout << "This means I have space for: " << total << " images" << endl;
   /* FileReader reader; */
   /* reader.ReadImages(indexStart, indexEnd); */
 
