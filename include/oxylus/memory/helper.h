@@ -17,6 +17,9 @@ public:
   Helper(){};
   std::string run_shell_cmd(const char* cmd_command);
   int extract_integer_from_str(std::string input);
+  int ImageFileCounter(std::string basePath, int start, int end);
+  /* static int PrintIterable(auto iterable); */
+  static std::string ImageFileNameHandler(std::string basePath, int number);
   // virtual ~Helper ();
 };
 
