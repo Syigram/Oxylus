@@ -57,3 +57,6 @@ include/oxylus/OxylusConfig.hpp
 
 # Doxygen template
 templates/header.h
+
+# ycm plugin
+.ycm_extra_conf.py

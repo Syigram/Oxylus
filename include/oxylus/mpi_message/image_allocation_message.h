@@ -32,7 +32,7 @@ public:
   void SetIdProcess(int idProcess){
     this->_idProcess = idProcess;
   }
-  int GetIdProcess () const{
+  int GetIdProcess () const {
     return this->_idProcess;
   }
   void SetIndexStart(int start){
@@ -45,13 +45,13 @@ public:
     this->_batchSize = batchSize;
   }
 
-  int GetIndexStart() const{
+  int GetIndexStart() const {
     return this->_indexStart;
   }
-  int GetIndexEnd() const{
+  int GetIndexEnd() const {
     return this->_indexEnd;
   }
-  int GetBatchSize() const{
+  int GetBatchSize() const {
     return this->_batchSize;
   }
 
@@ -82,4 +82,6 @@ public:
   virtual ~ImageAllocationMessage (){}
 };
 
+
 #endif
+
