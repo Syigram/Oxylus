@@ -13,18 +13,23 @@ namespace rdf  {
       int GetImagesRows();
       int GetImagesCols();
       int GetImagesNumber();
+      std::string GetBaseFolder();
+      std::string GetLabelFolder();
+      std::string GetDepthFolder();
+      std::string GetFileExtension();
+      std::string GetFilePrefix();
       ~ConfigurationObject(){};
-
     private:
       std::shared_ptr<ConfigurationParser> configParser;
       int imagesRows;
       int imagesCols;
       int imagesNumber;
-
+      std::string baseFolder;
+      std::string labelFolder;
+      std::string depthFolder;
+      std::string fileExtension;
+      std::string filePrefix;
       int LoadConfiguration();
-      int SetImagesRows();
-      int SetImagesCols();
-      int SetImagesNumber();
   };
 
 } /* rdf */

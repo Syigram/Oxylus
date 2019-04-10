@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 
 #include <oxylus/configuration/configuration_constants.h>
 #include <oxylus/image/image_operations.h>
@@ -35,9 +36,47 @@ void ImageOperations::PrintPalette(MapPalette palette){
   }
 }
 
-PointsVector ImageOperations::GenerateRandomPoints(cv::Mat& image, int rows, int cols, int n) {
+void ImageOperations::SavePaletteTo(std::string filepath, MapPalette& palette){
+  std::ofstream outputFile;
+  outputFile.open(filepath, std::ios::out | std::ios::in );
+  for (auto& pe:palette) {
+    outputFile <<"("
+      << int((pe.first)[0]) << ","
+      << int((pe.first)[1]) << ","
+      << int((pe.first)[2]) << ") -> "
+      << int(pe.second) << std::endl;
+  }
+  outputFile.close();
+}
 
-
+std::shared_ptr<PointsVector> ImageOperations::GenerateRandomPoints(ImageStructure& imageData,
+                                                   cv::Mat_<ushort> depthImage,
+                                                   cv::Mat_<uchar> labelImage) {
+  std::pair<std::set<std::pair<int,int>>::iterator,bool> ret;
+  std::uniform_int_distribution<int> rows_dist(0, imageData.GetRows() - 1);
+  std::uniform_int_distribution<int> cols_dist(0, imageData.GetCols() - 1);
+  int numberOfPoints = imageData.GetPointsSize();
+  int imageId = imageData.GetImageId();
+  int counter = 0;
+  int nodeId = 0;
+  std::set<std::pair<int,int>> setOfPoints;
+  std::shared_ptr<PointsVector> pointsVector = std::make_shared<PointsVector>();
+  while (counter < numberOfPoints){
+    int x = rows_dist(mt_);
+    int y = cols_dist(mt_);
+    std::pair<int, int> coords = std::make_pair(x, y);
+    ret = setOfPoints.insert(coords);
+    if (ret.second == true) {/* insert is successful */
+      int pixelValueLabel = (int) labelImage.at<uchar>(x, y);
+      int pixelValueDepth = (int) depthImage.at<ushort>(x, y);
+      PointStructure point(nodeId, pixelValueDepth, pixelValueLabel, x, y, imageId);
+      pointsVector->push_back(point);
+      point.Print();
+      std::cout << "couter" << counter;
+      counter++;
+    }
+  }
+  return pointsVector;
 }
 
 std::set<std::pair<int,int>> ImageOperations::RandomPointsSelection(int rows, int cols, int numberOfPoints) {

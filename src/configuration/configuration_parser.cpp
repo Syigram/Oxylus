@@ -32,6 +32,62 @@ int ConfigurationParser::LoadConfigFile() {
     std::cout << "INFO: Writing default values as: " << this->filename << std::endl;
     WriteDefaultConfigurationFile();
   }
+  return 0;
+}
+
+std::string ConfigurationParser::LoadDepthFolder(){
+  std::string placeholder = "";
+  try{
+    placeholder = this->parseTree.get<std::string>("images.depthFolder");
+  } catch (const boost::property_tree::ptree_error &e){
+    placeholder = e.what();
+    std::cout << placeholder << std::endl;
+  }
+  return placeholder;
+}
+
+std::string ConfigurationParser::LoadBaseFolder(){
+  std::string placeholder = "";
+  try{
+    placeholder = this->parseTree.get<std::string>("images.baseFolder");
+  } catch (const boost::property_tree::ptree_error &e){
+    placeholder = e.what();
+    std::cout << placeholder << std::endl;
+  }
+  return placeholder;
+}
+
+std::string ConfigurationParser::LoadLabelFolder(){
+  std::string placeholder = "";
+  try{
+    placeholder = this->parseTree.get<std::string>("images.labelFolder");
+  } catch (const boost::property_tree::ptree_error &e){
+    placeholder = e.what();
+    std::cout << placeholder << std::endl;
+  }
+  return placeholder;
+}
+
+std::string ConfigurationParser::LoadFileExtension(){
+  std::string placeholder = "";
+  try{
+    placeholder = this->parseTree.get<std::string>("images.fileExtension");
+  } catch (const boost::property_tree::ptree_error &e){
+    placeholder = e.what();
+    std::cout << placeholder << std::endl;
+  }
+  return placeholder;
+}
+
+std::string ConfigurationParser::LoadFilePrefix(){
+  std::string placeholder = "";
+  try{
+    placeholder = this->parseTree.get<std::string>("images.filePrefix");
+  } catch (const boost::property_tree::ptree_error &e){
+    placeholder = e.what();
+    std::cout << placeholder << std::endl;
+  }
+  return placeholder;
 }
 
 int ConfigurationParser::LoadImagesCols() {

@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include <oxylus/image/point_structure.h>
 
 
@@ -60,4 +62,12 @@ int PointStructure::GetImageId() {
   return this->imageId;
 }
 
+void PointStructure::Print() {
+  std::cout << "Node: " << currentNode << "\t";
+  std::cout << "Depth: " << depthPixelValue << "\t";
+  std::cout << "Label: " << labelPixelValue << "\t";
+  std::cout << "X: " << x << "\t";
+  std::cout << "Y: " << y << "\t";
+  std::cout << "ImageId: " << imageId << std::endl;
 
+}

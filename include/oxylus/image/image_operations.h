@@ -12,30 +12,36 @@
 
 #include <oxylus/image/image_structure.h>
 
+
+namespace cv {
+  /**
+   * Simple less comparator for Vec3b to be able to use maps
+   */
+  inline bool operator<(const Vec3b& a,const Vec3b& b) {
+    return (a[0]< b[0]) ||
+      ((a[0]==b[0]) && ( (a[1]< b[1]) ||
+                         ( (a[1]==b[1]) && (a[2]< b[2]))));
+  }
+}
+
+
 namespace rdf  {
   namespace bpc  {
 
     typedef std::map<cv::Vec3b,uchar> MapPalette;
 
 
-    namespace cv {
-      /**
-       * Simple less comparator for Vec3b to be able to use maps
-       */
-      inline bool operator<(const Vec3b& a,const Vec3b& b) {
-        return (a[0]< b[0]) ||
-          ((a[0]==b[0]) && ( (a[1]< b[1]) ||
-                             ( (a[1]==b[1]) && (a[2]< b[2]))));
-      }
-    }
 
     class ImageOperations {
       public:
         ImageOperations();
         static MapPalette InitializePalette();
         static void PrintPalette(MapPalette palette);
+        static void SavePaletteTo(std::string filepath, MapPalette& palette);
         static std::set<std::pair<int,int>> RandomPointsSelection(int rows, int cols, int n);
-        static PointsVector GenerateRandomPoints(ImageStructure imageData);
+        static std::shared_ptr<PointsVector> GenerateRandomPoints(ImageStructure& imageData,
+                                                 cv::Mat_<ushort> depthImage,
+                                                 cv::Mat_<uchar> labelImage);
         static PointStructure GenerateRandomPointStructure();
         virtual ~ImageOperations(){};
 

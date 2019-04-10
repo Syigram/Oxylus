@@ -1,10 +1,12 @@
 #ifndef POINT_STRUCTURE_H
 #define POINT_STRUCTURE_H
 
+#include <vector>
+
+#include <oxylus/image/point_structure.h>
+
 namespace rdf {
   namespace bpc {
-
-    typedef vector<PointStructure> PointsVector;
 
     class PointStructure {
       public:
@@ -22,6 +24,7 @@ namespace rdf {
         int GetX();
         int GetY();
         int GetImageId();
+        void Print();
         ~PointStructure(){};
 
       private:
@@ -31,7 +34,9 @@ namespace rdf {
         int x;
         int y;
         int imageId;
-    }
+    };
+
+    typedef std::vector<PointStructure> PointsVector;
   }
 }
 

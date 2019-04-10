@@ -4,6 +4,7 @@
 /* #include <map> */
 #include <set>
 #include <vector>
+#include <memory>
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/core/types.hpp>
@@ -15,30 +16,38 @@
 
 namespace rdf  {
 
-  class ImageStructure {
-    public:
-      ImageStructure();
-      ImageStructure(ConfigurationObject* configObject);
-      int GetRows();
-      int GetCols();
-      int GetSizeOf();
-    private:
-      /* data */
-      cv::Mat_<uchar> labelImage;
-      cv::Mat_<ushort> depthImage;
+  namespace bpc  {
 
-      std::vector<int> treesId; /* this vector contains the id of the trees that use
-                              this image for training */
+    class ImageStructure {
+      public:
+        ImageStructure();
+        ImageStructure(ConfigurationObject* configObject);
+        ImageStructure(ConfigurationObject* configObject, int imageId);
+        int GetRows();
+        int GetCols();
+        int GetPointsSize();
+        int GetImageId();
+        int GetSizeOf();
+        void SetPointsVector(std::shared_ptr<PointsVector> pointsVector);
+        std::shared_ptr<PointsVector> GetPointsVector();
+      private:
+        /* data */
+        cv::Mat_<uchar> labelImage;
+        cv::Mat_<ushort> depthImage;
 
-      PointsVector pointsVector;
-      std::set<std::pair<int,int>> setOfPoints;
+        std::vector<int> treesId; /* this vector contains the id of the trees that use
+                                this image for training */
 
-      /* std::string labefilename; */
-      int imageId;
-      int rows;
-      int cols;
-      int pointsSize;
-  };
+        std::set<std::pair<int,int>> setOfPoints;
+        std::shared_ptr<PointsVector> pointsVector;
+        /* std::string labefilename; */
+        int imageId;
+        int rows;
+        int cols;
+        int pointsSize;
+    };
+    typedef std::vector<ImageStructure> ImagesVector;
+  }
 
 }
 

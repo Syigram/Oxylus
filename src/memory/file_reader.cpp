@@ -3,6 +3,7 @@
 #include <oxylus/memory/helper.h>
 #include <oxylus/misc/custom_exception.h>
 
+using namespace rdf::bpc;
 
 FileReader::FileReader(){
    this->baseFolder = "/home/agonzalez/tfg/oxylus_images/";
@@ -12,6 +13,14 @@ FileReader::FileReader(){
    this->fileBasePath = "Data_";
 }
 
+FileReader::FileReader(ConfigurationObject* configObject){
+  this->configObject = configObject;
+  this->depthFolder = configObject->GetDepthFolder();
+  this->baseFolder = configObject->GetBaseFolder();
+  this->labelFolder = configObject->GetLabelFolder();
+  this->fileExtension = configObject->GetFileExtension();
+  this->fileBasePath = configObject->GetFilePrefix();
+}
 
 
 FileReader::FileReader(int start, int end){
@@ -32,18 +41,30 @@ int FileReader::ProcessImages(int indexStart, int indexEnd) {
   return 0;
 }
 
-int FileReader::ReadImages(int start, int end){
+std::shared_ptr<ImagesVector> FileReader::ReadImages(int start, int end){
   MapPalette palette = ImageOperations::InitializePalette();
+  int rows = this->configObject->GetImagesRows();
+  int cols = this->configObject->GetImagesCols();
+  int batchSize = (start - end) + 1;
+  std::shared_ptr<ImagesVector> imagesVector =
+                std::make_shared<ImagesVector>();
   while (start <= end){
     std::string fileName = Helper::ImageFileNameHandler(this->fileBasePath, start);
-    std::string fullPath = baseFolder + labelFolder + fileName + fileExtension;
-    /* std::string fullPath = baseFolder + depthFolder + fileName + fileExtension; */
-    std::cout << fullPath << std::endl;
-    this->ReadImage(fullPath, palette);
+    std::string labelFilename = baseFolder + labelFolder + fileName + fileExtension;
+    std::string depthFilename = baseFolder + depthFolder + fileName + fileExtension;
+    std::cout << labelFilename << std::endl;
+    std::cout << depthFilename << std::endl;
+    cv::Mat_<ushort> depthMat = this->ReadDepthImage(depthFilename);
+    cv::Mat_<uchar> labelMat = this->ReadLabelImage(labelFilename, rows, cols, palette);
+    int imageId = start;
+    ImageStructure imageData(this->configObject, imageId);
+    imageData.SetPointsVector(ImageOperations::GenerateRandomPoints(imageData, depthMat, labelMat));
+    imagesVector->push_back(imageData);
     start++;
   }
   ImageOperations::PrintPalette(palette);
-  return 0;
+  ImageOperations::SavePaletteTo("palette.txt", palette);
+  return imagesVector;
 }
 
 int FileReader::ReadImage(std::string fullPath, MapPalette& palette){
@@ -150,8 +171,9 @@ cv::Mat FileReader::ScanImage(cv::Mat& image, MapPalette& palette) {
   return image;
 }
 
-cv::Mat_<uchar> FileReader::ReadLabelImage(std::string filename) {
-  cv::Mat_<uchar> image = cv::imread(filename);
+cv::Mat_<uchar> FileReader::ReadLabelImage(std::string filename, int rows,
+                                            int cols, MapPalette& palette) {
+  cv::Mat image = cv::imread(filename, CV_LOAD_IMAGE_ANYDEPTH | CV_LOAD_IMAGE_ANYCOLOR);
   const int expectedChannels = 3;
   const int channels = image.channels();
   const int depth = image.depth();
@@ -164,12 +186,39 @@ cv::Mat_<uchar> FileReader::ReadLabelImage(std::string filename) {
   if (depth != CV_8U){
     throw CustomException("Unexpected depth: It should be uchar");
   }
-  return image;
+
+  /* Resulting labels */
+  cv::Mat_<uchar> labels(rows, cols);
+
+  /* Find largest label used so far in the palette */
+  auto maxLabel =
+    std::max_element(palette.begin(),
+                     palette.end(),
+                     [](const std::pair<cv::Vec3b,uchar>& p1,
+                        const std::pair<cv::Vec3b,uchar>& p2) {
+                       return p1.second < p2.second;
+                     });
+  assert(maxLabel != palette.end());
+  uchar lastLabel = maxLabel->second;
+  for (int i = 0; i < rows; i++) {
+    for (int j = 0; j < cols; j++) {
+      const cv::Vec3b& rgb = image.at<cv::Vec3b>(i, j);
+      auto it=palette.find(rgb);
+      if (it==palette.end()) {
+        lastLabel++;
+        palette[rgb]=lastLabel; // add a new label to the palette
+        labels.at<uchar>(i,j) = lastLabel;
+      } else {
+        labels.at<uchar>(i,j) = it->second;
+      }
+    }
+  }
+  return labels;
 }
 
 
 cv::Mat_<ushort> FileReader::ReadDepthImage(std::string filename) {
-  cv::Mat_<uchar> image = cv::imread(filename);
+  cv::Mat image = cv::imread(filename, CV_LOAD_IMAGE_ANYDEPTH | CV_LOAD_IMAGE_ANYCOLOR);
   const int expectedChannels = 1;
   const int channels = image.channels();
   const int depth = image.depth();
@@ -182,57 +231,9 @@ cv::Mat_<ushort> FileReader::ReadDepthImage(std::string filename) {
   if (depth != CV_16U){
     throw CustomException("Unexpected depth: It should be ushort");
   }
-  return image;
+  cv::Mat_<ushort> typedMat;
+  image.convertTo(typedMat, CV_16U);
+  return typedMat;
 
 }
 
-
-/* Mat& FileReader::ScanImage(Mat& image){ */
-/*     // accept only char type matrices */
-/*     /1* CV_Assert(image.depth() == CV_8U); *1/ */
-/*     std::set<int> pixelValues; */
-/*     int rows, cols; */
-/*     const int channels = image.channels(); */
-/*     if (!image.isContinuous()) */
-/*       image = image.clone(); */
-/*     rows = image.rows; */
-/*     cols = image.cols; */
-/*     cout << "type: " << image.type() << endl; */
-/*     unsigned char* pixelPtr = (unsigned char*)image.data; */
-/*     Scalar_<unsigned char> bgrPixel; */
-/*     unsigned char pixel; */
-/*     /1* cout << "M = "<< endl << " "  << image << endl << endl; *1/ */
-/*     for (int i = 0; i < rows; i++){ */
-/*       const uchar* current = image.ptr<uchar>(i); */
-/*       for (int j = 0; j < channels * cols; j++){ */
-
-/*         /1* int val = (int) current[i]; *1/ */
-/*         /1* pixelValues.insert(val); *1/ */
-
-/*         Vec3b intensity = image.at<Vec3b>(i, j); */
-/*         cout << "pixel1: " << (int) intensity.val[0] << '\t'; */
-/*         cout << "pixel2: " << (int) intensity.val[1] << '\t'; */
-/*         cout << "pixel3: " << (int) intensity.val[2] << endl; */
-/*         /1* for(int k = 0; k < image.channels(); k++) { *1/ */
-/*         /1*   int col = static_cast<unsigned char>(intensity.val[k]); *1/ */
-/*         /1*   pixelValues.insert(col); *1/ */
-/*         /1* } *1/ */
-
-/*         /1* bgrPixel.val[0] = pixelPtr[i*cols*channels + j*channels + 0]; *1/ */
-/*         /1* bgrPixel.val[1] = pixelPtr[i*cols*channels + j*channels + 1]; *1/ */
-/*         /1* bgrPixel.val[2] = pixelPtr[i*cols*channels + j*channels + 2]; *1/ */
-
-/*         /1* if (bgrPixel.val[0] > 0 || bgrPixel.val[1] > 0 || bgrPixel.val[2] > 0){ *1/ */
-
-/*         /1*   cout << "pixel1: " << (int) bgrPixel.val[0] << '\t'; *1/ */
-/*         /1*   cout << "pixel2: " << (int) bgrPixel.val[1] << '\t'; *1/ */
-/*         /1*   cout << "pixel3: " << (int) bgrPixel.val[2] << endl; *1/ */
-/*         /1* } *1/ */
-/*        /1* pixelValues.insert(val); *1/ */
-/*        /1* if (val > 0) *1/ */
-/*        /1* cout << "am val: " << val << endl; *1/ */
-/*       } */
-/*     } */
-
-/*     return image; */
-/* } */

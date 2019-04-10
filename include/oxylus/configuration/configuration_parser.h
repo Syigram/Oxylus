@@ -1,9 +1,12 @@
 #ifndef CONFIGURATION_PARSER_H
+
 #define CONFIGURATION_PARSER_H
 
 #include <string>
 
 #include <boost/property_tree/ptree.hpp>
+
+#include <oxylus/memory/helper.h>
 
 namespace rdf  {
 
@@ -21,6 +24,11 @@ namespace rdf  {
       int LoadImagesCols();
       int LoadImagesRows();
       int LoadImagesNumber();
+      std::string LoadBaseFolder();
+      std::string LoadLabelFolder();
+      std::string LoadDepthFolder();
+      std::string LoadFileExtension();
+      std::string LoadFilePrefix();
       int WriteDefaultConfigurationFile();
       ~ConfigurationParser(){};
 

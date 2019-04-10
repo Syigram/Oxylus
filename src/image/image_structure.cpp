@@ -1,22 +1,23 @@
 #include <oxylus/image/image_structure.h>
 
 
-using namespace rdf;
+using namespace rdf::bpc;
 
 ImageStructure::ImageStructure() {
-  int n = 1000;
-  this->rows = n;
-  this->cols = n;
-  labelImage = cv::Mat_<uchar>(rows, cols);
-  depthImage = cv::Mat_<ushort>(rows, cols);
-}
 
+}
 
 ImageStructure::ImageStructure(ConfigurationObject* configObject) {
   this->rows = configObject->GetImagesRows();
   this->cols = configObject->GetImagesCols();
-  labelImage = cv::Mat_<uchar>(rows, cols);
-  depthImage = cv::Mat_<ushort>(rows, cols);
+  this->pointsSize = configObject->GetImagesNumber();
+}
+
+ImageStructure::ImageStructure(ConfigurationObject* configObject, int imageId) {
+  this->rows = configObject->GetImagesRows();
+  this->cols = configObject->GetImagesCols();
+  this->pointsSize = configObject->GetImagesNumber();
+  this->imageId = imageId;
 }
 
 int ImageStructure::GetSizeOf() {
@@ -30,11 +31,28 @@ int ImageStructure::GetSizeOf() {
 
 }
 
+
+int ImageStructure::GetPointsSize() {
+  return this->pointsSize;
+}
+
 int ImageStructure::GetRows() {
   return this->rows;
 }
 
 
+int ImageStructure::GetImageId() {
+  return this->imageId;
+}
+
 int ImageStructure::GetCols() {
   return this->cols;
+}
+
+std::shared_ptr<PointsVector> ImageStructure::GetPointsVector() {
+  return this->pointsVector;
+}
+
+void ImageStructure::SetPointsVector(std::shared_ptr<PointsVector> pointsVector) {
+  this->pointsVector = pointsVector;
 }

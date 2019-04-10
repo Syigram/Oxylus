@@ -107,22 +107,23 @@ int main(int argc, char const *argv[]) {
   MemInfo info;
 
 
-  FileReader::ReadImageTest("testl.png");
-  FileReader::ReadImageTest("testd.png");
+  rdf::bpc::FileReader::ReadImageTest("testl.png");
 
-  rdf::ImageStructure first_struct(&config);
+  rdf::bpc::FileReader::ReadImageTest("testd.png");
 
-  int get_size_of_first = first_struct.GetSizeOf();
+  rdf::bpc::ImageStructure first_struct(&config);
 
-  int mem = info.GetMemAvailable();
-  int total =  mem / get_size_of_first;
+  /* int get_size_of_first = first_struct.GetSizeOf(); */
 
 
-  cout << "(GetSizeOf) ImageStructure: " << get_size_of_first << endl;
-  cout << "Total space: " << mem << endl;
-  cout << "This means I have space for: " << total << " images" << endl;
-  /* FileReader reader; */
-  /* reader.ReadImages(indexStart, indexEnd); */
+  /* cout << "(GetSizeOf) ImageStructure: " << get_size_of_first << endl; */
+  /* cout << "Total space: " << mem << endl; */
+  /* int mem = info.GetMemAvailable(); */
+  /* int total =  mem / get_size_of_first; */
+
+  /* cout << "This means I have space for: " << total << " images" << endl; */
+  rdf::bpc::FileReader reader(&config);
+  reader.ReadImages(indexStart, indexEnd);
 
   /* ImageOperations::RandomPointsSelection(200,200,1000); */
 
