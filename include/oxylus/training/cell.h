@@ -11,8 +11,6 @@ namespace rdf{
         std::vector<float> left;      ///< Left histogram
         std::vector<float> right;     ///< Right histogram
         virtual ~Cell();
-
-
     };
   }
 }
