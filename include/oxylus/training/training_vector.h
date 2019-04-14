@@ -14,7 +14,6 @@ namespace rdf{
         virtual void GenerateVector() = 0;
         virtual void PrintVector();
       protected:
-
         size_t size;
         T2 maxValue;
         T2 minValue;
@@ -23,11 +22,17 @@ namespace rdf{
           this->maxValue = value;
         };
 
-        virtual void SetMinimunValue(T2 value){
+        virtual void SetMinimumValue(T2 value){
           this->minValue = value;
         }
 
-        virtual T2 GetMaximunValue
+        virtual T2 GetMinimumValue(){
+          return this->minValue;
+        }
+
+        virtual T2 GetMaximumValue(){
+          return this->maxValue;
+        }
 
         virtual void SetSize(size_t value){
           this->size = value;

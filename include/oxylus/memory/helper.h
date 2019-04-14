@@ -6,6 +6,7 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
+#include <random>
 
 class Helper {
 private:
@@ -20,6 +21,7 @@ public:
   int ImageFileCounter(std::string basePath, int start, int end);
   /* static int PrintIterable(auto iterable); */
   static std::string ImageFileNameHandler(std::string basePath, int number);
+  static std::mt19937 InitializeRandomDevice();
   // virtual ~Helper ();
 };
 

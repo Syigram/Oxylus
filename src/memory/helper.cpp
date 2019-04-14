@@ -68,4 +68,8 @@ std::string Helper::ImageFileNameHandler(std::string basePath, int number){
 }
 
 
-
+std::mt19937 Helper::InitializeRandomDevice(){
+  std::random_device rd;
+  std::mt19937 mt(rd());
+  return mt;
+}

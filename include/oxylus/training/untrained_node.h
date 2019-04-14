@@ -4,6 +4,5 @@ class UntrainedNode {
   public:
     UntrainedNode();
     ~UntrainedNode(){};
-
 };
 #endif /* UNTRAINED_NODE_H */

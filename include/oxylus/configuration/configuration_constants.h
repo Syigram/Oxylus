@@ -20,6 +20,8 @@ namespace rdf  {
 
 
     const int IMAGE_AVG_SIZE = 100;
+    const int PALETTE_SIZE = 8;
+    const int BODY_PARTS = 8;
 
 
     const int BLACK = 0;
@@ -30,6 +32,24 @@ namespace rdf  {
     const int MAGENTA = 5;
     const int YELLOW = 6;
     const int WHITE = 7;
+
+
+
+
+    }
+
+    namespace hand{
+
+      using namespace rdf::bpc::constants;
+
+      const int THUMB_FINGER = WHITE;
+      const int INDEX_FINGER = RED;
+      const int MIDDLE_FINGER = GREEN;
+      const int RING_FINGER = BLUE;
+      const int PINKY_FINGER = CIAN;
+      const int PALM = YELLOW;
+      const int FOREARM = MAGENTA;
+      const int BACKGROUND = BLACK;
 
     }
   }

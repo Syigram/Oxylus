@@ -17,11 +17,19 @@ namespace rdf{
         }
 
         std::vector<Features> GenerateVector(){
-          float randomFeature1First;
-          float randomFeature1Second;
-          float randomFeature2First;
-          float randomFeature2Second;
-
+          std::uniform_real_distribution<float> features_dist(minValue, maxValue);
+          std::vector<float> featuresVector;
+          for (size_t i = 0; i < size; i++){
+            Features features
+            float value1 = features_dist(mt_);
+            float value2 = features_dist(mt_);
+            float value3 = features_dist(mt_);
+            float value4 = features_dist(mt_);
+            features.SetFeature1(value1, value2);
+            features.SetFeature2(value3, value4);
+            featuresVector.push_back(features);
+          }
+          return featuresVector;
         }
       private:
         size_t size;
