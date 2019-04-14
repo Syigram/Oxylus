@@ -23,6 +23,7 @@
 #include <oxylus/mpi_message/memory_message.h>
 #include <oxylus/memory/helper.h>
 #include <oxylus/configuration/configuration_object.h>
+#include <oxylus/training/cell.h>
 
 #define MPI_MASTER 0
 
@@ -107,6 +108,7 @@ int main(int argc, char const *argv[]) {
   MemInfo info;
 
 
+
   rdf::bpc::FileReader::ReadImageTest("testl.png");
 
   rdf::bpc::FileReader::ReadImageTest("testd.png");
@@ -123,10 +125,12 @@ int main(int argc, char const *argv[]) {
 
   /* cout << "This means I have space for: " << total << " images" << endl; */
   rdf::bpc::FileReader reader(&config);
-  reader.ReadImages(indexStart, indexEnd);
+  std::shared_ptr<rdf::bpc::ImagesVector> imagesVector = reader.ReadImages(indexStart, indexEnd);
 
   /* ImageOperations::RandomPointsSelection(200,200,1000); */
 
+
+  rdf::bpc::Cell<float> cell;
 
 
   /* std::string base = "Data_"; */
