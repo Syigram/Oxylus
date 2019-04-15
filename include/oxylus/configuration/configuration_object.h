@@ -13,6 +13,11 @@ namespace rdf  {
       int GetImagesRows();
       int GetImagesCols();
       int GetImagesNumber();
+      int GetPointsSize();
+      int GetMemoryUsage();
+      int GetNumberOfTrees();
+      int GetMaxTreeLevels();
+      int GetImagesPerNode();
       std::string GetBaseFolder();
       std::string GetLabelFolder();
       std::string GetDepthFolder();
@@ -24,6 +29,11 @@ namespace rdf  {
       int imagesRows;
       int imagesCols;
       int imagesNumber;
+      int pointsSize;
+      int memoryUsage;
+      int numberOfTrees;
+      int maxTreeLevels;
+      int imagesPerNode;
       std::string baseFolder;
       std::string labelFolder;
       std::string depthFolder;

@@ -90,6 +90,62 @@ std::string ConfigurationParser::LoadFilePrefix(){
   return placeholder;
 }
 
+int ConfigurationParser::LoadPointsSize(){
+  int value = 0;
+  try{
+    value = this->parseTree.get<int>("points.sampleSize");
+  }catch (const boost::property_tree::ptree_error &e){
+    std::string exception = e.what();
+    std::cout << exception << std::endl;
+  }
+  return value;
+}
+
+int ConfigurationParser::LoadMemoryUsage(){
+  int value = 0;
+  try{
+    value = this->parseTree.get<int>("memory.usage");
+  }catch (const boost::property_tree::ptree_error &e){
+    std::string exception = e.what();
+    std::cout << exception << std::endl;
+  }
+  return value;
+}
+
+int ConfigurationParser::LoadNumberOfTrees(){
+  int value = 0;
+  try{
+    value = this->parseTree.get<int>("hyperparameters.trees");
+  }catch (const boost::property_tree::ptree_error &e){
+    std::string exception = e.what();
+    std::cout << exception << std::endl;
+  }
+  return value;
+}
+
+int ConfigurationParser::LoadImagesPerNode(){
+  int value = 0;
+  try{
+    value = this->parseTree.get<int>("hyperparameters.imagesPerNode");
+  }catch (const boost::property_tree::ptree_error &e){
+    std::string exception = e.what();
+    std::cout << exception << std::endl;
+  }
+  return value;
+}
+
+int ConfigurationParser::LoadMaxTreeLevels(){
+  int value = 0;
+  try{
+    value = this->parseTree.get<int>("hyperparameters.maxLevels");
+  }catch (const boost::property_tree::ptree_error &e){
+    std::string exception = e.what();
+    std::cout << exception << std::endl;
+  }
+  return value;
+}
+
+
 int ConfigurationParser::LoadImagesCols() {
   return this->parseTree.get<int>("images.rows");
 }
@@ -130,4 +186,5 @@ int ConfigurationParser::WriteDefaultImagesSection(BoostTree& tree) {
   tree.put(sectionName + colsName, rdf::bpc::defaults::IMAGES_COLS);
   tree.put(sectionName + imagesNumberName, rdf::bpc::defaults::IMAGES_NUMBER);
 
+  return 0;
 }

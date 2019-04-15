@@ -27,7 +27,7 @@ namespace rdf  {
         int GetCols();
         int GetPointsSize();
         int GetImageId();
-        int GetSizeOf();
+        int GetSizeOf(ConfigurationObject* configObject);
         void SetPointsVector(std::shared_ptr<PointsVector> pointsVector);
         std::shared_ptr<PointsVector> GetPointsVector();
       private:
@@ -45,6 +45,7 @@ namespace rdf  {
         int rows;
         int cols;
         int pointsSize;
+        int treesSize;
     };
     typedef std::vector<ImageStructure> ImagesVector;
   }

@@ -7,93 +7,113 @@
 
 #include <oxylus/configuration/Serialization.h>
 #include <oxylus/memory/mem_info.h>
+#include <oxylus/configuration/configuration_object.h>
 
-class MemoryMessage {
-private:
-  /* data */
-  int _idProcess;
-  int _memAvailable;
-  int _memTotal;
-  int _memFree;
-  int _batchSize;
+namespace rdf{
+  namespace bpc{
 
-  /* --- Serialization --- */
-    friend class boost::serialization::access;
-    template<class Archive>
-    void serialize(Archive & ar, const unsigned int version) {
-        ar & _idProcess;
-        ar & _memTotal;
-        ar & _memFree;
-        ar & _memAvailable;
-        ar & _batchSize;
-    }
-    /* ==== Serialization ==== */
+    class MemoryMessage {
+    private:
+      /* data */
+      int idProcess;
+      int memAvailable;
+      int memTotal;
+      int memFree;
+      int batchSize;
+      ConfigurationObject* configObject;
 
 
-public:
-  void SetIdProcess(int idProcess){
-    this->_idProcess = idProcess;
-  }
-  void SetMemAvailable(int memAvailable){
-    this->_memAvailable = memAvailable;
-  }
-  void SetMemTotal(int memTotal){
-    this->_memTotal = memTotal;
-  }
-  void SetMemFree(int memFree){
-    this->_memFree = memFree;
-  }
-  void SetBatchSize(int batchSize){
-    this->_batchSize = batchSize;
-  }
-  int GetIdProcess(){
-    return this->_idProcess;
-  }
-  int GetMemFree(){
-    return this->_memFree;
-  }
-  int GetBatchSize(){
-    return this->_batchSize;
-  }
-  int GetMemAvailable(){
-    return this->_memAvailable;
-  }
-  int GetMemTotal(){
-    return this->_memTotal;
-  }
+      /* --- Serialization --- */
+        friend class boost::serialization::access;
+        template<class Archive>
+        void serialize(Archive & ar, const unsigned int version) {
+            ar & idProcess;
+            ar & memTotal;
+            ar & memFree;
+            ar & memAvailable;
+            ar & batchSize;
+        }
+        /* ==== Serialization ==== */
 
-  int CreateMemoryMessage(int idProcess){
-    MemInfo memInfo;
-    this->_idProcess = idProcess;
-    this->_memTotal = memInfo.GetMemTotal();
-    this->_memAvailable = memInfo.GetMemAvailable();
-    this->_memFree = memInfo.GetMemFree();
-    return 0;
-  }
 
-  void Print(){
-    std::cout << "====Printing memory message ======" << '\n';
-    std::cout << "IdProcess: " << _idProcess << '\t';
-    std::cout << "MemTotal: " << _memTotal << '\t';
-    std::cout << "MemAvailable: " << _memAvailable << '\t';
-    std::cout << "MemFree: " << _memFree << '\t';
-    std::cout << "BatchSize: " << _batchSize << '\n';
-    std::cout << "-----Printing memory message------" << '\n';
-  }
+    public:
+      void SetIdProcess(int idProcess){
+        this->idProcess = idProcess;
+      }
+      void SetMemAvailable(int memAvailable){
+        this->memAvailable = memAvailable;
+      }
+      void SetMemTotal(int memTotal){
+        this->memTotal = memTotal;
+      }
+      void SetMemFree(int memFree){
+        this->memFree = memFree;
+      }
+      /* void SetBatchSize(int batchSize){ */
+      /*   this->batchSize = batchSize; */
+      /* } */
+      int GetIdProcess(){
+        return this->idProcess;
+      }
+      int GetMemFree(){
+        return this->memFree;
+      }
+      /* int GetBatchSize(){ */
+      /*   return this->batchSize; */
+      /* } */
+      int GetMemAvailable(){
+        return this->memAvailable;
+      }
+      int GetMemTotal(){
+        return this->memTotal;
+      }
 
-  MemoryMessage (){
-    _idProcess = 0;
-    _memFree = 0;
-    _memTotal = 0;
-    _memAvailable = 0;
-    _batchSize = 0;
-  }
+      int CreateMemoryMessage(){
+        MemInfo memInfo(this->configObject);
+        this->memTotal = memInfo.GetMemTotal();
+        this->memAvailable = memInfo.GetMemAvailable();
+        this->memFree = memInfo.GetMemFree();
+        this->batchSize = memInfo.GetBatchSize();
+        return 0;
+      }
 
-  MemoryMessage(int idProcess){
-    CreateMemoryMessage(idProcess);
-  }
+      void Print(){
+        std::cout << "====Printing memory message ======" << '\n';
+        std::cout << "IdProcess: " << idProcess << '\t';
+        std::cout << "MemTotal: " << memTotal << '\t';
+        std::cout << "MemAvailable: " << memAvailable << '\t';
+        std::cout << "MemFree: " << memFree << '\t';
+        std::cout << "BatchSize: " << batchSize << '\n';
+        std::cout << "-----Printing memory message------" << '\n';
+      }
 
-  virtual ~MemoryMessage (){}
-};
+      MemoryMessage (){
+        idProcess = 0;
+        memFree = 0;
+        memTotal = 0;
+        memAvailable = 0;
+        batchSize = 0;
+      }
+
+      MemoryMessage(ConfigurationObject* configObject){
+        this->configObject = configObject;
+      }
+
+      MemoryMessage(ConfigurationObject* configObject, int idProcess){
+        this->configObject = configObject;
+        this->idProcess = idProcess;
+      }
+
+      MemoryMessage(int idProcess){
+        this->idProcess = idProcess;
+      }
+
+      virtual ~MemoryMessage(){};
+
+    };
+
+  }
+}
+
 
 #endif

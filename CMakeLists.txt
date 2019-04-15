@@ -12,7 +12,7 @@
 
 cmake_minimum_required(VERSION 3.5)
 
-project(oxylus VERSION 0.0.0 LANGUAGES CXX)
+project(oxylus VERSION 0.0.1 LANGUAGES CXX)
 
 ## Options
 option(OXYLUS_ENABLE_OpenMP "Enable use of OpenMP" on)

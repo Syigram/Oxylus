@@ -1,8 +1,9 @@
 #ifndef MEM_INFO_H
-
-/* #include <oxylus/mpi_message/memory_message.h> */
+#define MEM_INFO_H
 
 #include <string>
+
+#include <oxylus/configuration/configuration_object.h>
 
 enum MemType{
   TOTAL = 1,
@@ -10,28 +11,34 @@ enum MemType{
   FREE = 3
 };
 
-class MemInfo {
-private:
-  /* data */
-  int _idProcess;
-  int _memTotal;
-  int _memAvailable;
-  int _memFree;
+namespace rdf {
+  namespace bpc {
 
 
-public:
-  int GetMemoryValue(MemType type);
-  void SetMemoryInformation();
-  /* MemoryMessage GetAllMemoryInformation(); */
-  int GetMemTotal();
-  int GetMemAvailable();
-  int GetMemFree();
-  MemInfo ();
-  // virtual ~MemInfo ();
-};
+    class MemInfo {
+    private:
+      /* data */
+      int idProcess;
+      int memTotal;
+      int memAvailable;
+      int memFree;
+      int batchSize;
+      int memoryUsage;
+      ConfigurationObject* configObject;
+      int CalcBatchSize();
+      int GetMemoryValue(MemType type);
+      void LoadMemoryInformation();
+    public:
+      MemInfo ();
+      MemInfo(ConfigurationObject* configObject);
+      void SetMemoryInformation();
+      int GetMemTotal();
+      int GetMemAvailable();
+      int GetMemFree();
+      int GetBatchSize();
+      virtual ~MemInfo (){};
+    };
+  }
+}
 
-
-
-
-#define MEM_INFO_H
 #endif

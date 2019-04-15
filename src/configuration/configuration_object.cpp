@@ -29,6 +29,26 @@ int ConfigurationObject::GetImagesNumber() {
   return this->imagesNumber;
 }
 
+int ConfigurationObject::GetPointsSize() {
+  return this->pointsSize;
+}
+
+int ConfigurationObject::GetMemoryUsage() {
+  return this->memoryUsage;
+}
+
+int ConfigurationObject::GetNumberOfTrees() {
+  return this->numberOfTrees;
+}
+
+int ConfigurationObject::GetImagesPerNode() {
+  return this->imagesPerNode;
+}
+
+int ConfigurationObject::GetMaxTreeLevels() {
+  return this->maxTreeLevels;
+}
+
 std::string ConfigurationObject::GetBaseFolder(){
   return this->baseFolder;
 }
@@ -58,5 +78,10 @@ int ConfigurationObject::LoadConfiguration()  {
   this->depthFolder = configParser->LoadDepthFolder();
   this->fileExtension = configParser->LoadFileExtension();
   this->filePrefix = configParser->LoadFilePrefix();
+  this->pointsSize = configParser->LoadPointsSize();
+  this->memoryUsage = configParser->LoadMemoryUsage();
+  this->maxTreeLevels = configParser->LoadMaxTreeLevels();
+  this->numberOfTrees = configParser->LoadNumberOfTrees();
+  this->imagesPerNode = configParser->LoadImagesPerNode();
   return 0;
 }

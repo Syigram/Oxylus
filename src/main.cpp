@@ -17,13 +17,13 @@
 
 #include <oxylus/configuration/configuration_constants.h>
 #include <oxylus/image/image_structure.h>
-#include <oxylus/memory/mem_info.h>
 #include <oxylus/memory/file_reader.h>
 #include <oxylus/mpi_message/image_allocation_message.h>
 #include <oxylus/mpi_message/memory_message.h>
 #include <oxylus/memory/helper.h>
 #include <oxylus/configuration/configuration_object.h>
 #include <oxylus/training/cell.h>
+#include <oxylus/communication/communicator.h>
 
 #define MPI_MASTER 0
 
@@ -33,8 +33,9 @@ namespace keywords = boost::log::keywords;
 namespace sinks = boost::log::sinks;
 namespace expr = boost::log::expressions;
 
+
 typedef std::vector<ImageAllocationMessage> ImageAllocVect;
-typedef std::vector<MemoryMessage> MemAllocVect;
+typedef std::vector<rdf::bpc::MemoryMessage> MemAllocVect;
 
 using namespace std;
 
@@ -86,34 +87,44 @@ void init()
 }
 
 
-
 int main(int argc, char const *argv[]) {
+
 
   /* init(); */
   /* logging::add_common_attributes(); */
   /* BOOST_LOG_SEV(info) << "Info test"; */
   /* BOOST_LOG_TRIVIAL(trace) << "Finished run"; */
   /* BOOST_LOG_TRIVIAL(error) << "ERRor test"; */
-  ImageAllocationMessage imageAllocMsg(1, 20, 40, 20);
 
-  int indexStart = imageAllocMsg.GetIndexStart();
-  int indexEnd = imageAllocMsg.GetIndexEnd();
+  rdf::ConfigurationObject* config = new rdf::ConfigurationObject();
+  rdf::bpc::Communicator comm(config);
+  comm.AssignImagesToEachNode();
+  rdf::bpc::PointStructure point;
+  int value = sizeof(point);
+  cout << "vvalue" << value << endl;
 
-  rdf::ConfigurationObject config;
-
-  cout << "rows: " << config.GetImagesRows() << endl;
-  cout << "cols: " << config.GetImagesCols() << endl;
-  cout << "images: " << config.GetImagesNumber() << endl;
-
-  MemInfo info;
+  /* rdf::bpc::MemoryMessage mem(1); */
+  /* mem.CreateMemoryMessage(); */
 
 
 
-  rdf::bpc::FileReader::ReadImageTest("testl.png");
+  /* ImageAllocationMessage imageAllocMsg(1, 20, 40, 20); */
 
-  rdf::bpc::FileReader::ReadImageTest("testd.png");
+  /* int indexStart = imageAllocMsg.GetIndexStart(); */
+  /* int indexEnd = imageAllocMsg.GetIndexEnd(); */
 
-  rdf::bpc::ImageStructure first_struct(&config);
+
+  /* cout << "rows: " << config.GetImagesRows() << endl; */
+  /* cout << "cols: " << config.GetImagesCols() << endl; */
+  /* cout << "images: " << config.GetImagesNumber() << endl; */
+
+  /* MemInfo info; */
+
+  /* rdf::bpc::FileReader::ReadImageTest("testl.png"); */
+
+  /* rdf::bpc::FileReader::ReadImageTest("testd.png"); */
+
+  /* rdf::bpc::ImageStructure first_struct(&config); */
 
   /* int get_size_of_first = first_struct.GetSizeOf(); */
 
@@ -124,13 +135,13 @@ int main(int argc, char const *argv[]) {
   /* int total =  mem / get_size_of_first; */
 
   /* cout << "This means I have space for: " << total << " images" << endl; */
-  rdf::bpc::FileReader reader(&config);
-  std::shared_ptr<rdf::bpc::ImagesVector> imagesVector = reader.ReadImages(indexStart, indexEnd);
+  /* rdf::bpc::FileReader reader(&config); */
+  /* std::shared_ptr<rdf::bpc::ImagesVector> imagesVector = reader.ReadImages(indexStart, indexEnd); */
 
-  /* ImageOperations::RandomPointsSelection(200,200,1000); */
+  /* /1* ImageOperations::RandomPointsSelection(200,200,1000); *1/ */
 
 
-  rdf::bpc::Cell<float> cell;
+  /* rdf::bpc::Cell<float> cell; */
 
 
   /* std::string base = "Data_"; */
@@ -152,20 +163,20 @@ int main(int argc, char const *argv[]) {
 
 void first_gather_and_scatter_working(){
 
-  mpi::environment env;
-  mpi::communicator world;
+  /* mpi::environment env; */
+  /* mpi::communicator world; */
 
-  int rank = world.rank();
-  int worldSize = world.size();
+  /* int rank = world.rank(); */
+  /* int worldSize = world.size(); */
 
-  MemoryMessage memMessage(rank);
-  memMessage.Print();
-  std::vector<MemoryMessage> memoryMessageVector;
-  ImageAllocationMessage imageAllocScatter;
+  /* MemoryMessage memMessage(rank); */
+  /* memMessage.Print(); */
+  /* std::vector<MemoryMessage> memoryMessageVector; */
+  /* ImageAllocationMessage imageAllocScatter; */
 
-  mpi::gather<MemoryMessage>(world, memMessage, memoryMessageVector, 0);
-  ImageAllocVect imageAllocVector = ExtractMemoryMessageInfo(memoryMessageVector);
-  mpi::scatter(world, imageAllocVector, imageAllocScatter, 0);
-  std::cout << "---------------- Scatter begin ----------------" << '\n';
-  imageAllocScatter.Print();
+  /* mpi::gather<MemoryMessage>(world, memMessage, memoryMessageVector, 0); */
+  /* ImageAllocVect imageAllocVector = ExtractMemoryMessageInfo(memoryMessageVector); */
+  /* mpi::scatter(world, imageAllocVector, imageAllocScatter, 0); */
+  /* std::cout << "---------------- Scatter begin ----------------" << '\n'; */
+  /* imageAllocScatter.Print(); */
 }

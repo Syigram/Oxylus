@@ -10,25 +10,25 @@ ImageStructure::ImageStructure() {
 ImageStructure::ImageStructure(ConfigurationObject* configObject) {
   this->rows = configObject->GetImagesRows();
   this->cols = configObject->GetImagesCols();
-  this->pointsSize = configObject->GetImagesNumber();
+  this->pointsSize = configObject->GetPointsSize();
+  this->treesSize = configObject->GetNumberOfTrees();
 }
 
 ImageStructure::ImageStructure(ConfigurationObject* configObject, int imageId) {
   this->rows = configObject->GetImagesRows();
   this->cols = configObject->GetImagesCols();
-  this->pointsSize = configObject->GetImagesNumber();
+  this->pointsSize = configObject->GetPointsSize();
   this->imageId = imageId;
 }
 
-int ImageStructure::GetSizeOf() {
-  int labelSize = labelImage.total() * labelImage.elemSize();
-  int depthSize = depthImage.total() * depthImage.elemSize();
-  int treesVecSize = sizeof(treesId);
-  int pointsSize = sizeof(setOfPoints);
-  int rowsSize = sizeof(int);
-  int colsSize = sizeof(int);
-  return (labelSize + depthSize + treesVecSize + pointsSize + rowsSize) / KILOBYTE;
-
+int ImageStructure::GetSizeOf(ConfigurationObject* configObject) {
+  int totalPoints = configObject->GetPointsSize();
+  int totalTrees = configObject->GetNumberOfTrees();
+  int pointsStructuresBytes = totalPoints * sizeof(PointStructure);
+  int pointPositionBytes = totalPoints * sizeof(std::pair<int, int>);
+  int integerDataMembersBytes = sizeof(int) * 5;
+  int treesIdsBytes = totalTrees * sizeof(int);
+  return (pointPositionBytes + pointsStructuresBytes + treesIdsBytes + integerDataMembersBytes) / KILOBYTE;
 }
 
 
