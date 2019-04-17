@@ -17,6 +17,22 @@ ConfigurationObject::ConfigurationObject(std::string filename) {
   LoadConfiguration();
 }
 
+int ConfigurationObject::GetFeaturesMinValue() {
+  return this->featuresMinValue;
+}
+
+int ConfigurationObject::GetFeaturesMaxValue() {
+  return this->featuresMaxValue;
+}
+
+int ConfigurationObject::GetThresholdsMinValue() {
+  return this->thresholdsMinValue;
+}
+
+int ConfigurationObject::GetThresholdsMaxValue() {
+  return this->thresholdsMaxValue;
+}
+
 int ConfigurationObject::GetImagesCols() {
   return this->imagesCols;
 }

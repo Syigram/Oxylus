@@ -29,6 +29,10 @@ namespace rdf  {
       int LoadNumberOfTrees();
       int LoadMaxTreeLevels();
       int LoadImagesPerNode();
+      int LoadThresholdsMinValue();
+      int LoadThresholdsMaxValue();
+      int LoadFeaturesMinValue();
+      int LoadFeaturesMaxValue();
       std::string LoadBaseFolder();
       std::string LoadLabelFolder();
       std::string LoadDepthFolder();

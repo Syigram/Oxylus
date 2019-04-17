@@ -134,6 +134,50 @@ int ConfigurationParser::LoadImagesPerNode(){
   return value;
 }
 
+int ConfigurationParser::LoadFeaturesMinValue(){
+  int value = 0;
+  try{
+    value = this->parseTree.get<int>("hyperparameters.featuresMinValue");
+  }catch (const boost::property_tree::ptree_error &e){
+    std::string exception = e.what();
+    std::cout << exception << std::endl;
+  }
+  return value;
+}
+
+int ConfigurationParser::LoadFeaturesMaxValue(){
+  int value = 0;
+  try{
+    value = this->parseTree.get<int>("hyperparameters.featuresMaxValue");
+  }catch (const boost::property_tree::ptree_error &e){
+    std::string exception = e.what();
+    std::cout << exception << std::endl;
+  }
+  return value;
+}
+
+int ConfigurationParser::LoadThresholdsMinValue(){
+  int value = 0;
+  try{
+    value = this->parseTree.get<int>("hyperparameters.thresholdsMinValue");
+  }catch (const boost::property_tree::ptree_error &e){
+    std::string exception = e.what();
+    std::cout << exception << std::endl;
+  }
+  return value;
+}
+
+int ConfigurationParser::LoadThresholdsMaxValue(){
+  int value = 0;
+  try{
+    value = this->parseTree.get<int>("hyperparameters.thresholdsMaxValue");
+  }catch (const boost::property_tree::ptree_error &e){
+    std::string exception = e.what();
+    std::cout << exception << std::endl;
+  }
+  return value;
+}
+
 int ConfigurationParser::LoadMaxTreeLevels(){
   int value = 0;
   try{

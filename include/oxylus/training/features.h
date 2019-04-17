@@ -1,62 +1,54 @@
 #ifndef FEATURES_H
 #define FEATURES_H
 
-template <class T>
+#include <opencv2/core/types.hpp>
 
-class Features{
-  private:
-    std::pair<T, T> feature1;
-    std::pair<T, T> feature2;
+namespace rdf{
+  namespace bpc{
 
-  public:
-    std::pair<T, T> GetFeature1(){
-      return this->feature1;
-    }
+    class Features{
+      private:
+        cv::Point delta1;
+        cv::Point delta2;
 
-    std::pair<T, T> GetFeature2(){
-      return this->feature2;
-    }
+      public:
 
-    T GetFeature1First(){
-      return this->feature1.first;
-    }
+        void SetDelta1(int positionX, int positionY){
+          this->delta1.x = positionX;
+          this->delta1.y = positionY;
+        }
 
-    T GetFeature1Second(){
-      return this->feature1.second;
-    }
+        void SetDelta2(int positionX, int positionY){
+          this->delta2.x = positionX;
+          this->delta2.y = positionY;
+        }
 
-    T GetFeature2First(){
-      return this->feature2.first;
-    }
+        cv::Point GetDelta1(){
+          return this->delta1;
+        }
 
-    T GetFeature2Second(){
-      return this->feature2.second;
-    }
+        cv::Point GetDelta2(){
+          return this->delta2;
+        }
 
-    void SetFeature1(T param1, T param2){
-      this->feature1.first = param1;
-      this->feature1.second = param2;
-    }
+        int GetDelta1X(){
+          return this->delta1.x;
+        }
 
-    void SetFeature2(T param1, T param2){
-      this->feature2.first = param1;
-      this->feature2.second = param2;
-    }
+        int GetDelta1Y(){
+          return this->delta1.y;
+        }
 
-    void SetFeature1First(T param){
-      this->feature1.first = param;
-    }
+        int GetDelta2X(){
+          return this->delta2.x;
+        }
 
-    void SetFeature1Second(T param){
-      this->feature1.second = param;
-    }
+        int GetDelta2Y(){
+          return this->delta2.y;
+        }
 
-    void SetFeature2First(T param){
-      this->feature2.first = param;
-    }
+    };
+  }
+}
 
-    void SetFeature2Second(T param){
-      this->feature2.second = param;
-    }
-};
 #endif /* FEATURES_H */

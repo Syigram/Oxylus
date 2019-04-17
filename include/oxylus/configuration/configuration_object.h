@@ -18,6 +18,10 @@ namespace rdf  {
       int GetNumberOfTrees();
       int GetMaxTreeLevels();
       int GetImagesPerNode();
+      int GetFeaturesMinValue();
+      int GetFeaturesMaxValue();
+      int GetThresholdsMinValue();
+      int GetThresholdsMaxValue();
       std::string GetBaseFolder();
       std::string GetLabelFolder();
       std::string GetDepthFolder();
@@ -34,6 +38,10 @@ namespace rdf  {
       int numberOfTrees;
       int maxTreeLevels;
       int imagesPerNode;
+      int featuresMinValue;
+      int featuresMaxValue;
+      int thresholdsMinValue;
+      int thresholdsMaxValue;
       std::string baseFolder;
       std::string labelFolder;
       std::string depthFolder;
