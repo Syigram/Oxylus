@@ -32,8 +32,8 @@ include(CompilerFlags)
 add_subdirectory (src)
 
 ## Also build unit tests
-# enable_testing ()
-# add_subdirectory (test)
+enable_testing ()
+add_subdirectory (test)
 IF( EXISTS "${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json" )
   EXECUTE_PROCESS( COMMAND ${CMAKE_COMMAND} -E copy_if_different
     ${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json

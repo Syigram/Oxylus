@@ -20,7 +20,7 @@ file(GLOB OXYLUS_TEST_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp *.hpp)
 
 #Import the oxylus libraries
 get_property(OXYLUS_LIBRARIES GLOBAL PROPERTY oxylus_libs_property)
-#message("OXYLUS_LIBRARIES=${OXYLUS_LIBRARIES}")
+message("OXYLUS_LIBRARIES=${OXYLUS_LIBRARIES}")
 
 
 add_executable (${CMAKE_PROJECT_NAME}_tests ${OXYLUS_TEST_SRCS})
