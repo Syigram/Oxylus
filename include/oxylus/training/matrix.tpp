@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 
+ * Copyright (C) 2017
  * SIPLab Tecnológico de Costa Rica
  *
  * \author: Pablo Alvarado
@@ -33,22 +33,22 @@ namespace rdf
   inline typename Matrix<T>::iterator Matrix<T>::begin() {
     return this->_impl._data;
   }
-  
+
   template <typename T>
   inline typename Matrix<T>::const_iterator Matrix<T>::begin() const {
     return this->_impl._data;
   }
-  
+
   template <typename T>
   inline typename Matrix<T>::iterator Matrix<T>::end() {
     return this->_impl._data + _impl.tentries();
   }
-  
+
   template <typename T>
   inline typename Matrix<T>::const_iterator Matrix<T>::end() const {
     return this->_impl._data + _impl.tentries();
-  } 
-  
+  }
+
   // ------------------------
   // Implementation of Matrix
   // ------------------------
@@ -63,7 +63,7 @@ namespace rdf
     : Matrix(_rows,_cols,DoNotInitialize) {
     fill(_initVal);
   }
- 
+
   template<typename T>
   Matrix<T>::Matrix(const size_t _rows,
                     const size_t _cols,
@@ -96,10 +96,10 @@ namespace rdf
   template<typename T>
   Matrix<T>::Matrix(const Matrix<T>& _other)
     : Matrix(_other.rows(),_other.cols(),DoNotInitialize) {
-    
+
     fill(_other.data());
   }
-  
+
   template<typename T>
   Matrix<T>::Matrix(Matrix<T>&& _other)
     : _impl() { // move by swap
@@ -127,7 +127,7 @@ namespace rdf
     }
     return *this;
   }
-  
+
   template<typename T>
   bool Matrix<T>::operator==(const Matrix<T>& other) const {
     if (&other==this) return true; // alias detection
@@ -137,7 +137,7 @@ namespace rdf
         (other.cols() != this->cols())) return false;
 
     //
-    
+
     // check the content with pointers
     if (std::is_trivially_copyable<T>::value) {
       return (memcmp(this->_impl._data,
@@ -158,7 +158,7 @@ namespace rdf
   template<typename T>
   bool Matrix<T>::operator!=(const Matrix<T>& other) const {
     if (&other==this) return false; // alias detection
-    
+
     return !operator==(other);
   }
 
@@ -166,7 +166,7 @@ namespace rdf
   void Matrix<T>::swap(Matrix<T>& other) {
     this->_impl._swap_data(other._impl);
   }
-    
+
   template<typename T>
   void Matrix<T>::allocate(const size_t r,
                            const size_t c) {
@@ -182,7 +182,7 @@ namespace rdf
     _deallocate();
   }
 
-  
+
   template<typename T>
   void Matrix<T>::_create_storage(size_t __rows,size_t __cols) {
 
@@ -190,10 +190,10 @@ namespace rdf
     assert(this->_impl._data == nullptr);
 
     size_t n = __rows*__cols;
-              
+
     // Call the allocator to reserve the required memory
     this->_impl._data = new T[n];
-    
+
     // Initialize the rest of the attributes
     this->_impl._rows = __rows;
     this->_impl._cols = __cols;
@@ -204,12 +204,12 @@ namespace rdf
     if (this->_impl._data) {
       delete[] this->_impl._data;
     }
-    
+
     this->_impl._data  = nullptr;
     this->_impl._rows  = 0;
     this->_impl._cols  = 0;
   }
- 
+
   template<typename T>
   void Matrix<T>::fill(const T val) {
     iterator eit = this->end();
@@ -231,14 +231,14 @@ namespace rdf
 
     const size_t r = lst.size();
     const size_t c = (r>0u) ? lst.begin()->size() : 0u;
-    
+
     assert(r==rows() && "Check number of rows");
     assert(c==cols() && "Check number of cols");
 
     pointer rowPtr = this->_impl._data;
     for (const auto& r : lst) {
       pointer ptr=rowPtr;
-      
+
       for (const auto& c : r) {
         *ptr++ = c;
       }
@@ -249,15 +249,15 @@ namespace rdf
   template<typename T>
   std::vector< typename Matrix<T>::value_type >
   Matrix<T>::column(const size_t col) const {
-    
+
     std::vector< value_type > vct(this->_impl._rows);
 
-    const_pointer ptr = this->_impl._data + col;    
+    const_pointer ptr = this->_impl._data + col;
     for (auto it=vct.begin(); it!=vct.end(); ++it, ptr+=this->_impl._cols) {
       *it = *ptr;
     }
 
     return vct;
   }
-  
+
 } // namespace rdf

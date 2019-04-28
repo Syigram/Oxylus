@@ -17,6 +17,14 @@ ConfigurationObject::ConfigurationObject(std::string filename) {
   LoadConfiguration();
 }
 
+int ConfigurationObject::GetThresholdsSize() {
+  return this->thresholdsSize;
+}
+
+int ConfigurationObject::GetFeaturesSize() {
+  return this->featuresSize;
+}
+
 int ConfigurationObject::GetFeaturesMinValue() {
   return this->featuresMinValue;
 }
@@ -99,5 +107,12 @@ int ConfigurationObject::LoadConfiguration()  {
   this->maxTreeLevels = configParser->LoadMaxTreeLevels();
   this->numberOfTrees = configParser->LoadNumberOfTrees();
   this->imagesPerNode = configParser->LoadImagesPerNode();
+  this->featuresMinValue = configParser->LoadFeaturesMinValue();
+  this->featuresMaxValue = configParser->LoadFeaturesMaxValue();
+  this->featuresSize = configParser->LoadFeaturesSize();
+  this->thresholdsMinValue = configParser->LoadFeaturesMinValue();
+  this->thresholdsMaxValue = configParser->LoadThresholdsMaxValue();
+  this->thresholdsSize = configParser->LoadThresholdsSize();
   return 0;
+
 }

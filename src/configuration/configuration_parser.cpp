@@ -178,6 +178,28 @@ int ConfigurationParser::LoadThresholdsMaxValue(){
   return value;
 }
 
+int ConfigurationParser::LoadFeaturesSize(){
+  int value = 0;
+  try{
+    value = this->parseTree.get<int>("hyperparameters.featuresSize");
+  }catch (const boost::property_tree::ptree_error &e){
+    std::string exception = e.what();
+    std::cout << exception << std::endl;
+  }
+  return value;
+}
+
+int ConfigurationParser::LoadThresholdsSize(){
+  int value = 0;
+  try{
+    value = this->parseTree.get<int>("hyperparameters.thresholdsSize");
+  }catch (const boost::property_tree::ptree_error &e){
+    std::string exception = e.what();
+    std::cout << exception << std::endl;
+  }
+  return value;
+}
+
 int ConfigurationParser::LoadMaxTreeLevels(){
   int value = 0;
   try{

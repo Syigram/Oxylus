@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2017 
+ * Copyright (C) 2017
  * \file:   Matrix.h
  * \author Sygram
  * \author Pablo Alvarado
@@ -7,6 +7,8 @@
 
 #ifndef OXYLUS_MATRIX_H
 #define OXYLUS_MATRIX_H
+
+#include <oxylus/configuration/Serialization.h>
 
 namespace rdf {
 
@@ -16,13 +18,13 @@ namespace rdf {
   enum InitializationType {
     DoNotInitialize
   };
-  
+
   /**
    * Row-major generic matrix class.
    */
   template<typename T>
   class Matrix {
-  public:   
+  public:
     /**
      * @name Standard types
      */
@@ -42,7 +44,7 @@ namespace rdf {
     /// Const interator
     typedef const_pointer const_iterator;
     //@}
-   
+
   protected:
     /**
      * Data is held in an instance of this.
@@ -53,13 +55,13 @@ namespace rdf {
     struct _Matrix_impl {
       /// All matrix data
       pointer _data;
-      
+
       /// Number of rows
       size_t _rows;
-      
+
       /// Effective number of columns
       size_t _cols;
-      
+
       /// Return the total number of entries (i.e. real buffer size)
       inline size_t tentries() const {return _rows*_cols;}
 
@@ -69,7 +71,7 @@ namespace rdf {
       //@
       _Matrix_impl();
       //@}
-      
+
       void _swap_data(_Matrix_impl& _x) noexcept;
     };
 
@@ -97,7 +99,7 @@ namespace rdf {
     Matrix(const Matrix<T>& _other);
     Matrix(Matrix<T>&& _other);
     ~Matrix() noexcept;
-    
+
     /**
      * Constructs a matrix from a std::initializer_list
      *
@@ -108,9 +110,9 @@ namespace rdf {
      * \endcode
      */
     Matrix(std::initializer_list< std::initializer_list<value_type> > _lst);
-    
+
     //@}
-    
+
     /**
      * Deep copy another matrix of exactly the same type
      */
@@ -134,7 +136,7 @@ namespace rdf {
      * This is slow, as all componentes are elementwise compared
      */
     bool operator!=(const Matrix<T>& other) const;
-    
+
     /// Return pointer to a given row
     inline T* operator[](const size_t row) {
       return this->_impl._data + row * this->_impl._cols;
@@ -161,7 +163,7 @@ namespace rdf {
      * Swap the contents of the other matrix with this one
      */
     void swap(Matrix<T>& other);
-    
+
     /**
      * Allocate memory for the given number of rows and cols
      */
@@ -171,7 +173,7 @@ namespace rdf {
      * Reset this matrix to a default constructed empty state
      */
     void clear();
-    
+
     /**
      * Fill all elements of the matrix with the given value
      */
@@ -181,7 +183,7 @@ namespace rdf {
      * Fill all elements of the matrix with the given memory block
      *
      * The user must ensure that the given memory block has enough elements
-     * and with the same layout used in this matrix, including the 
+     * and with the same layout used in this matrix, including the
      * row padding.
      */
     void fill(const T* mem);
@@ -193,7 +195,7 @@ namespace rdf {
       return ( (this->_impl._rows==0) ||
                (this->_impl._cols==0) );
     }
-    
+
     /**
      * Number of rows
      */
@@ -208,7 +210,7 @@ namespace rdf {
       return this->_impl._cols;
     }
 
-    
+
     /**
      * Total number of entries (rows x cols)
      */
@@ -232,7 +234,7 @@ namespace rdf {
      * This method has to copy the column, and hence it is relatively slow
      */
     inline std::vector<value_type> column(const size_t col) const;
-    
+
     /**
      * @name Simple iterator functionality
      */
@@ -242,12 +244,12 @@ namespace rdf {
     inline iterator end();
     inline const_iterator end() const;
     //@}
-    
+
   private:
 
-    // Call the memory deallocation 
+    // Call the memory deallocation
     void _deallocate();
-    
+
     /// Use the allocator to create the necessary storage
     void _create_storage(size_t _rows,size_t _cols);
 
@@ -256,14 +258,42 @@ namespace rdf {
      */
     void fill(const std::initializer_list<std::initializer_list<value_type> >&);
 
-    
+  private:
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive & ar, const unsigned int version) {
+
+      size_t trows(_impl._rows),tcols(_impl._cols);
+
+      // make name-value-pairs (nvp) necessary if XML archives are used
+      // other archives will simply ignore the nvp but would work as well.
+      ar & boost::serialization::make_nvp("rows",trows);
+      ar & boost::serialization::make_nvp("cols",tcols);
+
+      if (Archive::is_loading::value) {
+        // create a new storage space only if the current size differs
+        // from the desired size
+        if ( (trows != _impl._rows) ||
+             (tcols != _impl._cols) ) {
+          clear();
+          _create_storage(trows,tcols);
+        }
+      }
+
+      const size_t entries = _impl.tentries();
+      for (size_t i=0;i<entries;++i) {
+        ar & boost::serialization::make_nvp("item",_impl._data[i]);
+      }
+    }
+
+
   }; // class Matrix
 
-  
+
 } // namespace rdf
 
 // include the template implementations
-#include "Matrix.tpp"
+#include "matrix.tpp"
 
 
 #endif /* MATRIX_H */

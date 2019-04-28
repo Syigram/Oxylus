@@ -5,30 +5,43 @@
 
 using namespace rdf::bpc;
 
-template <class T>
-Cell<T>::Cell(){
+Cell::Cell(){
   this->leftHistogram.resize(rdf::bpc::constants::BODY_PARTS);
   this->rightHistogram.resize(rdf::bpc::constants::BODY_PARTS);
 
 }
 
-template <class T>
-Cell<T>::Cell(const Cell& orig){
+Cell::Cell(const Cell& orig){
 
 }
 
-template <class T>
-void Cell<T>::AddToHistogram(bool left, T value){
+void Cell::AddToHistogram(bool left, int value){
 
 }
 
-template <class T>
-void Cell<T>::AddToLeftHistogram(T value){
+void Cell::AddToLeftHistogram(int value){
 
 }
 
-template <class T>
-void Cell<T>::AddToRightHistogram(T value){
+void Cell::AddToRightHistogram(int value){
 
 }
 
+void Cell::PrintHistograms(){
+  for (auto &i: leftHistogram){
+    std::cout << i << "\n";
+  }
+
+  for (auto &i: rightHistogram){
+    std::cout << i << "\n";
+  }
+}
+
+std::vector<int> Cell::GetRightHistogram() const {
+  return this->rightHistogram;
+}
+
+std::vector<int> Cell::GetLeftHistogram() const{
+  return this->leftHistogram;
+
+}

@@ -14,6 +14,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <fstream>
 
 #include <oxylus/configuration/configuration_constants.h>
 #include <oxylus/image/image_structure.h>
@@ -24,6 +25,12 @@
 #include <oxylus/configuration/configuration_object.h>
 #include <oxylus/training/cell.h>
 #include <oxylus/communication/communicator.h>
+#include <oxylus/training/thresholds_vector.h>
+#include <oxylus/training/features_vector.h>
+#include <oxylus/training/NodeMatrix.h>
+#include <oxylus/training/features.h>
+#include <oxylus/training/matrix.h>
+
 
 #define MPI_MASTER 0
 
@@ -96,12 +103,95 @@ int main(int argc, char const *argv[]) {
   /* BOOST_LOG_TRIVIAL(trace) << "Finished run"; */
   /* BOOST_LOG_TRIVIAL(error) << "ERRor test"; */
 
-  rdf::ConfigurationObject* config = new rdf::ConfigurationObject();
-  rdf::bpc::Communicator comm(config);
-  comm.AssignImagesToEachNode();
-  rdf::bpc::PointStructure point;
-  int value = sizeof(point);
-  cout << "vvalue" << value << endl;
+  /* rdf::ConfigurationObject* config = new rdf::ConfigurationObject(); */
+  /* rdf::bpc::Communicator comm(config); */
+  /* comm.AssignImagesToEachNode(); */
+  /* rdf::bpc::PointStructure point; */
+  /* rdf::bpc::ThresholdsVectorGenerator thresholdsVectorGen(config); */
+
+  /* rdf::bpc::FeaturesVectorGenerator featuresVectorGen(config); */
+
+  /* std::vector<int>* thresholdsVec = thresholdsVectorGen.GenerateVector(); */
+
+  /* std::vector<rdf::bpc::Features>* featuresVec = featuresVectorGen.GenerateVector(); */
+
+
+      std::stringstream ss;
+      boost::archive::xml_oarchive xoarc(ss);
+      /* std::ofstream ofs("filename"); */
+      /* boost::archive::text_oarchive oa(ofs); */
+
+      rdf::Matrix<int> a = { {1,2,3,4,5},{6,7,8,9,10},{11,12,13,14,15} };
+
+      xoarc << boost::serialization::make_nvp("matrix",a);
+      /* oa << a; */
+
+      rdf::Matrix<int> b;
+
+      boost::archive::xml_iarchive xiarc(ss);
+
+      xiarc >> boost::serialization::make_nvp("matrix",b);
+      /* ia >> b; */
+
+
+      if (a == b){
+        cout << "Matrices son iguales: yaayy" << endl;
+      }
+
+
+
+  /* rdf::bpc::NodeMatrix nodeMatrix; */
+  /* rdf::bpc::NodeMatrix nodeMatrix2; */
+  /* nodeMatrix.SetThresholdsVector(thresholdsVec); */
+  /* nodeMatrix.SetFeaturesVector(featuresVec); */
+  /* nodeMatrix2.SetThresholdsVector(thresholdsVec); */
+  /* nodeMatrix2.SetFeaturesVector(featuresVec); */
+  /* nodeMatrix.InitCellHistograms(); */
+  /* nodeMatrix2.InitCellHistograms(); */
+  /* bool ver = nodeMatrix == nodeMatrix2; */
+
+  /* nodeMatrix.InitCellHistograms(); */
+  /* nodeMatrix.PrintFeaturesVector(); */
+  /* nodeMatrix.PrintThresholdsVector(); */
+  /* nodeMatrix.PrintCellHistograms(); */
+
+  /* std::ofstream ofs("filename"); */
+
+  /* // create class instance */
+
+  /* // save data to archive */
+  /* { */
+  /*     boost::archive::text_oarchive oa(ofs); */
+  /*     // write class instance to archive */
+  /*     oa << nodeMatrix; */
+  /*     // archive and stream closed when destructors are called */
+  /* } */
+
+  /* // ... some time later restore the class instance to its orginal state */
+  /* std::vector<rdf::bpc::Features> newFeats; */
+  /* std::vector<int> newTresh; */
+  /* rdf::bpc::NodeMatrix newNodeMat; */
+  /* { */
+  /*     // create and open an archive for input */
+  /*     std::ifstream ifs("filename"); */
+  /*     boost::archive::text_iarchive ia(ifs); */
+  /*     // read class state from archive */
+  /*     ia >> newNodeMat; */
+  /*     // archive and stream closed when destructors are called */
+  /* } */
+  /* cout << "\n\n-------------------------\n\n"; */
+
+  /* nodeMatrix.SetFeaturesVector(&newFeats); */
+  /* nodeMatrix.SetThresholdsVector(&newTresh); */
+  /* nodeMatrix.PrintFeaturesVector(); */
+  /* nodeMatrix.PrintThresholdsVector(); */
+
+  /* newNodeMat.PrintFeaturesVector(); */
+  /* newNodeMat.PrintThresholdsVector(); */
+
+
+  /* int value = sizeof(point); */
+  /* cout << "vvalue" << value << endl; */
 
   /* rdf::bpc::MemoryMessage mem(1); */
   /* mem.CreateMemoryMessage(); */
