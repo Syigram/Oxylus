@@ -6,13 +6,14 @@
 using namespace rdf::bpc;
 
 Cell::Cell(){
-  this->leftHistogram.resize(rdf::bpc::constants::BODY_PARTS);
-  this->rightHistogram.resize(rdf::bpc::constants::BODY_PARTS);
+  this->leftHistogram.resize(rdf::bpc::constants::BODY_PARTS, 8);
+  this->rightHistogram.resize(rdf::bpc::constants::BODY_PARTS, 10);
 
 }
 
 Cell::Cell(const Cell& orig){
-
+  this->rightHistogram = orig.GetRightHistogram();
+  this->leftHistogram = orig.GetLeftHistogram();
 }
 
 void Cell::AddToHistogram(bool left, int value){

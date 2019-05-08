@@ -267,8 +267,11 @@ namespace rdf {
 
       // make name-value-pairs (nvp) necessary if XML archives are used
       // other archives will simply ignore the nvp but would work as well.
-      ar & boost::serialization::make_nvp("rows",trows);
-      ar & boost::serialization::make_nvp("cols",tcols);
+      /* ar & boost::serialization::make_nvp("rows",trows); */
+      /* ar & boost::serialization::make_nvp("cols",tcols); */
+
+      ar & trows;
+      ar & tcols;
 
       if (Archive::is_loading::value) {
         // create a new storage space only if the current size differs
@@ -282,7 +285,8 @@ namespace rdf {
 
       const size_t entries = _impl.tentries();
       for (size_t i=0;i<entries;++i) {
-        ar & boost::serialization::make_nvp("item",_impl._data[i]);
+       /* ar & boost::serialization::make_nvp("item",_impl._data[i]); */
+        ar & _impl._data[i];
       }
     }
 
