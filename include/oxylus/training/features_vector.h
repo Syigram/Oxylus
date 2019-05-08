@@ -27,9 +27,27 @@ namespace rdf{
           this->minValue = min;
         }
 
+        /* std::vector<Features> GenerateVector(){ */
+        /*   std::uniform_int_distribution<int> features_dist(minValue, maxValue); */
+        /*   std::vector<Features> featuresVector; */
+        /*   featuresVector.reserve(size); */
+        /*   for (size_t i = 0; i < size; i++){ */
+        /*     Features features; */
+        /*     int value1 = features_dist(mt_); */
+        /*     int value2 = features_dist(mt_); */
+        /*     int value3 = features_dist(mt_); */
+        /*     int value4 = features_dist(mt_); */
+        /*     features.SetDelta1(value1, value2); */
+        /*     features.SetDelta2(value3, value4); */
+        /*     featuresVector.push_back(features); */
+        /*   } */
+        /*   return featuresVector; */
+        /* } */
         std::vector<Features>* GenerateVector(){
           std::uniform_int_distribution<int> features_dist(minValue, maxValue);
-          std::vector<Features>* featuresVector = new std::vector<Features>[size];
+          /* std::vector<Features>* featuresVector = new std::vector<Features>[size]; */
+          std::vector<Features>* featuresVector = new std::vector<Features>();
+          featuresVector->reserve(size);
           for (size_t i = 0; i < size; i++){
             Features features;
             int value1 = features_dist(mt_);

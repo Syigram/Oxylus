@@ -25,9 +25,23 @@ namespace rdf{
           this->minValue = min;
         }
 
+        /* std::vector<int> GenerateVector(){ */
+        /*   int randomValue; */
+        /*   std::vector<int> thresholdsVector; */
+        /*   thresholdsVector.reserve(size); */
+        /*   std::uniform_int_distribution<int> threshold_dist(minValue, maxValue); */
+        /*   for (size_t i = 0; i < size; i++){ */
+        /*     randomValue = threshold_dist(mt_); */
+        /*     thresholdsVector.push_back(randomValue); */
+        /*   } */
+        /*   return thresholdsVector; */
+        /* } */
+
         std::vector<int>* GenerateVector(){
           int randomValue;
-          std::vector<int>* thresholdsVector = new std::vector<int>[size];
+          /* std::vector<int>* thresholdsVector = new std::vector<int>[size]; */
+          std::vector<int>* thresholdsVector = new std::vector<int>();
+          thresholdsVector->reserve(size);
           std::uniform_int_distribution<int> threshold_dist(minValue, maxValue);
           for (size_t i = 0; i < size; i++){
             randomValue = threshold_dist(mt_);
@@ -35,7 +49,9 @@ namespace rdf{
           }
           return thresholdsVector;
         }
+
         static std::mt19937 mt_;
+
       private:
         size_t size;
         int maxValue;
