@@ -49,18 +49,18 @@ namespace rdf{
       void SetMemFree(int memFree){
         this->memFree = memFree;
       }
-      /* void SetBatchSize(int batchSize){ */
-      /*   this->batchSize = batchSize; */
-      /* } */
+      void SetBatchSize(int batchSize){
+        this->batchSize = batchSize;
+      }
       int GetIdProcess(){
         return this->idProcess;
       }
       int GetMemFree(){
         return this->memFree;
       }
-      /* int GetBatchSize(){ */
-      /*   return this->batchSize; */
-      /* } */
+      int GetBatchSize(){
+        return this->batchSize;
+      }
       int GetMemAvailable(){
         return this->memAvailable;
       }
@@ -70,6 +70,7 @@ namespace rdf{
 
       int CreateMemoryMessage(){
         MemInfo memInfo(this->configObject);
+        memInfo.LoadMemoryInformation();
         this->memTotal = memInfo.GetMemTotal();
         this->memAvailable = memInfo.GetMemAvailable();
         this->memFree = memInfo.GetMemFree();

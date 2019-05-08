@@ -16,7 +16,6 @@ MemInfo::MemInfo(){
 MemInfo::MemInfo(ConfigurationObject* configObject){
   this->configObject = configObject;
   this->memoryUsage = configObject->GetMemoryUsage();
-  this->LoadMemoryInformation();
 }
 
 void MemInfo::LoadMemoryInformation(){

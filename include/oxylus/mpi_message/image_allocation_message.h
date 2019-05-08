@@ -7,7 +7,7 @@
 #include <oxylus/configuration/Serialization.h>
 
 
-class ImageAllocationMessage {
+class ImageBatchMessage {
 private:
 
     /* data */
@@ -62,24 +62,24 @@ public:
     std::cout << "IndexEnd: " << _indexEnd << '\n';
   }
 
-  ImageAllocationMessage(int p, int s, int e, int b) :
+  ImageBatchMessage(int p, int s, int e, int b) :
     _idProcess(p), _indexStart(s), _indexEnd(e), _batchSize(b)
   {}
 
-  ImageAllocationMessage (){
+  ImageBatchMessage (){
     _idProcess = 0;
     _indexStart = 0;
     _indexEnd = 0;
     _batchSize = 0;
   }
 
-  ImageAllocationMessage (const ImageAllocationMessage& copyObj){ /* copy-constructor */
+  ImageBatchMessage (const ImageBatchMessage& copyObj){ /* copy-constructor */
     _idProcess = copyObj.GetIdProcess();
     _indexStart = copyObj.GetIndexStart();
     _indexEnd = copyObj.GetIndexEnd();
     _batchSize = copyObj.GetBatchSize();
   }
-  virtual ~ImageAllocationMessage (){}
+  virtual ~ImageBatchMessage (){}
 };
 
 

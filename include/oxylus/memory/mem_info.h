@@ -27,11 +27,11 @@ namespace rdf {
       ConfigurationObject* configObject;
       int CalcBatchSize();
       int GetMemoryValue(MemType type);
-      void LoadMemoryInformation();
+      void SetMemoryInformation();
     public:
       MemInfo ();
       MemInfo(ConfigurationObject* configObject);
-      void SetMemoryInformation();
+      void LoadMemoryInformation();
       int GetMemTotal();
       int GetMemAvailable();
       int GetMemFree();
