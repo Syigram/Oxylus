@@ -41,6 +41,7 @@ int FileReader::ProcessImages(int indexStart, int indexEnd) {
   return 0;
 }
 
+
 std::shared_ptr<ImagesVector> FileReader::ReadImages(int start, int end){
   MapPalette palette = ImageOperations::InitializePalette();
   int rows = this->configObject->GetImagesRows();
@@ -57,15 +58,16 @@ std::shared_ptr<ImagesVector> FileReader::ReadImages(int start, int end){
     cv::Mat_<ushort> depthMat = this->ReadDepthImage(depthFilename);
     cv::Mat_<uchar> labelMat = this->ReadLabelImage(labelFilename, rows, cols, palette);
     int imageId = start;
-    ImageStructure imageData(this->configObject, imageId);
-    imageData.SetPointsVector(ImageOperations::GenerateRandomPoints(imageData, depthMat, labelMat));
+    ImageStructure imageData(this->configObject, depthMat, imageId);
+    imageData.SetPointsVector(ImageOperations::GenerateRandomPoints(imageData, depthMat, labelMat, palette));
     imagesVector->push_back(imageData);
     start++;
   }
-  ImageOperations::PrintPalette(palette);
-  ImageOperations::SavePaletteTo("palette.txt", palette);
+  /* ImageOperations::PrintPalette(palette); */
+  /* ImageOperations::SavePaletteTo("palette.txt", palette); */
   return imagesVector;
 }
+
 
 int FileReader::ReadImage(std::string fullPath, MapPalette& palette){
   cv::Mat image = cv::imread(fullPath, CV_LOAD_IMAGE_ANYDEPTH | CV_LOAD_IMAGE_ANYCOLOR);

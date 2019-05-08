@@ -3,40 +3,45 @@
 
 #include <vector>
 
+#include <opencv2/core/types.hpp>
+
 #include <oxylus/image/point_structure.h>
+
 
 namespace rdf {
   namespace bpc {
 
+    class PointStructure;
+
+    typedef std::vector<PointStructure> PointStructureVec;
+
     class PointStructure {
       public:
         PointStructure();
-        PointStructure(int node, int depthValue, int labelValue, int x, int y, int imageId);
+        PointStructure(int node, int labelValue, int x, int y, int imageId);
+        PointStructure(cv::Point point, int labelValue, int imageId, int node);
         void SetImageId(int imageId);
         void SetCurrentNode(int node);
-        void SetDepthPixelValue(int value);
         void SetLabelPixelValue(int value);
+        void SetPoint(int x, int y);
         void SetX(int x);
         void SetY(int y);
         int GetCurrentNode();
         int GetLabelPixelValue();
-        int GetDepthPixelValue();
         int GetX();
         int GetY();
+        cv::Point GetPoint();
         int GetImageId();
         void Print();
         ~PointStructure(){};
 
       private:
         int currentNode;
-        int depthPixelValue;
         int labelPixelValue;
-        int x;
-        int y;
+        cv::Point point;
         int imageId;
     };
 
-    typedef std::vector<PointStructure> PointsVector;
   }
 }
 

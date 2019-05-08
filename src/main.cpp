@@ -40,33 +40,31 @@ namespace keywords = boost::log::keywords;
 namespace sinks = boost::log::sinks;
 namespace expr = boost::log::expressions;
 
-
-typedef std::vector<ImageAllocationMessage> ImageAllocVect;
-typedef std::vector<rdf::bpc::MemoryMessage> MemAllocVect;
-
 using namespace std;
 
+/* typedef std::vector<ImageAllocationMessage> ImageAllocVect; */
+/* typedef std::vector<rdf::bpc::MemoryMessage> MemAllocVect; */
 
-ImageAllocVect ExtractMemoryMessageInfo(MemAllocVect messages){
-  ImageAllocVect imageAllocVector;
-  MemAllocVect::iterator it;
-  int counter = 0;
-  int i = 0;
-  for(it = messages.begin(); it != messages.end(); it++, i++){
-    ImageAllocationMessage imageAllocMsg;
-    int batchSize = it->GetMemAvailable() / rdf::bpc::constants::IMAGE_AVG_SIZE;
-    int start = counter;
-    int end = counter + batchSize;
-    imageAllocMsg.SetBatchSize(batchSize);
-    imageAllocMsg.SetIndexStart(start);
-    imageAllocMsg.SetIndexEnd(end);
-    imageAllocMsg.SetIdProcess(i);
-    counter = end + 1;
-    imageAllocMsg.Print();
-    imageAllocVector.push_back(imageAllocMsg);
-  }
-  return imageAllocVector;
-}
+/* ImageAllocVect ExtractMemoryMessageInfo(MemAllocVect messages){ */
+/*   ImageAllocVect imageAllocVector; */
+/*   MemAllocVect::iterator it; */
+/*   int counter = 0; */
+/*   int i = 0; */
+/*   for(it = messages.begin(); it != messages.end(); it++, i++){ */
+/*     ImageAllocationMessage imageAllocMsg; */
+/*     int batchSize = it->GetMemAvailable() / rdf::bpc::constants::IMAGE_AVG_SIZE; */
+/*     int start = counter; */
+/*     int end = counter + batchSize; */
+/*     imageAllocMsg.SetBatchSize(batchSize); */
+/*     imageAllocMsg.SetIndexStart(start); */
+/*     imageAllocMsg.SetIndexEnd(end); */
+/*     imageAllocMsg.SetIdProcess(i); */
+/*     counter = end + 1; */
+/*     imageAllocMsg.Print(); */
+/*     imageAllocVector.push_back(imageAllocMsg); */
+/*   } */
+/*   return imageAllocVector; */
+/* } */
 
 void init()
 {
@@ -103,9 +101,11 @@ int main(int argc, char const *argv[]) {
   /* BOOST_LOG_TRIVIAL(trace) << "Finished run"; */
   /* BOOST_LOG_TRIVIAL(error) << "ERRor test"; */
 
-  /* rdf::ConfigurationObject* config = new rdf::ConfigurationObject(); */
-  /* rdf::bpc::Communicator comm(config); */
-  /* comm.AssignImagesToEachNode(); */
+  rdf::ConfigurationObject* config = new rdf::ConfigurationObject();
+  rdf::bpc::Communicator comm(config);
+  comm.AssignImagesToEachNode();
+  comm.LoadImagesToStructures();
+  cout << "rank: " << comm.GetRank() << "... ended\n";
   /* rdf::bpc::PointStructure point; */
   /* rdf::bpc::ThresholdsVectorGenerator thresholdsVectorGen(config); */
 
@@ -116,28 +116,77 @@ int main(int argc, char const *argv[]) {
   /* std::vector<rdf::bpc::Features>* featuresVec = featuresVectorGen.GenerateVector(); */
 
 
-      std::stringstream ss;
-      boost::archive::xml_oarchive xoarc(ss);
+  /*     /1* std::stringstream ss; *1/ */
+  /*     /1* boost::archive::xml_oarchive xoarc(ss); *1/ */
+  /*     std::ofstream ofs("filename.txt"); */
+
+  /*     rdf::Matrix<int> a = { {1,2,3,4,5},{6,7,8,9,10},{11,12,13,14,15} }; */
+
+  /*     /1* xoarc << boost::serialization::make_nvp("matrix",a); *1/ */
+  /*     { */
+  /*       boost::archive::text_oarchive oa(ofs); */
+  /*       oa << a; */
+  /*     } */
+
+  /*     rdf::Matrix<int> b; */
+
+  /*     /1* boost::archive::xml_iarchive xiarc(ss); *1/ */
+
+  /*     { */
+  /*       std::ifstream ifs("filename.txt"); */
+  /*       boost::archive::text_iarchive ia(ifs); */
+  /*       /1* xiarc >> boost::serialization::make_nvp("matrix",b); *1/ */
+  /*       ia >> b; */
+  /*     } */
+
+
+  /*     if (a == b){ */
+  /*       cout << "Matrices son iguales: yaayy" << endl; */
+
+  /*     } */
+
+  /*     else { */
+
+  /*       cout << "Matrices son different: yaayy" << endl; */
+  /*     } */
+
+  /*     /1* rdf::Matrix<rdf::bpc::Cell> histograms(10, 10); *1/ */
+  /*     rdf::Matrix<rdf::bpc::Cell> histograms(10, 10, rdf::bpc::Cell()); */
+  /*     rdf::bpc::NodeMatrix nodeMatrix_1; */
+  /*     rdf::bpc::NodeMatrix nodeMatrix_2; */
+  /*     nodeMatrix_1.SetThresholdsVector(thresholdsVec); */
+  /*     nodeMatrix_1.SetFeaturesVector(featuresVec); */
+  /*     nodeMatrix_2.SetThresholdsVector(thresholdsVec); */
+  /*     nodeMatrix_2.SetFeaturesVector(featuresVec); */
+
+  /*     nodeMatrix_1.SetCellHistogram(histograms); */
+  /*     nodeMatrix_2.SetCellHistogram(histograms); */
+
+  /*     if (nodeMatrix_1 == nodeMatrix_2){ */
+  /*       cout << "sirveeeeeeee\n"; */
+  /*     } else { */
+  /*       cout << "no sirvee \n"; */
+  /*     } */
+      /* std::stringstream ss; */
       /* std::ofstream ofs("filename"); */
       /* boost::archive::text_oarchive oa(ofs); */
 
-      rdf::Matrix<int> a = { {1,2,3,4,5},{6,7,8,9,10},{11,12,13,14,15} };
+      /* thresholdsVec = InitializeThresholdsVector(); */
+      /* rdf::bpc::FeaturesVec featuresVec = InitializeFeaturesVector(); */
+      /* rdf::bpc::NodeMatrix nodeMatrix_1; */
+      /* nodeMatrix_1.SetThresholdsVector(thresholdsVec); */
+      /* nodeMatrix_1.SetFeaturesVector(featuresVec); */
+      /* nodeMatrix_1.InitCellHistograms(); */
 
-      xoarc << boost::serialization::make_nvp("matrix",a);
-      /* oa << a; */
+      /* oa << nodeMatrix_1; */
 
-      rdf::Matrix<int> b;
+      /* std::ifstream ifs("filename"); */
+      /* boost::archive::text_iarchive ia(ifs); */
+      /* rdf::bpc::NodeMatrix nodeMatrix_2; */
 
-      boost::archive::xml_iarchive xiarc(ss);
+      /* ia >> nodeMatrix_2; */
 
-      xiarc >> boost::serialization::make_nvp("matrix",b);
-      /* ia >> b; */
-
-
-      if (a == b){
-        cout << "Matrices son iguales: yaayy" << endl;
-      }
-
+      /* BOOST_CHECK(nodeMatrix_1 == nodeMatrix_2); */
 
 
   /* rdf::bpc::NodeMatrix nodeMatrix; */
@@ -173,8 +222,8 @@ int main(int argc, char const *argv[]) {
   /* rdf::bpc::NodeMatrix newNodeMat; */
   /* { */
   /*     // create and open an archive for input */
-  /*     std::ifstream ifs("filename"); */
-  /*     boost::archive::text_iarchive ia(ifs); */
+      /* std::ifstream ifs("filename"); */
+      /* boost::archive::text_iarchive ia(ifs); */
   /*     // read class state from archive */
   /*     ia >> newNodeMat; */
   /*     // archive and stream closed when destructors are called */

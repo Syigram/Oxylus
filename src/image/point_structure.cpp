@@ -8,20 +8,25 @@ using namespace rdf::bpc;
 
 PointStructure::PointStructure() {
   this->currentNode = 0;
-  this->x = 0;
-  this->y = 0;
+  this->point.x = 0;
+  this->point.y = 0;
   this->imageId = 0;
-  this->depthPixelValue = 0;
   this->labelPixelValue = 0;
 }
 
-PointStructure::PointStructure(int node, int depthValue, int labelValue,
+PointStructure::PointStructure(int node, int labelValue,
                                   int x, int y, int imageId) {
   this->currentNode = node;
-  this->x = x;
-  this->y = y;
+  this->point.x = x;
+  this->point.y = y;
   this->imageId = imageId;
-  this->depthPixelValue = depthValue;
+  this->labelPixelValue = labelValue;
+}
+
+PointStructure::PointStructure(cv::Point point, int labelValue, int imageId, int node) {
+  this->currentNode = node;
+  this->point = point;
+  this->imageId = imageId;
   this->labelPixelValue = labelValue;
 }
 
@@ -31,12 +36,6 @@ void PointStructure::SetCurrentNode(int currentNode) {
 int PointStructure::GetCurrentNode() {
   return this->currentNode;
 }
-void PointStructure::SetDepthPixelValue(int depthPixelValue) {
-  this->depthPixelValue = depthPixelValue;
-}
-int PointStructure::GetDepthPixelValue() {
-  return this->depthPixelValue;
-}
 void PointStructure::SetLabelPixelValue(int labelPixelValue) {
   this->labelPixelValue = labelPixelValue;
 }
@@ -44,17 +43,27 @@ int PointStructure::GetLabelPixelValue() {
   return this->labelPixelValue;
 }
 void PointStructure::SetX(int x) {
-  this->x = x;
+  this->point.x = x;
 }
 int PointStructure::GetX() {
-  return this->x;
+  return this->point.x;
 }
 void PointStructure::SetY(int y) {
-  this->y = y;
+  this->point.y = y;
 }
 int PointStructure::GetY() {
-  return this->y;
+  return this->point.y;
 }
+
+void PointStructure::SetPoint(int x, int y){
+  this->point.x = x;
+  this->point.y = y;
+}
+
+cv::Point PointStructure::GetPoint(){
+  return this->point;
+}
+
 void PointStructure::SetImageId(int imageId) {
   this->imageId = imageId;
 }
@@ -64,10 +73,9 @@ int PointStructure::GetImageId() {
 
 void PointStructure::Print() {
   std::cout << "Node: " << currentNode << "\t";
-  std::cout << "Depth: " << depthPixelValue << "\t";
   std::cout << "Label: " << labelPixelValue << "\t";
-  std::cout << "X: " << x << "\t";
-  std::cout << "Y: " << y << "\t";
+  std::cout << "X: " << point.x << "\t";
+  std::cout << "Y: " << point.y << "\t";
   std::cout << "ImageId: " << imageId << std::endl;
 
 }
