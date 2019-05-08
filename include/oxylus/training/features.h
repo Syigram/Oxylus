@@ -27,6 +27,31 @@ namespace rdf{
         }
 
       public:
+        Features(){
+          this->delta1.x = 0;
+          this->delta1.y = 0;
+          this->delta2.x = 0;
+          this->delta2.y = 0;
+        }
+
+        ~Features(){
+
+        }
+
+        Features(int x1, int y1, int x2, int y2){
+          this->delta1.x = x1;
+          this->delta1.y = y1;
+          this->delta2.x = x2;
+          this->delta2.y = y2;
+        }
+
+        Features(const Features& other){
+          this->delta1.x = other.GetDelta1X();
+          this->delta1.y = other.GetDelta1Y();
+          this->delta2.x = other.GetDelta2X();
+          this->delta2.y = other.GetDelta2Y();
+        }
+
         void Print(){
           std::cout << "Delta1X: " << delta1.x << "\tDelta1Y: " << delta1.y << std::endl;
           std::cout << "Delta2X: " << delta2.x << "\tDelta2Y: " << delta2.y << std::endl;
@@ -82,7 +107,7 @@ namespace rdf{
           return this->delta2.y;
         }
 
-        inline bool operator=(Features& other){
+        inline bool operator=(const Features& other){
           this->delta1.x = other.GetDelta1X();
           this->delta1.y = other.GetDelta1Y();
           this->delta2.x = other.GetDelta2X();
