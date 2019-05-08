@@ -23,23 +23,23 @@ namespace rdf  {
         ImageStructure();
         ImageStructure(ConfigurationObject* configObject);
         ImageStructure(ConfigurationObject* configObject, int imageId);
+        ImageStructure(ConfigurationObject* configObject, cv::Mat_<ushort> depthImage,  int imageId);
         int GetRows();
         int GetCols();
         int GetPointsSize();
         int GetImageId();
         int GetSizeOf(ConfigurationObject* configObject);
-        void SetPointsVector(std::shared_ptr<PointsVector> pointsVector);
-        std::shared_ptr<PointsVector> GetPointsVector();
+        void SetPointsVector(std::shared_ptr<PointStructureVec> pointsVector);
+        void SetDepthImage(cv::Mat_<ushort> depthImage);
+        std::shared_ptr<PointStructureVec> GetPointsVector();
       private:
         /* data */
-        cv::Mat_<uchar> labelImage;
         cv::Mat_<ushort> depthImage;
 
         std::vector<int> treesId; /* this vector contains the id of the trees that use
                                 this image for training */
 
-        std::set<std::pair<int,int>> setOfPoints;
-        std::shared_ptr<PointsVector> pointsVector;
+        std::shared_ptr<PointStructureVec> pointsVector;
         /* std::string labefilename; */
         int imageId;
         int rows;
@@ -47,6 +47,7 @@ namespace rdf  {
         int pointsSize;
         int treesSize;
     };
+
     typedef std::vector<ImageStructure> ImagesVector;
   }
 
