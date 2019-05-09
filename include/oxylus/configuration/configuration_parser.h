@@ -35,6 +35,7 @@ namespace rdf  {
       int LoadFeaturesMinValue();
       int LoadFeaturesMaxValue();
       int LoadFeaturesSize();
+      int LoadPercentImagesPerTree();
       std::string LoadBaseFolder();
       std::string LoadLabelFolder();
       std::string LoadDepthFolder();

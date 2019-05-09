@@ -17,6 +17,10 @@ ConfigurationObject::ConfigurationObject(std::string filename) {
   LoadConfiguration();
 }
 
+int ConfigurationObject::GetPercentImagesPerTree() {
+  return this->percentImagesPerTree;
+}
+
 int ConfigurationObject::GetThresholdsSize() {
   return this->thresholdsSize;
 }
@@ -113,6 +117,6 @@ int ConfigurationObject::LoadConfiguration()  {
   this->thresholdsMinValue = configParser->LoadFeaturesMinValue();
   this->thresholdsMaxValue = configParser->LoadThresholdsMaxValue();
   this->thresholdsSize = configParser->LoadThresholdsSize();
+  this->percentImagesPerTree = configParser->LoadPercentImagesPerTree();
   return 0;
-
 }

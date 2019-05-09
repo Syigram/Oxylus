@@ -14,6 +14,7 @@
 #include <opencv2/core/types.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
+#include <oxylus/configuration/configuration_object.h>
 #include <oxylus/image/image_structure.h>
 
 
@@ -50,6 +51,7 @@ namespace rdf  {
     class ImageOperations {
       public:
         ImageOperations();
+        ImageOperations(ConfigurationObject* configurationObject);
         static MapPalette InitializePalette();
         static void PrintPalette(MapPalette palette);
         static void SavePaletteTo(std::string filepath, MapPalette& palette);
@@ -59,6 +61,7 @@ namespace rdf  {
                                                  cv::Mat_<uchar>& labelImage,
                                                  MapPalette palette);
         static PointStructure GenerateRandomPointStructure();
+        int AssignImagesToTrees(std::shared_ptr<ImagesVector> imagesVector);
         virtual ~ImageOperations(){};
 
       private:
@@ -66,7 +69,10 @@ namespace rdf  {
         //<! Static function for initializing seed for random distribution.
         //<! It is only initialized once.
         static std::mt19937 InitRandomSeed();
-
+        
+        int treesPercent;
+        int numOfTrees;
+        
         static VecColorsHistogram GenerateColorsHistogramForImage(
             cv::Mat_<uchar>& labelImage,
             int rows,

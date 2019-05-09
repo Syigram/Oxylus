@@ -24,6 +24,7 @@ namespace rdf  {
       int GetThresholdsMinValue();
       int GetThresholdsMaxValue();
       int GetThresholdsSize();
+      int GetPercentImagesPerTree();
       std::string GetBaseFolder();
       std::string GetLabelFolder();
       std::string GetDepthFolder();
@@ -46,6 +47,7 @@ namespace rdf  {
       int thresholdsMinValue;
       int thresholdsMaxValue;
       int thresholdsSize;
+      int percentImagesPerTree;
       std::string baseFolder;
       std::string labelFolder;
       std::string depthFolder;

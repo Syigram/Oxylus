@@ -211,6 +211,16 @@ int ConfigurationParser::LoadMaxTreeLevels(){
   return value;
 }
 
+int ConfigurationParser::LoadPercentImagesPerTree(){
+  int value = 0;
+  try{
+    value = this->parseTree.get<int>("hyperparameters.imagesPerTree");
+  }catch (const boost::property_tree::ptree_error &e){
+    std::string exception = e.what();
+    std::cout << exception << std::endl;
+  }
+  return value;
+}
 
 int ConfigurationParser::LoadImagesCols() {
   return this->parseTree.get<int>("images.rows");

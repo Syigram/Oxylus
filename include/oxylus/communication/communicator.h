@@ -9,6 +9,7 @@
 #include <oxylus/configuration/configuration_object.h>
 #include <oxylus/mpi_message/memory_message.h>
 #include <oxylus/mpi_message/image_allocation_message.h>
+#include <oxylus/image/image_structure.h>
 
 #define MPI_MASTER 0
 
@@ -27,6 +28,7 @@ namespace rdf{
         Communicator(ConfigurationObject* configObject);
         void AssignImagesToEachNode();
         void LoadImagesToStructures();
+        void AssignTreeBitsToImages(std::shared_ptr<ImagesVector> imagesVec);
         void ExecutePointsSelection();
         void StartDistributedTraining();
         int GetRank();

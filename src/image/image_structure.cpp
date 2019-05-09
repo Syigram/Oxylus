@@ -12,21 +12,26 @@ ImageStructure::ImageStructure(ConfigurationObject* configObject) {
   this->cols = configObject->GetImagesCols();
   this->pointsSize = configObject->GetPointsSize();
   this->treesSize = configObject->GetNumberOfTrees();
+  treesId.resize(treesSize, 0);
 }
 
 ImageStructure::ImageStructure(ConfigurationObject* configObject, int imageId) {
   this->rows = configObject->GetImagesRows();
   this->cols = configObject->GetImagesCols();
   this->pointsSize = configObject->GetPointsSize();
+  this->treesSize = configObject->GetNumberOfTrees();
   this->imageId = imageId;
+  treesId.resize(treesSize, 0);
 }
 
 ImageStructure::ImageStructure(ConfigurationObject* configObject, cv::Mat_<ushort> depthImage, int imageId) {
   this->rows = configObject->GetImagesRows();
   this->cols = configObject->GetImagesCols();
   this->pointsSize = configObject->GetPointsSize();
+  this->treesSize = configObject->GetNumberOfTrees();
   this->imageId = imageId;
   this->depthImage = depthImage;
+  treesId.resize(treesSize, 0);
 }
 
 int ImageStructure::GetSizeOf(ConfigurationObject* configObject) {

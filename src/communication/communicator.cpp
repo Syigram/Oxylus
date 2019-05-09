@@ -35,7 +35,8 @@ void Communicator::LoadImagesToStructures(){
   int indexStart = this->imageBatchMessage.GetIndexStart();
   int indexEnd = this->imageBatchMessage.GetIndexEnd();
   rdf::bpc::FileReader reader(this->configObject);
-  std::shared_ptr<rdf::bpc::ImagesVector> imagesVector = reader.ReadImages(indexStart, indexEnd);
+  std::shared_ptr<ImagesVector> imagesVector = reader.ReadImages(indexStart, indexEnd);
+  AssignTreeBitsToImages(imagesVector);
 }
 
 void Communicator::GatherMemoryInformationMessage(){
@@ -44,6 +45,11 @@ void Communicator::GatherMemoryInformationMessage(){
   memoryMessage.Print();
   mpi::gather(world, memoryMessage, this->memoryMessageVec, MPI_MASTER);
   this->MasterPrint("gathering memory messages..");
+}
+
+void Communicator::AssignTreeBitsToImages(std::shared_ptr<ImagesVector> imagesVec) {
+  ImageOperations imageOperations(this->configObject);
+  imageOperations.AssignImagesToTrees(imagesVec);
 }
 
 void Communicator::ScatterImagesBatchMessage(ImageBatchMessage newImageBatchMessage){

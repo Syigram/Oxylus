@@ -12,6 +12,11 @@ ImageOperations::ImageOperations(){
 
 }
 
+ImageOperations::ImageOperations(ConfigurationObject* configurationObject){
+  this->treesPercent = configurationObject->GetPercentImagesPerTree();
+  this->numOfTrees = configurationObject->GetNumberOfTrees();
+}
+
 MapPalette ImageOperations::InitializePalette() {
   MapPalette palette;
   palette[cv::Vec3b(0,0,0)] = rdf::bpc::constants::BLACK;
@@ -177,6 +182,27 @@ VecColorsHistogram ImageOperations::SortColorsHistogram(MapColorsHistogram& mapC
     lowestValue = highVal;
   }
   return orderedColorsHistogram;
+}
+
+int ImageOperations::AssignImagesToTrees(std::shared_ptr<ImagesVector> imagesVector){
+  int totalImages = imagesVector->size();
+  int percentPerImages = this->treesPercent;
+  float percentValueFloat = (float) (percentPerImages / 100.0);
+  percentValueFloat = percentValueFloat * (float) totalImages;
+  int percentValueInt = (int) percentValueFloat;
+  int imageCount = 0;
+  std::uniform_int_distribution<int> index_dist(0, totalImages - 1);
+  for (int i = 0; i < this->numOfTrees; i++){
+    while (imageCount < percentValueInt) {
+      int imageIndex = index_dist(ImageOperations::mt_);
+      int treeBit = imagesVector->at(imageIndex).treesId[i];
+      if (treeBit == 0){
+        imagesVector->at(imageIndex).treesId[i] = 1;
+        imageCount++;
+      }
+    }
+    imageCount = 0;
+  }
 }
 
 

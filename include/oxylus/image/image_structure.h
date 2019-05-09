@@ -32,12 +32,12 @@ namespace rdf  {
         void SetPointsVector(std::shared_ptr<PointStructureVec> pointsVector);
         void SetDepthImage(cv::Mat_<ushort> depthImage);
         std::shared_ptr<PointStructureVec> GetPointsVector();
+        std::vector<int> treesId; /* this vector contains the id of the trees that use
+                                this image for training */
       private:
         /* data */
         cv::Mat_<ushort> depthImage;
 
-        std::vector<int> treesId; /* this vector contains the id of the trees that use
-                                this image for training */
 
         std::shared_ptr<PointStructureVec> pointsVector;
         /* std::string labefilename; */
