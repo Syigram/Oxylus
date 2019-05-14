@@ -37,6 +37,7 @@ namespace rdf {
 
       private:
         int currentNode;
+        std::vector<int> nodeHistory;
         int labelPixelValue;
         cv::Point point;
         int imageId;
