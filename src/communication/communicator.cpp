@@ -2,8 +2,8 @@
 
 #include <oxylus/communication/communicator.h>
 
+#include <oxylus/training/vectors_generator.h>
 #include <oxylus/memory/file_reader.h>
-
 
 
 using namespace rdf::bpc;
@@ -35,8 +35,8 @@ void Communicator::LoadImagesToStructures(){
   int indexStart = this->imageBatchMessage.GetIndexStart();
   int indexEnd = this->imageBatchMessage.GetIndexEnd();
   rdf::bpc::FileReader reader(this->configObject);
-  std::shared_ptr<ImagesVector> imagesVector = reader.ReadImages(indexStart, indexEnd);
-  AssignTreeBitsToImages(imagesVector);
+  this->imagesStructureVector = reader.ReadImages(indexStart, indexEnd);
+  AssignTreeBitsToImages(imagesStructureVector);
 }
 
 void Communicator::GatherMemoryInformationMessage(){
@@ -52,13 +52,42 @@ void Communicator::AssignTreeBitsToImages(std::shared_ptr<ImagesVector> imagesVe
   imageOperations.AssignImagesToTrees(imagesVec);
 }
 
+
+void Communicator::BeginTraining(){
+  int numOfTrees = this->configObject->GetNumberOfTrees();
+  int currentNode = 0;
+  int minPointsPerNode = 2000;
+  for (int i = 0; i < numOfTrees; i++) {
+    int pointsPerNode = ImageOperations::GetNumberOfPointsForNode(currentNode, imagesStructureVector);
+    if (pointsPerNode < minPointsPerNode){
+      std::cout << "Not enough points for node: " << currentNode << std::endl;
+    }
+    NodeVectors nodeVectors = this->BroadcastNodeVectors(currentNode);
+  }
+}
+
+NodeVectors Communicator::BroadcastNodeVectors(int nodeId){
+  NodeVectors nodeVectors;
+  if (rank == MPI_MASTER) {
+    MasterPrint("am master");
+    VectorsGenerator vectorGenerator(this->configObject);
+    std::vector<int>* thresholdsVec = vectorGenerator.GenerateThresholdsVector();
+    std::vector<Features>* featuresVec = vectorGenerator.GenerateFeaturesVector();
+    nodeVectors.nodeId = nodeId;
+    nodeVectors.featuresVec = featuresVec;
+    nodeVectors.thresholdsVec = thresholdsVec;
+  } 
+  mpi::broadcast(world, nodeVectors, MPI_MASTER);
+  return nodeVectors;
+}
+
 void Communicator::ScatterImagesBatchMessage(ImageBatchMessage newImageBatchMessage){
   ImageBatchMessageVec imageBatchMessageVec;
   int newBatchLimit = 2;
   int i = 0;
   for(auto &memoryMessage: this->memoryMessageVec){
     /* int batchSize = memoryMessage.GetBatchSize(); */ /* TODO: use real batch size calc */
-    int batchSize = 90;
+    int batchSize = 20;
     int start = newBatchLimit;
     int end = newBatchLimit + batchSize;
     newImageBatchMessage.SetBatchSize(batchSize);

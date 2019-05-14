@@ -10,6 +10,7 @@
 #include <oxylus/mpi_message/memory_message.h>
 #include <oxylus/mpi_message/image_allocation_message.h>
 #include <oxylus/image/image_structure.h>
+#include <oxylus/training/node_vectors.h>
 
 #define MPI_MASTER 0
 
@@ -29,6 +30,7 @@ namespace rdf{
         void AssignImagesToEachNode();
         void LoadImagesToStructures();
         void AssignTreeBitsToImages(std::shared_ptr<ImagesVector> imagesVec);
+        void BeginTraining();
         void ExecutePointsSelection();
         void StartDistributedTraining();
         int GetRank();
@@ -39,6 +41,7 @@ namespace rdf{
         mpi::communicator world;
         MemoryMessageVec memoryMessageVec;
         ImageBatchMessage imageBatchMessage;
+        std::shared_ptr<ImagesVector> imagesStructureVector;
         size_t size;
         int rank;
         int master;
@@ -46,6 +49,7 @@ namespace rdf{
         void GatherMemoryInformationMessage();
         void ScatterImagesBatchMessage(ImageBatchMessage imageBatchMessage);
         void MasterPrint(std::string message);
+        NodeVectors BroadcastNodeVectors(int nodeId);
 
     };
   }
