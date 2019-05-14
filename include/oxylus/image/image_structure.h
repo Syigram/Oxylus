@@ -17,6 +17,10 @@
 namespace rdf  {
 
   namespace bpc  {
+    
+    class ImageStructure;
+
+    typedef std::vector<ImageStructure> ImagesVector;
 
     class ImageStructure {
       public:
@@ -34,12 +38,11 @@ namespace rdf  {
         std::shared_ptr<PointStructureVec> GetPointsVector();
         std::vector<int> treesId; /* this vector contains the id of the trees that use
                                 this image for training */
+        std::shared_ptr<PointStructureVec> pointsVector;
       private:
         /* data */
         cv::Mat_<ushort> depthImage;
 
-
-        std::shared_ptr<PointStructureVec> pointsVector;
         /* std::string labefilename; */
         int imageId;
         int rows;
@@ -48,7 +51,6 @@ namespace rdf  {
         int treesSize;
     };
 
-    typedef std::vector<ImageStructure> ImagesVector;
   }
 
 }
