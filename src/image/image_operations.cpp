@@ -42,6 +42,19 @@ void ImageOperations::PrintPalette(MapPalette palette){
   }
 }
 
+int ImageOperations::GetNumberOfPointsForNode(int nodeId, std::shared_ptr<ImagesVector> imagesVector){
+  int counter = 0;
+  for (auto& image: *imagesVector) {
+    for (auto& point: *(image.pointsVector)) {
+      if (point.GetCurrentNode() == nodeId){
+        counter++;
+      }
+    }
+  }
+  return counter;
+
+}
+
 void ImageOperations::SavePaletteTo(std::string filepath, MapPalette& palette){
   std::ofstream outputFile;
   outputFile.open(filepath, std::ios::out | std::ios::in );
