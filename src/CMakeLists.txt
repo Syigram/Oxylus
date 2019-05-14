@@ -20,10 +20,10 @@ file(GLOB OXYLUS_HEADERS RELATIVE ${CMAKE_SOURCE_DIR}/include *.?pp *.h)
 set( OXYLUS_LIBRARIES "")
 
 ## Create all libraries first
+add_subdirectory (configuration)
 add_subdirectory (communication)
 add_subdirectory (memory)
 add_subdirectory (image)
-add_subdirectory (configuration)
 add_subdirectory (training)
 
 set_property(GLOBAL PROPERTY oxylus_libs_property "${OXYLUS_LIBRARIES}")
