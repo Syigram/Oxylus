@@ -6,6 +6,7 @@
 
 #include <boost/mpi.hpp>
 
+#include <oxylus/configuration/configuration_constants.h>
 #include <oxylus/configuration/configuration_object.h>
 #include <oxylus/mpi_message/memory_message.h>
 #include <oxylus/mpi_message/image_allocation_message.h>
@@ -37,6 +38,7 @@ namespace rdf{
         virtual ~Communicator(){};
 
       private:
+        ConfigurationObject* configObject;
         mpi::environment environment;
         mpi::communicator world;
         MemoryMessageVec memoryMessageVec;
@@ -45,11 +47,18 @@ namespace rdf{
         size_t size;
         int rank;
         int master;
-        ConfigurationObject* configObject;
+        int featuresSize;
+        int thresholdsSize;
         void GatherMemoryInformationMessage();
         void ScatterImagesBatchMessage(ImageBatchMessage imageBatchMessage);
         void MasterPrint(std::string message);
+        Matrix<Cell> ReduceHistograms(std::vector<NodeVectors> &gatheredNodeVectors);
+        void UpdateHistogramsCount(Matrix<Cell>& nodeHistograms);
         NodeVectors BroadcastNodeVectors(int nodeId);
+        double ClassificationObjectiveFunction(std::vector<int> histogram, double magnitude);
+        double GetArgMinValue(Cell& cell);
+        std::pair<int, int> CalculateArgMinValues(Matrix<Cell>& nodeHistograms);
+        std::pair<Features, int> FindLowestArgMin();
 
     };
   }
