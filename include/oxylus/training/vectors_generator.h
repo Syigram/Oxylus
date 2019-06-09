@@ -22,8 +22,12 @@ namespace rdf{
       private:
         int minThresholdsValue;
         int maxThresholdsValue;
-        int minFeaturesValue;
+        int minDeltaXOffset;
+        int maxDeltaXOffset;
+        int minDeltaYOffset;
+        int maxDeltaYOffset;
         int maxFeaturesValue;
+        int minFeaturesValue;
         int featuresVectorSize;
         int thresholdsVectorSize;
         static std::mt19937 InitializeRandomDevice();
