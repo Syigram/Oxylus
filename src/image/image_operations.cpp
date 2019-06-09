@@ -77,7 +77,6 @@ std::shared_ptr<PointStructureVec> ImageOperations::GenerateRandomPoints(ImageSt
   int cols = imageData.GetCols();
   int totalPoints = imageData.GetPointsSize();
   int imageId = imageData.GetImageId();
-  int initialNodeId = 0;
   std::set<cv::Point> setOfPoints;
   std::vector<cv::Point> vectorOfPoints;
   std::shared_ptr<PointStructureVec> pointsStructVec = std::make_shared<PointStructureVec>();
@@ -85,12 +84,13 @@ std::shared_ptr<PointStructureVec> ImageOperations::GenerateRandomPoints(ImageSt
   int totalColorsInImage = vecColorHistogram.size();
   int newLimit = totalPoints / totalColorsInImage;
   int newCounter = 0;
+  int tryoutsCounter = 0;
   int index = 0;
   for (auto& colorPoints: vecColorHistogram){
     int totalColorPoints = colorPoints.second.size();
     index++;
     while (newCounter <= newLimit){
-      if (newCounter == totalColorPoints){
+      if (tryoutsCounter == (totalColorPoints)){
         /* if points inserted are already at max for a color
          * we calculate the remaining points, then we calculate
          * the new limit according to those points and accounting
@@ -103,13 +103,21 @@ std::shared_ptr<PointStructureVec> ImageOperations::GenerateRandomPoints(ImageSt
       int randomIndex = index_dist(ImageOperations::mt_);
       auto point = colorPoints.second.at(randomIndex);
       if (!ImageOperations::PointExistsInVector(vectorOfPoints, point)){
+        int depthValue = (int) depthImage.at<ushort>(point);
+        if (depthValue == 0){
+          tryoutsCounter++;
+          vectorOfPoints.push_back(point);
+          continue;
+        }
         int labelValue = (int) labelImage.at<uchar>(point);
-        PointStructure pointStructure(point, labelValue, imageId, initialNodeId);
+        PointStructure pointStructure(point, labelValue, imageId);
         pointsStructVec->push_back(pointStructure);
         vectorOfPoints.push_back(point);
+        tryoutsCounter++;
         newCounter++;
       }
     }
+    tryoutsCounter = 0;
     newCounter = 0;
   }
   return pointsStructVec;
@@ -177,7 +185,6 @@ VecColorsHistogram ImageOperations::GenerateColorsHistogramForImage(cv::Mat_<uch
 VecColorsHistogram ImageOperations::SortColorsHistogram(MapColorsHistogram& mapColorsHistogram){
   typedef std::pair<int, std::vector<cv::Point>> PairColorToPoints;
   VecColorsHistogram orderedColorsHistogram;
-  int size = mapColorsHistogram.size();
   int highVal = 10000000;
   int index = 0;
   int lowestValue = highVal;

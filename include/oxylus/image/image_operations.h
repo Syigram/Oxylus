@@ -70,10 +70,8 @@ namespace rdf  {
         //<! Static function for initializing seed for random distribution.
         //<! It is only initialized once.
         static std::mt19937 InitRandomSeed();
-        
         int treesPercent;
         int numOfTrees;
-        
         static VecColorsHistogram GenerateColorsHistogramForImage(
             cv::Mat_<uchar>& labelImage,
             int rows,

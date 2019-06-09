@@ -7,24 +7,24 @@ using namespace rdf::bpc;
 
 
 PointStructure::PointStructure() {
-  this->currentNode = 0;
+  this->currentNode = 1;
   this->point.x = 0;
   this->point.y = 0;
   this->imageId = 0;
   this->labelPixelValue = 0;
 }
 
-PointStructure::PointStructure(int node, int labelValue,
+PointStructure::PointStructure(int labelValue,
                                   int x, int y, int imageId) {
-  this->currentNode = node;
+  this->currentNode = 1;
   this->point.x = x;
   this->point.y = y;
   this->imageId = imageId;
   this->labelPixelValue = labelValue;
 }
 
-PointStructure::PointStructure(cv::Point point, int labelValue, int imageId, int node) {
-  this->currentNode = node;
+PointStructure::PointStructure(cv::Point point, int labelValue, int imageId) {
+  this->currentNode = 1;
   this->point = point;
   this->imageId = imageId;
   this->labelPixelValue = labelValue;

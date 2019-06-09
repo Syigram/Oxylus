@@ -18,8 +18,8 @@ namespace rdf {
     class PointStructure {
       public:
         PointStructure();
-        PointStructure(int node, int labelValue, int x, int y, int imageId);
-        PointStructure(cv::Point point, int labelValue, int imageId, int node);
+        PointStructure(int labelValue, int x, int y, int imageId);
+        PointStructure(cv::Point point, int labelValue, int imageId);
         void SetImageId(int imageId);
         void SetCurrentNode(int node);
         void SetLabelPixelValue(int value);
