@@ -112,6 +112,17 @@ int ConfigurationParser::LoadMemoryUsage(){
   return value;
 }
 
+int ConfigurationParser::LoadTrainingStopCondition(){
+  int value = 0;
+  try{
+    value = this->parseTree.get<int>("hyperparameters.stopCondition");
+  }catch (const boost::property_tree::ptree_error &e){
+    std::string exception = e.what();
+    std::cout << exception << std::endl;
+  }
+  return value;
+}
+
 int ConfigurationParser::LoadNumberOfTrees(){
   int value = 0;
   try{
@@ -138,6 +149,50 @@ int ConfigurationParser::LoadFeaturesMinValue(){
   int value = 0;
   try{
     value = this->parseTree.get<int>("hyperparameters.featuresMinValue");
+  }catch (const boost::property_tree::ptree_error &e){
+    std::string exception = e.what();
+    std::cout << exception << std::endl;
+  }
+  return value;
+}
+
+int ConfigurationParser::LoadDeltaMinXOffset(){
+  int value = 0;
+  try{
+    value = this->parseTree.get<int>("hyperparameters.deltaMinXOffset");
+  }catch (const boost::property_tree::ptree_error &e){
+    std::string exception = e.what();
+    std::cout << exception << std::endl;
+  }
+  return value;
+}
+
+int ConfigurationParser::LoadDeltaMaxXOffset(){
+  int value = 0;
+  try{
+    value = this->parseTree.get<int>("hyperparameters.deltaMaxXOffset");
+  }catch (const boost::property_tree::ptree_error &e){
+    std::string exception = e.what();
+    std::cout << exception << std::endl;
+  }
+  return value;
+}
+
+int ConfigurationParser::LoadDeltaMinYOffset(){
+  int value = 0;
+  try{
+    value = this->parseTree.get<int>("hyperparameters.deltaMinYOffset");
+  }catch (const boost::property_tree::ptree_error &e){
+    std::string exception = e.what();
+    std::cout << exception << std::endl;
+  }
+  return value;
+}
+
+int ConfigurationParser::LoadDeltaMaxYOffset(){
+  int value = 0;
+  try{
+    value = this->parseTree.get<int>("hyperparameters.deltaMaxYOffset");
   }catch (const boost::property_tree::ptree_error &e){
     std::string exception = e.what();
     std::cout << exception << std::endl;

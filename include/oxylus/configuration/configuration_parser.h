@@ -28,14 +28,19 @@ namespace rdf  {
       int LoadMemoryUsage();
       int LoadNumberOfTrees();
       int LoadMaxTreeLevels();
+      int LoadTrainingStopCondition();
       int LoadImagesPerNode();
       int LoadThresholdsMinValue();
       int LoadThresholdsMaxValue();
       int LoadThresholdsSize();
-      int LoadFeaturesMinValue();
-      int LoadFeaturesMaxValue();
+      int LoadFeaturesMinValue(); /* deprecated */
+      int LoadFeaturesMaxValue(); /* deprecated */
       int LoadFeaturesSize();
       int LoadPercentImagesPerTree();
+      int LoadDeltaMinXOffset();
+      int LoadDeltaMaxXOffset();
+      int LoadDeltaMinYOffset();
+      int LoadDeltaMaxYOffset();
       std::string LoadBaseFolder();
       std::string LoadLabelFolder();
       std::string LoadDepthFolder();

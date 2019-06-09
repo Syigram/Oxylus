@@ -17,6 +17,7 @@ namespace rdf  {
       int GetMemoryUsage();
       int GetNumberOfTrees();
       int GetMaxTreeLevels();
+      int GetStopCondition();
       int GetImagesPerNode();
       int GetFeaturesMinValue();
       int GetFeaturesMaxValue();
@@ -25,6 +26,10 @@ namespace rdf  {
       int GetThresholdsMaxValue();
       int GetThresholdsSize();
       int GetPercentImagesPerTree();
+      int GetDeltaMinXOffset();
+      int GetDeltaMaxXOffset();
+      int GetDeltaMinYOffset();
+      int GetDeltaMaxYOffset();
       std::string GetBaseFolder();
       std::string GetLabelFolder();
       std::string GetDepthFolder();
@@ -39,6 +44,7 @@ namespace rdf  {
       int pointsSize;
       int memoryUsage;
       int numberOfTrees;
+      int stopCondition;
       int maxTreeLevels;
       int imagesPerNode;
       int featuresMinValue;
@@ -48,6 +54,10 @@ namespace rdf  {
       int thresholdsMaxValue;
       int thresholdsSize;
       int percentImagesPerTree;
+      int deltaMinXOffset;
+      int deltaMaxXOffset;
+      int deltaMinYOffset;
+      int deltaMaxYOffset;
       std::string baseFolder;
       std::string labelFolder;
       std::string depthFolder;

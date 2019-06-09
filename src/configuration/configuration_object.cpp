@@ -17,6 +17,22 @@ ConfigurationObject::ConfigurationObject(std::string filename) {
   LoadConfiguration();
 }
 
+int ConfigurationObject::GetDeltaMinXOffset() {
+  return this->deltaMinXOffset;
+}
+
+int ConfigurationObject::GetDeltaMaxXOffset() {
+  return this->deltaMaxXOffset;
+}
+
+int ConfigurationObject::GetDeltaMinYOffset() {
+  return this->deltaMinYOffset;
+}
+
+int ConfigurationObject::GetDeltaMaxYOffset() {
+  return this->deltaMaxYOffset;
+}
+
 int ConfigurationObject::GetPercentImagesPerTree() {
   return this->percentImagesPerTree;
 }
@@ -73,6 +89,10 @@ int ConfigurationObject::GetImagesPerNode() {
   return this->imagesPerNode;
 }
 
+int ConfigurationObject::GetStopCondition() {
+  return this->stopCondition;
+}
+
 int ConfigurationObject::GetMaxTreeLevels() {
   return this->maxTreeLevels;
 }
@@ -109,6 +129,7 @@ int ConfigurationObject::LoadConfiguration()  {
   this->pointsSize = configParser->LoadPointsSize();
   this->memoryUsage = configParser->LoadMemoryUsage();
   this->maxTreeLevels = configParser->LoadMaxTreeLevels();
+  this->stopCondition = configParser->LoadTrainingStopCondition();
   this->numberOfTrees = configParser->LoadNumberOfTrees();
   this->imagesPerNode = configParser->LoadImagesPerNode();
   this->featuresMinValue = configParser->LoadFeaturesMinValue();
@@ -118,5 +139,9 @@ int ConfigurationObject::LoadConfiguration()  {
   this->thresholdsMaxValue = configParser->LoadThresholdsMaxValue();
   this->thresholdsSize = configParser->LoadThresholdsSize();
   this->percentImagesPerTree = configParser->LoadPercentImagesPerTree();
+  this->deltaMinXOffset = configParser->LoadDeltaMinXOffset();
+  this->deltaMaxXOffset = configParser->LoadDeltaMaxXOffset();
+  this->deltaMinYOffset = configParser->LoadDeltaMinYOffset();
+  this->deltaMaxYOffset = configParser->LoadDeltaMaxYOffset();
   return 0;
 }
