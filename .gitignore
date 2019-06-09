@@ -29,6 +29,9 @@
 # bin
 bin/oxylus
 
+#debug
+debug/*
+
 ### CMake ###
 CMakeCache.txt
 CMakeFiles
