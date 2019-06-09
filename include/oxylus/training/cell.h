@@ -12,13 +12,22 @@ namespace rdf{
     class Cell{
       public:
         Cell();
+        Cell(int n);
         Cell(const Cell& orig);
         void AddToHistogram(bool left, int value );
-        void AddToLeftHistogram(int value);
-        void AddToRightHistogram(int value);
+        void AddToLeftHistogram(int index);
+        void AddToRightHistogram(int index);
         std::vector<int> GetLeftHistogram() const;
         std::vector<int> GetRightHistogram() const;
         void PrintHistograms();
+        Cell& operator=(const Cell& rhs) {
+          this->leftHistogram = rhs.leftHistogram;
+          this->rightHistogram = rhs.rightHistogram;
+          this->leftHistogramTotal = rhs.leftHistogramTotal;
+          this->rightHistogramTotal = rhs.rightHistogramTotal;
+          return *this;
+        }
+
         inline bool operator!=(Cell& rhs){
           size_t leftSize = this->leftHistogram.size();
           size_t rightSize = this->rightHistogram.size();
@@ -38,15 +47,25 @@ namespace rdf{
           }
           return false;
         }
+        Cell& Reduce(const Cell& other);
+        void SetHistogramsTotalCount();
         virtual ~Cell(){};
-      private:
         std::vector<int> leftHistogram;      ///< Left histogram
         std::vector<int> rightHistogram;     ///< Right histogram
+        int leftHistogramTotal;
+        int rightHistogramTotal;
+        int totalCount;
+        double argMinValue;
+      private:
         friend class boost::serialization::access;
         template<class Archive>
         void serialize(Archive & ar, const unsigned int version) {
           ar & leftHistogram;
           ar & rightHistogram;
+          ar & leftHistogramTotal;
+          ar & rightHistogramTotal;
+          ar & totalCount;
+          ar & argMinValue;
         }
     };
 
