@@ -97,7 +97,11 @@ namespace rdf
   Matrix<T>::Matrix(const Matrix<T>& _other)
     : Matrix(_other.rows(),_other.cols(),DoNotInitialize) {
 
-    fill(_other.data());
+    if (std::is_trivial<T>::value) {
+      fill(_other.data());
+    } else {
+      fill(_other);
+    }
   }
 
   template<typename T>
@@ -114,7 +118,12 @@ namespace rdf
   template<typename T>
   Matrix<T>& Matrix<T>::operator=(const Matrix<T>& other) {
     allocate(other._impl._rows, other._impl._cols);
-    fill(other.data());
+
+    if (std::is_standard_layout<T>::value) {
+      fill(other.data());
+    } else {
+      fill(other);
+    }
 
     return *this;
   }
@@ -218,6 +227,19 @@ namespace rdf
     }
 
     // ACCELERATE ME!
+  }
+
+  template<typename T>
+  void Matrix<T>::fill(const Matrix<T>& other) {
+
+    const std::size_t r=std::min(other.rows(),this->rows());
+    const std::size_t c=std::min(other.cols(),this->cols());
+
+    for (std::size_t j=0u;j<r;++j) {
+     for (std::size_t i=0u;i<c;++i) {
+	(*this)(j,i)=other(j,i);
+      }
+    }
   }
 
   template<typename T>

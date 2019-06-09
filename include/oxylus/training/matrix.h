@@ -126,14 +126,14 @@ namespace rdf {
     /**
      * Compare two matrices for equality
      *
-     * This is slow, as all componentes are elementwise compared
+     * This is slow, as all components are elementwise compared
      */
     bool operator==(const Matrix<T>& other) const;
 
     /**
      * Compare two matrices for equality
      *
-     * This is slow, as all componentes are elementwise compared
+     * This is slow, as all components are elementwise compared
      */
     bool operator!=(const Matrix<T>& other) const;
 
@@ -187,6 +187,14 @@ namespace rdf {
      * row padding.
      */
     void fill(const T* mem);
+   /**
+     * Fill with the contents of another matrix.
+     *
+     * This method copies element by element.  The shapes do not need to
+     * be the same for this and the other matrix, but only the overlapping
+     * portion is copied.
+     */
+    void fill(const Matrix<T>& other);
 
     /**
      * Check if the matrix is empty (zero rows or columns)
@@ -278,10 +286,17 @@ namespace rdf {
         // from the desired size
         if ( (trows != _impl._rows) ||
              (tcols != _impl._cols) ) {
+          /* allocate(trows, tcols); */
           clear();
           _create_storage(trows,tcols);
         }
       }
+
+    /* if (std::is_trivial<T>::value) { */
+    /*   fill(data()); */
+    /* } else { */
+    /*   fill(*this); */
+    /* } */
 
       const size_t entries = _impl.tentries();
       for (size_t i=0;i<entries;++i) {
