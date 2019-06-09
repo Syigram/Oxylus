@@ -107,12 +107,12 @@ namespace rdf{
           return this->delta2.y;
         }
 
-        inline bool operator=(const Features& other){
+        Features& operator=(const Features& other){
           this->delta1.x = other.GetDelta1X();
           this->delta1.y = other.GetDelta1Y();
           this->delta2.x = other.GetDelta2X();
           this->delta2.y = other.GetDelta2Y();
-          return true;
+          return *this;
         }
 
         inline bool operator==(const Features& rhs){
