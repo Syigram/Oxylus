@@ -42,6 +42,14 @@ void ImageOperations::PrintPalette(MapPalette palette){
   }
 }
 
+void ImageOperations::ResetPoints(std::shared_ptr<ImagesVector> imagesVector){
+  for (auto& image: *imagesVector) {
+    for (auto& point: *(image.pointsVector)) {
+      point.SetCurrentNode(1);
+    }
+  }
+}
+
 int ImageOperations::GetNumberOfPointsForNode(int nodeId, std::shared_ptr<ImagesVector> imagesVector){
   int counter = 0;
   for (auto& image: *imagesVector) {
@@ -52,7 +60,6 @@ int ImageOperations::GetNumberOfPointsForNode(int nodeId, std::shared_ptr<Images
     }
   }
   return counter;
-
 }
 
 void ImageOperations::SavePaletteTo(std::string filepath, MapPalette& palette){

@@ -63,6 +63,7 @@ namespace rdf  {
         static PointStructure GenerateRandomPointStructure();
         static int GetNumberOfPointsForNode(int nodeId, std::shared_ptr<ImagesVector> imagesVec);
         int AssignImagesToTrees(std::shared_ptr<ImagesVector> imagesVector);
+        static void ResetPoints(std::shared_ptr<ImagesVector> imagesVector);
         virtual ~ImageOperations(){};
 
       private:
