@@ -6,7 +6,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <opencv2/core/core.hpp>
+#include <opencv2/core/types.hpp>
 
+#include <oxylus/configuration/configuration_object.h>
 #include <oxylus/image/image_operations.h>
 
 namespace rdf{

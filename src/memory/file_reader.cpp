@@ -94,6 +94,15 @@ int FileReader::ReadImageTest(std::string fullPath) {
     std::cout <<  "Could not open or find the image" << std::endl ;
       return -1;
   }
+  for (int i = 0; i < image.rows; i++) {
+    for (int j = 0; j < image.cols; j++) {
+      int val = (int) image.at<ushort>(i, j);
+      ushort test = image.at<ushort>(i, j);
+      if (val > 0)
+        std::cout << "depth: " << test << std::endl;
+
+    }
+  }
   cv::namedWindow( "Display window", cv::WINDOW_AUTOSIZE );// Create a window for display.
   cv::imshow( "Display window", image );                   // Show our image inside it.
   cv::waitKey(0);
