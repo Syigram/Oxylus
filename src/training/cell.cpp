@@ -17,11 +17,18 @@ Cell::Cell(){
 Cell::Cell(int n) {
   this->leftHistogram.resize(n, 0);
   this->rightHistogram.resize(n, 0);
+  this->leftHistogramTotal = 0;
+  this->rightHistogramTotal = 0;
+  this->totalCount = 0;
+  this->argMinValue = 0.0;
 }
 
 Cell::Cell(const Cell& orig){
   this->rightHistogram = orig.GetRightHistogram();
   this->leftHistogram = orig.GetLeftHistogram();
+  this->leftHistogramTotal = orig.leftHistogramTotal;
+  this->rightHistogramTotal = orig.rightHistogramTotal;
+  this->totalCount = orig.totalCount;  
 }
 
 void Cell::AddToHistogram(bool left, int value){
@@ -64,16 +71,10 @@ Cell& Cell::Reduce(const Cell& other) {
 }
 
 void Cell::SetHistogramsTotalCount() {
-  int totalLeft = 0;
-  int totalRight = 0;
   for (int k = 0; k < constants::BODY_PARTS; k++) {
-    totalLeft += this->leftHistogram[k];
-    totalRight += this->rightHistogram[k];
+    leftHistogramTotal += this->leftHistogram[k];
+    rightHistogramTotal += this->rightHistogram[k];
   }
-  this->leftHistogramTotal = totalLeft;
-  this->rightHistogramTotal = totalRight;
-  this->totalCount = totalLeft + totalRight;
-  std::cout << "Total right: " << totalRight << std::endl;
-  std::cout << "Total left: " << totalLeft << std::endl;
+  this->totalCount = leftHistogramTotal + rightHistogramTotal;
 }
 
