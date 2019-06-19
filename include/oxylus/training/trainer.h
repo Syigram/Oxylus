@@ -10,8 +10,9 @@
 #include <oxylus/configuration/configuration_object.h>
 #include <oxylus/image/image_operations.h>
 #include <oxylus/training/node_vectors.h>
-#include <oxylus/training/partial_trained_node.h>
 #include <oxylus/training/weak_learner_node.h>
+#include <oxylus/training/leaf_node.h>
+#include <oxylus/training/tree.h>
 
 
 namespace rdf {
@@ -22,10 +23,14 @@ namespace rdf {
         Trainer();
         Trainer(ConfigurationObject* configurationObject);
         /* PartialTrainedNode TrainNode(std::shared_ptr<ImagesVector> imagesVec, NodeVectors& nodeVectors); */
-        void TrainNode(std::shared_ptr<ImagesVector> imagesVec, NodeVectors& nodeVectors);
+        void TrainNode(std::shared_ptr<ImagesVector> imagesVec, NodeVectors& nodeVectors, int treeId);
         WeakLearnerNode* CreateTrainedNode(int nodeId, int bestFeatureIndex,
                     int bestThresholdIndex, NodeVectors& nodeVectors);
+        LeafNode* CreateLeafNode(int nodeId, std::shared_ptr<ImagesVector> imagesVec);
+        LeafNode* CreateLeafNodeFromParent(int nodeId, std::vector<int> histograms);
         void EvaluateImages(std::shared_ptr<ImagesVector> imagesVec, WeakLearnerNode* weakNode);
+        void CheckForLeafNodes(int parentNodeId, Cell& bestCell, Tree& tree,
+            std::vector<int> leafNodesList);
         ~Trainer(){};
 
       private:
@@ -41,6 +46,9 @@ namespace rdf {
         double GetArgMinValue(Cell& cell);
         std::pair<int, int> CalculateArgMinValues(Matrix<Cell>& nodeHistograms);
 
+        std::vector<int> CreateHistogramForLeafNode(int nodeId, std::shared_ptr<ImagesVector> imagesVec);
+
+        bool HasMinimunPoints(int count);
         ConfigurationObject* configurationObject;
 
         int highestDepthValue;

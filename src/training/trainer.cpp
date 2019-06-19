@@ -1,4 +1,6 @@
 #include <oxylus/training/trainer.h>
+#include <oxylus/configuration/configuration_constants.h>
+
 
 using namespace rdf::bpc;
 
@@ -13,7 +15,7 @@ Trainer::Trainer(ConfigurationObject* configurationObject){
   this->maxRows = configurationObject->GetImagesRows();
 }
 
-void Trainer::TrainNode(std::shared_ptr<ImagesVector> imagesVec, NodeVectors& nodeVectors){
+void Trainer::TrainNode(std::shared_ptr<ImagesVector> imagesVec, NodeVectors& nodeVectors, int treeId){
   int featuresSize = configurationObject->GetFeaturesSize();
   int thresholdsSize = configurationObject->GetThresholdsSize();
   int trainingNodeId = nodeVectors.nodeId;
@@ -23,31 +25,29 @@ void Trainer::TrainNode(std::shared_ptr<ImagesVector> imagesVec, NodeVectors& no
   int featuresIndex = 0;
   int thresholdIndex = 0;
   for (auto& imageStructure: *imagesVec) {
-    for (auto& pointStructure: *(imageStructure.pointsVector)) {
-      if (trainingNodeId == pointStructure.GetCurrentNode()){
-        cv::Mat_<ushort>& depthImage = imageStructure.depthImage;
-        int z_u = (int) depthImage.at<ushort>(pointStructure.GetPoint());
-        featuresIndex = 0;
-        for (auto& features: *(nodeVectors.featuresVec)) {
-          cv::Point point1 = CalculateFeatureResponsePoint(features.GetDelta1(), pointStructure, z_u);
-          cv::Point point2 = CalculateFeatureResponsePoint(features.GetDelta2(), pointStructure, z_u);
-          int featureResponse = CalculateFeatureResponse(depthImage, point1, point2);
-          /* if (featureResponse > -100000 && featureResponse < 100000 && featureResponse != 0) */
-          /*   std::cout << "featResponse: " << featureResponse << std::endl; */
-          thresholdIndex = 0;
-          for (auto thresholdN: *(nodeVectors.thresholdsVec)) {
-            Cell& cell = nodeHistograms[featuresIndex][thresholdIndex];
-            int labelValue = pointStructure.GetLabelPixelValue();
-            if (featureResponse >= thresholdN){
-              cell.rightHistogram[labelValue]++;
-              /* std::cout << "right at[" << labelValue << "]: " << cell.rightHistogram[labelValue] << std::endl; */
-            } else {
-              cell.leftHistogram[labelValue]++;
-              /* std::cout << "left at[" << labelValue << "]: " << cell.leftHistogram[labelValue] << std::endl; */
+    if (imageStructure.treesId.at(treeId) == 1) {
+      for (auto& pointStructure: *(imageStructure.pointsVector)) {
+        if (trainingNodeId == pointStructure.GetCurrentNode()){
+          cv::Mat_<ushort>& depthImage = imageStructure.depthImage;
+          int z_u = (int) depthImage.at<ushort>(pointStructure.GetPoint());
+          featuresIndex = 0;
+          for (auto& features: *(nodeVectors.featuresVec)) {
+            cv::Point point1 = CalculateFeatureResponsePoint(features.GetDelta1(), pointStructure, z_u);
+            cv::Point point2 = CalculateFeatureResponsePoint(features.GetDelta2(), pointStructure, z_u);
+            int featureResponse = CalculateFeatureResponse(depthImage, point1, point2);
+            thresholdIndex = 0;
+            for (auto thresholdN: *(nodeVectors.thresholdsVec)) {
+              Cell& cell = nodeHistograms[featuresIndex][thresholdIndex];
+              int labelValue = pointStructure.GetLabelPixelValue();
+              if (featureResponse >= thresholdN){
+                cell.rightHistogram[labelValue]++;
+              } else {
+                cell.leftHistogram[labelValue]++;
+              }
+              thresholdIndex++;
             }
-            thresholdIndex++;
+            featuresIndex++;
           }
-          featuresIndex++;
         }
       }
     }
@@ -100,15 +100,41 @@ cv::Point Trainer::CalculateFeatureResponsePoint(cv::Point point,
   return myPoint;
 }
 
-WeakLearnerNode* Trainer::CreateTrainedNode(int nodeId, int bestFeatureIndex,
-  int bestThresholdIndex, NodeVectors& nodeVectors) {
 
+WeakLearnerNode* Trainer::CreateTrainedNode(
+    int nodeId,
+    int bestFeatureIndex,
+    int bestThresholdIndex,
+    NodeVectors& nodeVectors) {
   Features bestFeatures = nodeVectors.featuresVec->at(bestFeatureIndex);
   int bestThreshold = nodeVectors.thresholdsVec->at(bestThresholdIndex);
+  std::cout << "best thresdhold: " << bestThresholdIndex << std::endl;
+  std::cout << "best feature: " << bestFeatureIndex << std::endl;
   WeakLearnerNode* node  = new WeakLearnerNode(nodeId, bestFeatures, bestThreshold);
   return node;
 
 }
+
+
+LeafNode* Trainer::CreateLeafNode(int nodeId, std::shared_ptr<ImagesVector> imagesVec) {
+  LeafNode* node = new LeafNode(nodeId);
+  for (auto& image: *imagesVec) {
+    for (auto& point: *(image.pointsVector)) {
+      if (point.GetCurrentNode() == nodeId){
+        int labelValue = point.GetLabelPixelValue();
+        node->histogram[labelValue]++;
+      }
+    }
+  }
+  return node;
+}
+
+
+std::vector<int> Trainer::CreateHistogramForLeafNode(int nodeId, std::shared_ptr<ImagesVector> imagesVec) {
+
+
+}
+
 
 void Trainer::EvaluateImages(std::shared_ptr<ImagesVector> imagesVec, WeakLearnerNode* weakNode) {
   int nodeId = weakNode->nodeId;
@@ -137,8 +163,6 @@ void Trainer::EvaluateImages(std::shared_ptr<ImagesVector> imagesVec, WeakLearne
       }
     }
   }
-  std::cout << "A total of: " << leftCounter << " went to node:" << leftNodeId << std::endl;
-  std::cout << "A total of: " << rightCounter << " went to node:" << rightNodeId << std::endl;
 }
 
 
@@ -224,4 +248,36 @@ std::mt19937 Trainer::mt_ = Trainer::InitRandomSeed();
 /*   return std::make_pair(featuresIndex, thresholdIndex); */
 /* } */
 
+LeafNode* Trainer::CreateLeafNodeFromParent(int nodeId, std::vector<int> histograms) {
+  LeafNode* node = new LeafNode(nodeId, histograms);
+  return node;
+}
+
+void Trainer::CheckForLeafNodes(
+    int parentNodeId, 
+    Cell& bestCell,
+    Tree& tree, 
+    std::vector<int> leafNodesList) {
+
+  int leftCount = bestCell.leftHistogramTotal;
+  int rightCount = bestCell.rightHistogramTotal;
+  if (!HasMinimunPoints(leftCount)) {
+    int leftNodeId = parentNodeId * 2;
+    LeafNode* leftNode = CreateLeafNodeFromParent(leftNodeId, bestCell.leftHistogram);       
+    tree.Insert(leftNode);
+    leafNodesList.push_back(leftNodeId);
+  }
+  if (!HasMinimunPoints(rightCount)) {
+    int rightNodeId = (parentNodeId * 2) + 1;
+    LeafNode* rightNode = CreateLeafNodeFromParent(rightNodeId, bestCell.rightHistogram);       
+    tree.Insert(rightNode);
+    leafNodesList.push_back(rightNodeId);
+  }
+}
+
+bool Trainer::HasMinimunPoints(int count) {
+  int stopCondition = this->configurationObject->GetStopCondition();
+  if (count >= stopCondition) return true;
+  else return false;
+}
 
