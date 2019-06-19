@@ -5,9 +5,9 @@
  * Created on May 14, 2018, 2:07 AM
  */
 
-#include "Node.h"
+#include <oxylus/training/node.h>
 
-using namespace rdf;
+using namespace rdf::bpc;
 
 Node::Node() {
 }
