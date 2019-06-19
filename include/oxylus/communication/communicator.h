@@ -35,7 +35,8 @@ namespace rdf{
         void ExecutePointsSelection();
         void StartDistributedTraining();
         int GetRank();
-        virtual ~Communicator(){};
+        virtual ~Communicator(){
+        }
 
       private:
         ConfigurationObject* configObject;
@@ -50,6 +51,7 @@ namespace rdf{
         int featuresSize;
         int thresholdsSize;
         void GatherMemoryInformationMessage();
+        int NodeHasMinimunPoints(std::vector<int> pointsCount);
         void ScatterImagesBatchMessage(ImageBatchMessage imageBatchMessage);
         void MasterPrint(std::string message);
         Matrix<Cell> ReduceHistograms(std::vector<NodeVectors> &gatheredNodeVectors);
@@ -57,9 +59,12 @@ namespace rdf{
         NodeVectors BroadcastNodeVectors(int nodeId);
         double ClassificationObjectiveFunction(std::vector<int> histogram, double magnitude);
         double GetArgMinValue(Cell& cell);
-        std::pair<int, int> CalculateArgMinValues(Matrix<Cell>& nodeHistograms);
-        std::pair<Features, int> FindLowestArgMin();
+        std::pair<int, int> FindLowestArgMin(Matrix<Cell>& nodeHistograms);
 
+        bool CheckValidNodeVectors(std::vector<NodeVectors> &gatheredNodeVectors);
+        /* void LookForLeafNodes(); */
+        /* void CountHistograms(Matrix<Cell>& nodeHistograms, int bestFeatureIndex, */
+        /*     int bestThresholdIndex); */
     };
   }
 }

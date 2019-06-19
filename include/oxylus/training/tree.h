@@ -16,6 +16,7 @@ namespace rdf {
         Tree(std::string name);
         Tree(int id);
         Node* root;
+        std::vector<int> leafNodesList;
         void Insert(Node* node);
         void InsertAfterNode(Node* parentNode, Node* newNode);
         void SaveNode(Node* node);
@@ -27,6 +28,8 @@ namespace rdf {
         Node* GetNextNode(Node* prevNode, int nextNodeId);
         bool IsLeftChild(int prevNodeId, int nextNodeId);
         bool IsRightChild(int prevNodeId, int nextNodeId);
+        std::vector<int> InsertChildrenToLeafNodesList(int nodeId, std::vector<int>& leafNodes );
+        bool NodeExistsInLeafNodesList(int nodeId, std::vector<int>& leafNodes);
         void SetRoot(Node* node);
         Node* GetRoot();
         virtual ~Tree(){};

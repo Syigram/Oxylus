@@ -1,15 +1,18 @@
 #include <iostream>
 #include <cmath>
 
+
+#include <boost/serialization/set.hpp>
+
 #include <oxylus/communication/communicator.h>
 
 #include <oxylus/training/vectors_generator.h>
 #include <oxylus/memory/file_reader.h>
 #include <oxylus/training/trainer.h>
+#include <oxylus/training/tree.h>
 
 using namespace rdf::bpc;
 
-using namespace boost::archive;
 
 Communicator::Communicator(){
   this->rank = world.rank();
@@ -60,52 +63,124 @@ void Communicator::AssignTreeBitsToImages(std::shared_ptr<ImagesVector> imagesVe
 void Communicator::BeginTraining(){
   int numOfTrees = this->configObject->GetNumberOfTrees();
   int currentNode = imagesStructureVector->at(0).pointsVector->at(0).GetCurrentNode();
-  int minPointsPerNode = 2000;
   int bestThresholdIndex = 0;
   int bestFeatureIndex = 0;
-  Trainer trainer(this->configObject);
-  std::vector<PartialTrainedNode> vecPartialNodes;
+  int isLeafNode = 0;
+  int maxNodesN = pow(2, configObject->GetMaxTreeLevels());
+  Trainer trainer(configObject);
   std::vector<NodeVectors> gatheredNodeVectors;
   std::vector<Matrix<Cell>> vecNodeHistograms;
-  /* for (int i = 0; i < numOfTrees; i++) { */
-    int pointsPerNode = ImageOperations::GetNumberOfPointsForNode(currentNode, imagesStructureVector);
-    if (pointsPerNode < minPointsPerNode){
-      std::cout << "Not enough points for node: " << currentNode << std::endl;
-    }
-    NodeVectors nodeVectors = this->BroadcastNodeVectors(currentNode);
-    /* std::vector<int>* thresholdsVec = new std::vector<int>(); */
-    /* std::vector<Features>* featuresVec = new std::vector<Features>(); */
-    /* thresholdsVec->reserve(configObject->GetThresholdsSize()); */
-    /* featuresVec->reserve(configObject->GetFeaturesSize()); */
-    /* thresholdsVec = nodeVectors.thresholdsVec; */
-    /* featuresVec = nodeVectors.featuresVec; */
-    /* nodeVectors.featuresVec = featuresVec; */
-    /* nodeVectors.thresholdsVec = thresholdsVec; */
-    /* trainer.TrainNode(imagesStructureVector, nodeVectors); */
-    trainer.TrainNode(imagesStructureVector, nodeVectors);
-    /* Matrix<Cell> nodeHisto =  trainer.TrainNode(imagesStructureVector, nodeVectors); */
-    mpi::gather(world, nodeVectors, gatheredNodeVectors, MPI_MASTER);
-    /* this block reduces the histograms, calculates the argmin value and sends
-     * the indexes of the best feature and threshold back to the slave nodes
-     * so that they can do the processing of images using these best features found */
-    if (rank == MPI_MASTER) {
-      Matrix<Cell> reducedHistograms = ReduceHistograms(gatheredNodeVectors);
-      UpdateHistogramsCount(reducedHistograms);
-      std::pair<int, int> bestFeatureAndThreshold = CalculateArgMinValues(reducedHistograms);
-      bestFeatureIndex = std::get<0>(bestFeatureAndThreshold);
-      bestThresholdIndex = std::get<1>(bestFeatureAndThreshold);
+  std::vector<int> leafNodesList;
+  std::vector<int> pointsCount;
+  for (int treeId = 0; treeId < numOfTrees; treeId++) {
+    Tree tree(treeId);
+    for (int j = 1; j < maxNodesN; j++) {
+      currentNode = j;
+
+      /* check if current node is already in list of leaf nodes */
+      if (tree.NodeExistsInLeafNodesList(currentNode, leafNodesList)) {
+        leafNodesList = tree.InsertChildrenToLeafNodesList(currentNode, leafNodesList);
+        continue;
+      }
+
+      /* if not, count the number of points for the given node */
+      int pointsPerNode = ImageOperations::GetNumberOfPointsForNode(currentNode, imagesStructureVector);
+      mpi::gather(world, pointsPerNode, pointsCount, MPI_MASTER);
+      /* gather all counts of points for a given node and check if they have enough
+       * points needed for training */
+      if (rank == MPI_MASTER) {
+        isLeafNode = !NodeHasMinimunPoints(pointsCount);
+      }
+      mpi::broadcast(world, isLeafNode, MPI_MASTER);
+      /* std::cout << "Slave #" << rank << "has isLeafNode" << isLeafNode << std::endl; */
+
+      /* if master determined the node is a leaf node
+       * create leaf node and insert it to tree
+       * skip training
+       * insert its children to the leaf nodes list */
+      if (isLeafNode) {
+        std::cout << "Slave #" << rank << "inserted leaf node: " << currentNode << std::endl;
+        tree.InsertChildrenToLeafNodesList(currentNode, leafNodesList);
+        LeafNode* leafNode = trainer.CreateLeafNode(currentNode, imagesStructureVector);
+        tree.Insert(leafNode);
+        continue;
+      }
+
+
+      NodeVectors nodeVectors = this->BroadcastNodeVectors(currentNode);
+      std::cout << "Slave #" << rank << "training node: " << currentNode << std::endl;
+      trainer.TrainNode(imagesStructureVector, nodeVectors, treeId);
+      mpi::gather(world, nodeVectors, gatheredNodeVectors, MPI_MASTER);
+
+      /* this block reduces the histograms, calculates the argmin value and sends
+       * the indexes of the best feature and threshold back to the slave nodes
+       * so that they can do the processing of images using these best features found */
+      if (rank == MPI_MASTER) {
+        CheckValidNodeVectors(gatheredNodeVectors);
+        Matrix<Cell> reducedHistograms = ReduceHistograms(gatheredNodeVectors);
+        UpdateHistogramsCount(reducedHistograms);
+        std::pair<int, int> bestFeatureAndThreshold = FindLowestArgMin(reducedHistograms);
+        bestFeatureIndex = std::get<0>(bestFeatureAndThreshold);
+        bestThresholdIndex = std::get<1>(bestFeatureAndThreshold);
+        std::cout << "best feat from master"  << bestFeatureIndex<< std::endl;
+        std::cout << "best thresh from master"  << bestThresholdIndex << std::endl;
+        /* Cell& bestCell = reducedHistograms[bestFeatureIndex][bestThresholdIndex]; */
+        /* WeakLearnerNode* weakNode = trainer.CreateTrainedNode(currentNode, */
+        /*                 bestFeatureIndex, bestThresholdIndex, nodeVectors); */
+        /* tree.Insert(weakNode); */
+        /* trainer.CheckForLeafNodes(currentNode, bestCell, tree, leafNodesList); */
+        /* mpi::broadcast(world, leafNodesList, MPI_MASTER); */
+      }
       mpi::broadcast(world, bestThresholdIndex, MPI_MASTER);
       mpi::broadcast(world, bestFeatureIndex, MPI_MASTER);
+      WeakLearnerNode* weakLearnerNode = trainer.CreateTrainedNode(currentNode,
+                        bestFeatureIndex, bestThresholdIndex, nodeVectors);
+      tree.Insert(weakLearnerNode);
+      trainer.EvaluateImages(imagesStructureVector, weakLearnerNode);
+      delete nodeVectors.featuresVec;
+      delete nodeVectors.thresholdsVec;
     }
-    world.barrier();
+    ImageOperations::ResetPoints(imagesStructureVector);
 
-    WeakLearnerNode* weakLearnerNode = trainer.CreateTrainedNode(currentNode,
-                      bestFeatureIndex, bestThresholdIndex, nodeVectors);
-    trainer.EvaluateImages(imagesStructureVector, weakLearnerNode);
+  }
+}
+
+bool Communicator::CheckValidNodeVectors(std::vector<NodeVectors> &gatheredNodeVectors) {
+    for (int i = 0; i < featuresSize; i++) {
+      Features f0 = gatheredNodeVectors[0].featuresVec->at(i);
+      Features f1 = gatheredNodeVectors[1].featuresVec->at(i);
+      Features f2 = gatheredNodeVectors[2].featuresVec->at(i);
+      Features f3 = gatheredNodeVectors[3].featuresVec->at(i);
+      if (f0 != f1 || f0 != f2 || f0 != f3) {
+        std::cout << "found different feature" << std::endl;
+        return false;
+      }
+    }
+
+    for (int i = 0; i < thresholdsSize; i++) {
+      int t0 = gatheredNodeVectors[0].thresholdsVec->at(i);
+      int t1 = gatheredNodeVectors[1].thresholdsVec->at(i);
+      int t2 = gatheredNodeVectors[2].thresholdsVec->at(i);
+      int t3 = gatheredNodeVectors[3].thresholdsVec->at(i);
+      if (t0 != t1 || t0 != t2 || t0 != t3) {
+        std::cout << "found different threshold" << std::endl;
+        return false;
+      }
+    }
+
+    std::cout << "all thresholds and features are equally equal" << std::endl;
+    return true;
+}
 
 
-    /* std::cout << "survibed" << std::endl; */
-  /* } */
+int Communicator::NodeHasMinimunPoints(std::vector<int> pointsCount) {
+  int minPointsPerNode = this->configObject->GetStopCondition();
+  for (auto count: pointsCount) {
+    if (count < minPointsPerNode) {
+      return 0;
+    }
+  }
+  return 1;
 }
 
 
@@ -135,7 +210,6 @@ void Communicator::UpdateHistogramsCount(Matrix<Cell>& nodeHistograms) {
 NodeVectors Communicator::BroadcastNodeVectors(int nodeId){
   NodeVectors nodeVectors;
   if (rank == MPI_MASTER) {
-    MasterPrint("am master");
     VectorsGenerator vectorGenerator(this->configObject);
     std::vector<int>* thresholdsVec = vectorGenerator.GenerateThresholdsVector();
     std::vector<Features>* featuresVec = vectorGenerator.GenerateFeaturesVector();
@@ -149,11 +223,11 @@ NodeVectors Communicator::BroadcastNodeVectors(int nodeId){
 
 void Communicator::ScatterImagesBatchMessage(ImageBatchMessage newImageBatchMessage){
   ImageBatchMessageVec imageBatchMessageVec;
-  int newBatchLimit = 2;
+  int newBatchLimit = 1;
   int i = 0;
   for(auto &memoryMessage: this->memoryMessageVec){
     /* int batchSize = memoryMessage.GetBatchSize(); */ /* TODO: use real batch size calc */
-    int batchSize = 4;
+    int batchSize = 2;
     int start = newBatchLimit;
     int end = newBatchLimit + batchSize;
     newImageBatchMessage.SetBatchSize(batchSize);
@@ -168,10 +242,19 @@ void Communicator::ScatterImagesBatchMessage(ImageBatchMessage newImageBatchMess
 }
 
 
-std::pair<Features, int> Communicator::FindLowestArgMin() {
+/* void Communicator::CountHistograms( */
+/*     Matrix<Cell>& nodeHistograms, */
+/*     int bestFeatureIndex, */
+/*     int bestThresholdIndex, */
+/*     Tree& tree) { */
 
+/*   int leftCount = nodeHistograms[bestFeatureIndex][bestThresholdIndex].leftHistogramTotal; */
+/*   int rightCount = nodeHistograms[bestFeatureIndex][bestThresholdIndex].rightHistogramTotal; */
+/*   if (!HasMinimunPoints(leftCount)) { */
+            
+/*   } */
+/* } */
 
-}
 
 
 double Communicator::GetArgMinValue(Cell& cell) {
@@ -180,6 +263,8 @@ double Communicator::GetArgMinValue(Cell& cell) {
   double S_Magnitude = (double) cell.totalCount;
   double I_L = ClassificationObjectiveFunction(cell.leftHistogram, S_L_Magnitude);
   double I_R = ClassificationObjectiveFunction(cell.rightHistogram, S_R_Magnitude);
+  /* std::cout << "s_l=" << S_L_Magnitude << "\ts_r=" << S_R_Magnitude << "\ts_m=" << S_Magnitude << std::endl; */
+  /* std::cout << "IL=" << I_L << "\tIR="<< I_R << std::endl; */
   double SL_BY_IL = (S_L_Magnitude / S_Magnitude) * I_L;
   double SR_BY_IR = (S_R_Magnitude / S_Magnitude) * I_R;
   return SL_BY_IL + SR_BY_IR;
@@ -193,25 +278,29 @@ double Communicator::ClassificationObjectiveFunction(
   int totalBodyParts = constants::BODY_PARTS;
   for (int i = 0; i < totalBodyParts; ++i) {
     double P_C_S = (double) histogram[i] / (double) S_D_Magnitude;
-    double log_P_C_S = log(P_C_S);
-    result += (P_C_S * log_P_C_S);
+    if (P_C_S > 0.0) {
+      double log_P_C_S = log(P_C_S);
+      result += (P_C_S * log_P_C_S);
+    }
   }
   return result * -1;
 }
   
 
-std::pair<int, int> Communicator::CalculateArgMinValues(Matrix<Cell>& nodeHistograms) {
+std::pair<int, int> Communicator::FindLowestArgMin(Matrix<Cell>& nodeHistograms) {
   double lowestArgMin = 10000000;
   int featuresIndex = 0;
   int thresholdIndex = 0;
   for (int i = 0; i < featuresSize; i++) {
     for (int j = 0; j < thresholdsSize; j++) {
       Cell& currentCell = nodeHistograms[i][j];
-      currentCell.argMinValue = GetArgMinValue(currentCell);
-      if (currentCell.argMinValue < lowestArgMin) {
-        lowestArgMin = currentCell.argMinValue;
+      double argMinVal = GetArgMinValue(currentCell);
+      if (argMinVal < lowestArgMin) {
+        lowestArgMin = argMinVal;
+        currentCell.argMinValue = argMinVal;
         featuresIndex = i;
         thresholdIndex = j;
+      } else {
       }
     }
   }

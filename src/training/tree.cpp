@@ -22,13 +22,31 @@ Tree::Tree(int id){
   this->id = id;
 }
 
+std::vector<int> Tree::InsertChildrenToLeafNodesList(int nodeId, std::vector<int>& leafNodes) {
+  int leftNodeId = nodeId * 2;
+  int rightNodeId = (nodeId * 2) + 1;
+  leafNodes.push_back(leftNodeId);
+  leafNodes.push_back(rightNodeId);
+  return leafNodes;
+}
+
+bool Tree::NodeExistsInLeafNodesList(int nodeId, std::vector<int>& leafNodes) {
+  auto it = std::find(leafNodes.begin(), leafNodes.end(), nodeId);
+  if (it != leafNodes.end()) {
+    leafNodes.erase(it);
+    return true;
+  } else {
+    return false;
+  }
+
+}
+
 
 void Tree::Insert(Node* node){
   if (root == NULL) {
     root = node;
   } else {
-    WeakLearnerNode * weakNode = static_cast<WeakLearnerNode*>(node);
-    int nodeId = weakNode->GetNodeId();
+    int nodeId = node->GetNodeId();
     std::vector<int> parentsList = GetParentsList(nodeId);
     Node* currentNode = GetRoot();
     for (auto parentId: parentsList) {
@@ -115,7 +133,6 @@ Node* Tree::GetRoot() {
 std::vector<int> Tree::GetParentsList(int nodeId) {
   std::vector<int> parentsList;
   while ((nodeId >>= 1) > 0) {
-    std::cout << "inserting parent.. " << nodeId << std::endl;
     parentsList.push_back(nodeId);
   }
   parentsList.pop_back(); /* removes root node from list */
