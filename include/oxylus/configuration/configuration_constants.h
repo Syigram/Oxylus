@@ -33,8 +33,7 @@ namespace rdf  {
     const int YELLOW = 6;
     const int WHITE = 7;
 
-
-
+    const int HIGH_VALUE = 2147483647;
 
     }
 
