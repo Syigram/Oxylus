@@ -51,20 +51,10 @@ namespace rdf{
         int featuresSize;
         int thresholdsSize;
         void GatherMemoryInformationMessage();
-        int NodeHasMinimunPoints(std::vector<int> pointsCount);
         void ScatterImagesBatchMessage(ImageBatchMessage imageBatchMessage);
         void MasterPrint(std::string message);
-        Matrix<Cell> ReduceHistograms(std::vector<NodeVectors> &gatheredNodeVectors);
-        void UpdateHistogramsCount(Matrix<Cell>& nodeHistograms);
         NodeVectors BroadcastNodeVectors(int nodeId);
-        double ClassificationObjectiveFunction(std::vector<int> histogram, double magnitude);
-        double GetArgMinValue(Cell& cell);
-        std::pair<int, int> FindLowestArgMin(Matrix<Cell>& nodeHistograms);
-
-        bool CheckValidNodeVectors(std::vector<NodeVectors> &gatheredNodeVectors);
-        /* void LookForLeafNodes(); */
-        /* void CountHistograms(Matrix<Cell>& nodeHistograms, int bestFeatureIndex, */
-        /*     int bestThresholdIndex); */
+        void CheckValidNodeVectors(std::vector<NodeVectors> &gatheredNodeVectors);
     };
   }
 }

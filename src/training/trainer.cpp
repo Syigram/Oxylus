@@ -6,13 +6,17 @@ using namespace rdf::bpc;
 
 
 Trainer::Trainer(){
+
 }
 
 Trainer::Trainer(ConfigurationObject* configurationObject){
   this->configurationObject = configurationObject;
-  this->highestDepthValue = 10000000;
+  this->highestDepthValue = rdf::bpc::constants::HIGH_VALUE;
+  this->highIntValue = rdf::bpc::constants::HIGH_VALUE;
   this->maxCols = configurationObject->GetImagesCols();
   this->maxRows = configurationObject->GetImagesRows();
+  this->featuresSize = configurationObject->GetFeaturesSize();
+  this->thresholdsSize = configurationObject->GetThresholdsSize();
 }
 
 void Trainer::TrainNode(std::shared_ptr<ImagesVector> imagesVec, NodeVectors& nodeVectors, int treeId){
@@ -61,7 +65,7 @@ int Trainer::CalculateFeatureResponse(cv::Mat_<ushort>& depthImage, cv::Point po
   int depthValue2 = CalculateDepthValue(depthImage, point2);
   std::uniform_int_distribution<int> index_dist(0, 1);
   /* int randomProbability = index_dist(Trainer::mt_); */
-  /* int highValue = configObject->GetHighestDepthValue();; */
+  /* int highValue = configurationObject->GetHighestDepthValue();; */
   /* std::cout << "depthResponse" << depthValue1 - depthValue2 << std::endl; */
   return depthValue1 - depthValue2;
 }
@@ -177,76 +181,119 @@ std::mt19937 Trainer::InitRandomSeed() {
 std::mt19937 Trainer::mt_ = Trainer::InitRandomSeed();
 
 
-/* rdf::Matrix<Cell> Trainer::ReduceHistograms(std::vector<NodeVectors> &gatheredNodeVectors) { */
-/*   Cell myCell; */
-/*   Matrix<Cell> histogramsAccumulated(featuresSize, thresholdsSize, myCell); */
-/*   for (auto& nodeVector: gatheredNodeVectors) { */
-/*     for (int i = 0; i < featuresSize; i++) { */
-/*       for (int j = 0; j < thresholdsSize; j++) { */
-/*         histogramsAccumulated[i][j].Reduce(nodeVector.nodeHistograms[i][j]); */
-/*       } */
-/*     } */
-/*   } */
-/*   return histogramsAccumulated; */
-/* } */
+rdf::Matrix<Cell> Trainer::ReduceHistograms(std::vector<NodeVectors> &gatheredNodeVectors) {
+  Cell myCell;
+  Matrix<Cell> histogramsAccumulated(featuresSize, thresholdsSize, myCell);
+  for (auto& nodeVector: gatheredNodeVectors) {
+    for (int i = 0; i < featuresSize; i++) {
+      for (int j = 0; j < thresholdsSize; j++) {
+        histogramsAccumulated[i][j].Reduce(nodeVector.nodeHistograms[i][j]);
+      }
+    }
+  }
+  return histogramsAccumulated;
+}
 
 
-/* void Trainer::UpdateHistogramsCount(Matrix<Cell>& nodeHistograms) { */
-/*   for (int i = 0; i < featuresSize; i++) { */
-/*     for (int j = 0; j < thresholdsSize; j++) { */
-/*       nodeHistograms[i][j].SetHistogramsTotalCount(); */
-/*     } */
-/*   } */
-/* } */
+void Trainer::UpdateHistogramsCount(Matrix<Cell>& nodeHistograms) {
+  for (int i = 0; i < featuresSize; i++) {
+    for (int j = 0; j < thresholdsSize; j++) {
+      nodeHistograms[i][j].SetHistogramsTotalCount();
+    }
+  }
+}
 
 
-/* double Trainer::GetArgMinValue(Cell& cell) { */
-/*   double S_L_Magnitude = (double) cell.leftHistogramTotal; */
-/*   double S_R_Magnitude = (double) cell.rightHistogramTotal; */
-/*   double S_Magnitude = (double) cell.totalCount; */
-/*   double I_L = ClassificationObjectiveFunction(cell.leftHistogram, S_L_Magnitude); */
-/*   double I_R = ClassificationObjectiveFunction(cell.rightHistogram, S_R_Magnitude); */
-/*   double SL_BY_IL = (S_L_Magnitude / S_Magnitude) * I_L; */
-/*   double SR_BY_IR = (S_R_Magnitude / S_Magnitude) * I_R; */
-/*   return SL_BY_IL + SR_BY_IR; */
-/*   /1* std::cout << "argMin value: " << cell.argMinValue << std::endl; *1/ */
-/* } */
+double Trainer::GetArgMinValue(Cell& cell) {
+  double S_L_Magnitude = (double) cell.leftHistogramTotal;
+  double S_R_Magnitude = (double) cell.rightHistogramTotal;
+  double S_Magnitude = (double) cell.totalCount;
+  std::cout << "s_l=" << S_L_Magnitude << "\ts_r=" << S_R_Magnitude << "\ts_m=" << S_Magnitude << std::endl;
+  double I_L = ClassificationObjectiveFunction(cell.leftHistogram, S_L_Magnitude);
+  double I_R = ClassificationObjectiveFunction(cell.rightHistogram, S_R_Magnitude);
+  double SL_BY_IL = ArgMinFunction(I_L, S_L_Magnitude, S_Magnitude);
+  double SR_BY_IR = ArgMinFunction(I_R, S_R_Magnitude, S_Magnitude);
+  std::cout << "IL=" << I_L << "\tIR="<< I_R << std::endl;
+  return SL_BY_IL + SR_BY_IR;
+  /* std::cout << "argMin value: " << cell.argMinValue << std::endl; */
+}
 
-/* double Trainer::ClassificationObjectiveFunction( */
-/*     std::vector<int> histogram, */
-/*     double S_D_Magnitude) { */
-/*   double result = 0; */
-/*   int totalBodyParts = constants::BODY_PARTS; */
-/*   for (int i = 0; i < totalBodyParts; ++i) { */
-/*     double P_C_S = (double) histogram[i] / (double) S_D_Magnitude; */
-/*     double log_P_C_S = log(P_C_S); */
-/*     result += (P_C_S * log_P_C_S); */
-/*   } */
-/*   return result * -1; */
-/* } */
+double Trainer::ArgMinFunction(
+    double classification_objective,
+    double side_magnitude,
+    double total_magnitude) {
+  if (classification_objective == this->highIntValue) {
+    return highIntValue;
+  } else if (classification_objective >= 0.0) {
+    return (side_magnitude / total_magnitude) * classification_objective;
+  } else {
+    std::cerr << "Error: Classification objective result has a negative value" 
+              << classification_objective << std::endl;
+    return 0.0;
+  }
+}
+
+double Trainer::ClassificationObjectiveFunction(std::vector<int> histogram,
+                                                double histogram_magnitude) {
+  double result = 0.0;
+  int totalBodyParts = constants::BODY_PARTS;
+  for (int i = 0; i < totalBodyParts; i++) {
+    double P_C_S = (double) histogram[i] / (double) histogram_magnitude;
+    if (std::isnan(P_C_S)){
+      return this->highIntValue;
+    } else if (P_C_S > 0.0) {
+      double log_P_C_S = log(P_C_S);
+      result += (P_C_S * log_P_C_S);
+    } else {
+      result += 0;
+    }
+  }
+  return GetPositiveResult(result);
+}
   
+double Trainer::GetPositiveResult(double result) {
+  if (result == 0.0) {
+    return 0.0;
+  } else {
+    return result * -1;
+  }
+}
 
-/* std::pair<int, int> Trainer::CalculateArgMinValues(Matrix<Cell>& nodeHistograms) { */
-/*   double lowestArgMin = 10000000; */
-/*   int featuresIndex = 0; */
-/*   int thresholdIndex = 0; */
-/*   for (int i = 0; i < featuresSize; i++) { */
-/*     for (int j = 0; j < thresholdsSize; j++) { */
-/*       Cell& currentCell = nodeHistograms[i][j]; */
-/*       currentCell.argMinValue = GetArgMinValue(currentCell); */
-/*       if (currentCell.argMinValue < lowestArgMin) { */
-/*         lowestArgMin = currentCell.argMinValue; */
-/*         featuresIndex = i; */
-/*         thresholdIndex = j; */
-/*       } */
-/*     } */
-/*   } */
-/*   std::cout << "lowestArgMin: " << lowestArgMin << std::endl; */
-/*   std::cout << "featIndex: " << featuresIndex << "\tthreshIndex: "<< thresholdIndex << std::endl; */
-/*   std::cout << "left count: " << nodeHistograms[featuresIndex][thresholdIndex].leftHistogramTotal; */
-/*   std::cout << "right count: " << nodeHistograms[featuresIndex][thresholdIndex].rightHistogramTotal; */
-/*   return std::make_pair(featuresIndex, thresholdIndex); */
-/* } */
+std::pair<int, int> Trainer::FindLowestArgMin(Matrix<Cell>& nodeHistograms) {
+  double lowestArgMin = this->highIntValue;
+  int featuresIndex = 0;
+  int thresholdIndex = 0;
+  for (int i = 0; i < featuresSize; i++) {
+    for (int j = 0; j < thresholdsSize; j++) {
+      Cell& currentCell = nodeHistograms[i][j];
+      double argMinVal = GetArgMinValue(currentCell);
+      if (argMinVal < lowestArgMin) {
+        lowestArgMin = argMinVal;
+        currentCell.argMinValue = argMinVal;
+        featuresIndex = i;
+        thresholdIndex = j;
+      } else {
+      }
+    }
+  }
+  /* std::cout << "lowestArgMin: " << lowestArgMin << std::endl; */
+  /* std::cout << "featIndex: " << featuresIndex << "\tthreshIndex: "<< thresholdIndex << std::endl; */
+  /* std::cout << "left count: " << nodeHistograms[featuresIndex][thresholdIndex].leftHistogramTotal; */
+  /* std::cout << "right count: " << nodeHistograms[featuresIndex][thresholdIndex].rightHistogramTotal; */
+  return std::make_pair(featuresIndex, thresholdIndex);
+}
+
+
+int Trainer::NodeHasMinimunPoints(std::vector<int> pointsCount) {
+  int minPointsPerNode = this->configurationObject->GetStopCondition();
+  for (auto count: pointsCount) {
+    if (count < minPointsPerNode) {
+      return 0;
+    }
+  }
+  return 1;
+}
+
 
 LeafNode* Trainer::CreateLeafNodeFromParent(int nodeId, std::vector<int> histograms) {
   LeafNode* node = new LeafNode(nodeId, histograms);
@@ -258,7 +305,6 @@ void Trainer::CheckForLeafNodes(
     Cell& bestCell,
     Tree& tree, 
     std::vector<int> leafNodesList) {
-
   int leftCount = bestCell.leftHistogramTotal;
   int rightCount = bestCell.rightHistogramTotal;
   if (!HasMinimunPoints(leftCount)) {
