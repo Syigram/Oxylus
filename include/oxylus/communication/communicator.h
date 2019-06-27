@@ -35,8 +35,7 @@ namespace rdf{
         void ExecutePointsSelection();
         void StartDistributedTraining();
         int GetRank();
-        virtual ~Communicator(){
-        }
+        virtual ~Communicator(){}
 
       private:
         ConfigurationObject* configObject;

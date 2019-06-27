@@ -1,6 +1,11 @@
 #include <iostream>
+#include <fstream>
 #include <cmath>
 #include <cstdlib>
+
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/serialization/export.hpp>
 
 #include <boost/serialization/set.hpp>
 #include <oxylus/communication/communicator.h>
@@ -49,7 +54,7 @@ void Communicator::GatherMemoryInformationMessage(){
   memoryMessage.CreateMemoryMessage();
   memoryMessage.Print();
   mpi::gather(world, memoryMessage, this->memoryMessageVec, MPI_MASTER);
-  this->MasterPrint("gathering memory messages..");
+  /* this->MasterPrint("gathering memory messages.."); */
 }
 
 void Communicator::AssignTreeBitsToImages(std::shared_ptr<ImagesVector> imagesVec) {
@@ -97,7 +102,6 @@ void Communicator::BeginTraining(){
        * skip training
        * insert its children to the leaf nodes list */
       if (isLeafNode) {
-        std::cout << "Slave #" << rank << "inserted leaf node: " << currentNode << std::endl;
         tree.InsertChildrenToLeafNodesList(currentNode, leafNodesList);
         LeafNode* leafNode = trainer.CreateLeafNode(currentNode, imagesStructureVector);
         tree.Insert(leafNode);
@@ -114,14 +118,12 @@ void Communicator::BeginTraining(){
        * the indexes of the best feature and threshold back to the slave nodes
        * so that they can do the processing of images using these best features found */
       if (rank == MPI_MASTER) {
-        CheckValidNodeVectors(gatheredNodeVectors);
+        /* CheckValidNodeVectors(gatheredNodeVectors); */
         Matrix<Cell> reducedHistograms = trainer.ReduceHistograms(gatheredNodeVectors);
         trainer.UpdateHistogramsCount(reducedHistograms);
         std::pair<int, int> bestFeatureAndThreshold = trainer.FindLowestArgMin(reducedHistograms);
         bestFeatureIndex = std::get<0>(bestFeatureAndThreshold);
         bestThresholdIndex = std::get<1>(bestFeatureAndThreshold);
-        std::cout << "best feat from master"  << bestFeatureIndex<< std::endl;
-        std::cout << "best thresh from master"  << bestThresholdIndex << std::endl;
         /* Cell& bestCell = reducedHistograms[bestFeatureIndex][bestThresholdIndex]; */
         /* WeakLearnerNode* weakNode = trainer.CreateTrainedNode(currentNode, */
         /*                 bestFeatureIndex, bestThresholdIndex, nodeVectors); */
@@ -140,6 +142,18 @@ void Communicator::BeginTraining(){
     }
     ImageOperations::ResetPoints(imagesStructureVector);
 
+    /* std::string filename = "tree_dat_" + tree.GetName(); */
+    /* std::ofstream ofs(filename); */
+    /* { */
+    /*     boost::archive::text_oarchive oa(ofs); */
+    /*     // write class instance to archive */
+    /*     /1* oa.register_type<WeakLearnerNode>(); *1/ */
+    /*     /1* oa.register_type<WeakLearnerNode>(); *1/ */
+    /*     /1* oa.register_type<LeafNode>(); *1/ */
+    /*     oa << tree; */
+    /*       // archive and stream closed when destructors are called */
+    /* } */
+    tree.Serialize();
   }
 }
 

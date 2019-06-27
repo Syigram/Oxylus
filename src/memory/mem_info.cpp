@@ -80,11 +80,11 @@ int MemInfo::CalcBatchSize(){
   double memoryUsable = (double) (memoryAvailable * memoryPercent);
   int estimatedBatchSize = (int) (memoryUsable / imageStructureBytes);
   this->batchSize = estimatedBatchSize;
-  cout << "memoryUsage: " << memoryUsage << endl;
-  cout << "memoryAvailable: " << memoryAvailable << endl;
-  cout << "imageStructureBytes: " << imageStructureBytes << endl;
-  cout << "memoryPercent: " << memoryPercent << endl;
-  cout << "memoryUsable: " << memoryUsable << endl;
-  cout << "estimatedBatchSize: " << estimatedBatchSize << endl;
+  /* cout << "memoryUsage: " << memoryUsage << endl; */
+  /* cout << "memoryAvailable: " << memoryAvailable << endl; */
+  /* cout << "imageStructureBytes: " << imageStructureBytes << endl; */
+  /* cout << "memoryPercent: " << memoryPercent << endl; */
+  /* cout << "memoryUsable: " << memoryUsable << endl; */
+  /* cout << "estimatedBatchSize: " << estimatedBatchSize << endl; */
   return this->batchSize;
 }

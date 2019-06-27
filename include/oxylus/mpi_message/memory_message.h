@@ -79,13 +79,11 @@ namespace rdf{
       }
 
       void Print(){
-        std::cout << "====Printing memory message ======" << '\n';
         std::cout << "IdProcess: " << idProcess << '\t';
         std::cout << "MemTotal: " << memTotal << '\t';
         std::cout << "MemAvailable: " << memAvailable << '\t';
         std::cout << "MemFree: " << memFree << '\t';
         std::cout << "BatchSize: " << batchSize << '\n';
-        std::cout << "-----Printing memory message------" << '\n';
       }
 
       MemoryMessage (){

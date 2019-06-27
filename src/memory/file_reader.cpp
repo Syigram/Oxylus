@@ -6,11 +6,6 @@
 using namespace rdf::bpc;
 
 FileReader::FileReader(){
-   this->baseFolder = "/home/agonzalez/tfg/oxylus_images/";
-   this->labelFolder = "label/";
-   this->depthFolder = "depth/";
-   this->fileExtension = ".png";
-   this->fileBasePath = "Data_";
 }
 
 FileReader::FileReader(ConfigurationObject* configObject){
@@ -53,8 +48,8 @@ std::shared_ptr<ImagesVector> FileReader::ReadImages(int start, int end){
     std::string fileName = Helper::ImageFileNameHandler(this->fileBasePath, start);
     std::string labelFilename = baseFolder + labelFolder + fileName + fileExtension;
     std::string depthFilename = baseFolder + depthFolder + fileName + fileExtension;
-    std::cout << labelFilename << std::endl;
-    std::cout << depthFilename << std::endl;
+    /* std::cout << labelFilename << std::endl; */
+    /* std::cout << depthFilename << std::endl; */
     cv::Mat_<ushort> depthMat = this->ReadDepthImage(depthFilename);
     cv::Mat_<uchar> labelMat = this->ReadLabelImage(labelFilename, rows, cols, palette);
     int imageId = start;

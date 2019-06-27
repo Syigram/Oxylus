@@ -112,8 +112,6 @@ WeakLearnerNode* Trainer::CreateTrainedNode(
     NodeVectors& nodeVectors) {
   Features bestFeatures = nodeVectors.featuresVec->at(bestFeatureIndex);
   int bestThreshold = nodeVectors.thresholdsVec->at(bestThresholdIndex);
-  std::cout << "best thresdhold: " << bestThresholdIndex << std::endl;
-  std::cout << "best feature: " << bestFeatureIndex << std::endl;
   WeakLearnerNode* node  = new WeakLearnerNode(nodeId, bestFeatures, bestThreshold);
   return node;
 
@@ -208,12 +206,12 @@ double Trainer::GetArgMinValue(Cell& cell) {
   double S_L_Magnitude = (double) cell.leftHistogramTotal;
   double S_R_Magnitude = (double) cell.rightHistogramTotal;
   double S_Magnitude = (double) cell.totalCount;
-  std::cout << "s_l=" << S_L_Magnitude << "\ts_r=" << S_R_Magnitude << "\ts_m=" << S_Magnitude << std::endl;
+  /* std::cout << "s_l=" << S_L_Magnitude << "\ts_r=" << S_R_Magnitude << "\ts_m=" << S_Magnitude << std::endl; */
   double I_L = ClassificationObjectiveFunction(cell.leftHistogram, S_L_Magnitude);
   double I_R = ClassificationObjectiveFunction(cell.rightHistogram, S_R_Magnitude);
   double SL_BY_IL = ArgMinFunction(I_L, S_L_Magnitude, S_Magnitude);
   double SR_BY_IR = ArgMinFunction(I_R, S_R_Magnitude, S_Magnitude);
-  std::cout << "IL=" << I_L << "\tIR="<< I_R << std::endl;
+  /* std::cout << "IL=" << I_L << "\tIR="<< I_R << std::endl; */
   return SL_BY_IL + SR_BY_IR;
   /* std::cout << "argMin value: " << cell.argMinValue << std::endl; */
 }
