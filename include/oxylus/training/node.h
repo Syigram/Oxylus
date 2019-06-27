@@ -1,6 +1,8 @@
 #ifndef NODE_H
 #define NODE_H
 
+#include <iostream>
+
 #include <oxylus/configuration/Serialization.h>
 
 
@@ -18,6 +20,7 @@ namespace rdf {
       virtual void SetLeftNode(Node*) = 0;
       virtual void SetRightNode(Node*) = 0;
       virtual int GetNodeId() = 0;
+      virtual void Print() = 0;
       Node* rightNode;
       Node* leftNode;
 

@@ -30,6 +30,7 @@
 #include <oxylus/training/features.h>
 #include <oxylus/training/matrix.h>
 #include <oxylus/training/weak_learner_node.h>
+#include <oxylus/training/leaf_node.h>
 #include <oxylus/training/tree.h>
 
 
@@ -44,7 +45,8 @@ namespace expr = boost::log::expressions;
 using namespace std;
 using namespace rdf::bpc;
 
-BOOST_CLASS_EXPORT(WeakLearnerNode)
+/* BOOST_CLASS_EXPORT(WeakLearnerNode) */
+/* BOOST_CLASS_EXPORT(LeafNode) */
 
 
 void init()
@@ -105,6 +107,18 @@ int main(int argc, char const *argv[]) {
   /* WeakLearnerNode* node13 = new WeakLearnerNode(13); */
   /* WeakLearnerNode* node14 = new WeakLearnerNode(14); */
 
+  /* LeafNode* node15 = new LeafNode(15); */
+  /* LeafNode* node16 = new LeafNode(16); */
+  /* LeafNode* node17 = new LeafNode(17); */
+  /* LeafNode* node18 = new LeafNode(18); */
+  /* LeafNode* node19 = new LeafNode(19); */
+  /* LeafNode* node20 = new LeafNode(20); */
+  /* LeafNode* node21 = new LeafNode(21); */
+  /* LeafNode* node22 = new LeafNode(22); */
+  /* LeafNode* node23 = new LeafNode(23); */
+  /* LeafNode* node24 = new LeafNode(24); */
+  /* LeafNode* node25 = new LeafNode(25); */
+
   /* Tree tree; */
   /* tree.Insert(node1); */
   /* tree.Insert(node2); */
@@ -120,36 +134,65 @@ int main(int argc, char const *argv[]) {
   /* tree.Insert(node12); */
   /* tree.Insert(node13); */
   /* tree.Insert(node14); */
+  /* tree.Insert(node15); */
+  /* tree.Insert(node16); */
+  /* tree.Insert(node17); */
+  /* tree.Insert(node18); */
+  /* tree.Insert(node19); */
+  /* tree.Insert(node20); */
+  /* tree.Insert(node21); */
+  /* tree.Insert(node22); */
+  /* tree.Insert(node23); */
+  /* tree.Insert(node24); */
+  /* tree.Insert(node25); */
   /* tree.PrintTree(tree.GetRoot()); */
 
+    /* std::ofstream ofs("treefile"); */
 
-  /*   std::ofstream ofs("treefile"); */
+    /* // create class instance */
 
-  /*   // create class instance */
+    /* // save data to archive */
+    /* { */
+    /*     boost::archive::text_oarchive oa(ofs); */
+    /*     // write class instance to archive */
+    /*     /1* oa.register_type<WeakLearnerNode>(); *1/ */
+    /*     oa << tree; */
+    /* 	// archive and stream closed when destructors are called */
+    /* } */
 
-  /*   // save data to archive */
-  /*   { */
-  /*       boost::archive::text_oarchive oa(ofs); */
-  /*       // write class instance to archive */
-  /*       /1* oa.register_type<WeakLearnerNode>(); *1/ */
-  /*       oa << tree; */
-  /*   	// archive and stream closed when destructors are called */
-  /*   } */
+    /* // ... some time later restore the class instance to its orginal state */
 
-  /*   // ... some time later restore the class instance to its orginal state */
-  /*   Tree newTree; */
-  /*   { */
-  /*       // create and open an archive for input */
-  /*       std::ifstream ifs("treefile"); */
-  /*       boost::archive::text_iarchive ia(ifs); */
-  /*      /1* ia.register_type<WeakLearnerNode>(); *1/ */
-  /*       // read class state from archive */
-  /*       ia >> newTree; */
-  /*       // archive and stream closed when destructors are called */
-  /*   } */
 
-  /*   std::cout << "Printing new tree" << std::endl; */
-  /*   newTree.PrintTree(newTree.GetRoot()); */
+    /* Tree tree0; */
+    /* Tree tree1; */
+    /* Tree tree2; */
+
+    /* tree0.Deserialize("tree_0.dat"); */
+    /* tree1.Deserialize("tree_1.dat"); */
+    /* tree2.Deserialize("tree_2.dat"); */
+
+    /* std::cout << "Printing tree 0" << std::endl; */
+    /* tree0.PrintTree(tree0.GetRoot()); */
+    /* std::cout << "Printing tree 1" << std::endl; */
+    /* tree1.PrintTree(tree1.GetRoot()); */
+    /* std::cout << "Printing tree 2" << std::endl; */
+    /* tree2.PrintTree(tree2.GetRoot()); */
+
+
+
+
+    /* { */
+    /*     // create and open an archive for input */
+    /*     std::ifstream ifs("treefile"); */
+    /*     boost::archive::text_iarchive ia(ifs); */
+    /*    /1* ia.register_type<WeakLearnerNode>(); *1/ */
+    /*     // read class state from archive */
+    /*     ia >> newTree; */
+    /*     // archive and stream closed when destructors are called */
+    /* } */
+
+    /* std::cout << "Printing new tree" << std::endl; */
+    /* newTree.PrintTree(newTree.GetRoot()); */
 
 
   return 0;

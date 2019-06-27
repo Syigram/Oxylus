@@ -31,6 +31,8 @@ namespace rdf {
         
         int GetNodeId();
 
+        void Print();
+
         std::vector<int> histogram;
         int nodeId;
 

@@ -12,11 +12,16 @@ namespace rdf {
       WeakLearnerNode();
       WeakLearnerNode(int id);
       WeakLearnerNode(int nodeId, Features features, int threshold) :
-        threshold(threshold), features(features), nodeId(nodeId) {};
+        threshold(threshold), features(features), nodeId(nodeId) {
+          this->rightNode = nullptr;
+          this->leftNode  = nullptr;
+        };
       WeakLearnerNode(const WeakLearnerNode& other) {
         this->features = other.features;
         this->threshold = other.threshold;
         this->nodeId = other.nodeId;
+        this->rightNode = nullptr;
+        this->leftNode = nullptr;
       }
       WeakLearnerNode& operator=(const WeakLearnerNode& other) {
         this->features = other.features;
@@ -46,6 +51,7 @@ namespace rdf {
       int threshold;
       int nodeId;
       int GetNodeId();
+      void Print();
 
       virtual ~WeakLearnerNode(){};
     private:

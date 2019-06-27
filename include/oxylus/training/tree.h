@@ -1,11 +1,13 @@
 #ifndef TREE_H
 #define TREE_H
 
+#include <iostream>
 #include <string>
 #include <vector>
 
-#include <oxylus/training/node.h>
 #include <oxylus/training/weak_learner_node.h>
+#include <oxylus/training/leaf_node.h>
+
 
 namespace rdf {
   namespace bpc {
@@ -32,6 +34,9 @@ namespace rdf {
         bool NodeExistsInLeafNodesList(int nodeId, std::vector<int>& leafNodes);
         void SetRoot(Node* node);
         Node* GetRoot();
+        void Serialize();
+        Tree Deserialize(std::string filename);
+        std::string GetName() { return name; }
         virtual ~Tree(){};
       private:
         std::vector<int> GetParentsList(int id);

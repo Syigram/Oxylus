@@ -4,7 +4,9 @@
 
 
 #include <oxylus/training/tree.h>
-
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/serialization/export.hpp>
 
 using namespace rdf::bpc;
 
@@ -20,6 +22,7 @@ Tree::Tree(std::string name){
 Tree::Tree(int id){
   root = NULL;
   this->id = id;
+  this->name = std::to_string(id);
 }
 
 std::vector<int> Tree::InsertChildrenToLeafNodesList(int nodeId, std::vector<int>& leafNodes) {
@@ -83,6 +86,7 @@ bool Tree::IsLeftChild(int prevNodeId, int nextNodeId) {
   return !IsRightChild(prevNodeId, nextNodeId);
 }
 
+
 bool Tree::IsRightChild(int prevNodeId, int nextNodeId) {
   if (nextNodeId == (prevNodeId * 2) + 1) {
     return true;
@@ -109,7 +113,7 @@ void Tree::SaveTree(Node* node) {
 
 
 void Tree::PrintNode(Node* node) {
-  std::cout << "nodeId: " << node->GetNodeId() << std::endl;
+  node->Print();
 }
 
 
@@ -122,9 +126,37 @@ void Tree::PrintTree(Node* node) {
   
 }
 
+
+void Tree::Serialize() {
+  std::string filename = "tree" + this->name + ".dat";
+  std::ofstream ofs(filename);
+  std::cout << "Serializing tree to file: " << filename << std::endl;
+  {
+      boost::archive::text_oarchive oa(ofs);
+      oa.register_type<WeakLearnerNode>();
+      oa.register_type<LeafNode>();
+      oa << *this;
+  }
+}
+
+
+Tree Tree::Deserialize(std::string filename) {
+  std::cout << "Deserializing tree from file: " << filename << std::endl;
+  {
+      std::ifstream ifs(filename);
+      boost::archive::text_iarchive ia(ifs);
+      ia.register_type<WeakLearnerNode>();
+      ia.register_type<LeafNode>();
+      ia >> *this;
+  }
+  return *this;
+}
+
+
 void Tree::SetRoot(Node* node) {
   this->root = node;
 }
+
 
 Node* Tree::GetRoot() {
   return this->root;
