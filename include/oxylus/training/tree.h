@@ -25,6 +25,7 @@ namespace rdf {
         void SaveTree(Node* root);
         void PrintNode(Node* node);
         void PrintTree(Node* root);
+        void EraseTree();
         int GetParentId(int nodeId);
         int GetNodeLevel(int nodeId);
         Node* GetNextNode(Node* prevNode, int nextNodeId);
@@ -42,6 +43,8 @@ namespace rdf {
         std::vector<int> GetParentsList(int id);
         int id;
         std::string name;
+
+        void EraseTree(Node* root);
         friend class boost::serialization::access;
         template <typename Archive>
         void serialize(Archive &ar, const unsigned int version) {

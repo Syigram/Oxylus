@@ -25,6 +25,18 @@ Tree::Tree(int id){
   this->name = std::to_string(id);
 }
 
+void Tree::EraseTree() {
+  EraseTree(root);
+}
+
+void Tree::EraseTree(Node* node) {
+  if (node != nullptr) {
+    EraseTree(node->GetLeft());
+    EraseTree(node->GetRight());
+    delete node;
+  }
+}
+
 std::vector<int> Tree::InsertChildrenToLeafNodesList(int nodeId, std::vector<int>& leafNodes) {
   int leftNodeId = nodeId * 2;
   int rightNodeId = (nodeId * 2) + 1;
