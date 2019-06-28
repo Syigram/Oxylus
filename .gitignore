@@ -31,7 +31,7 @@ bin/oxylus
 
 # constants
 
-**/configuration_constants.h
+**/configuration/configuration_constants.h
 
 
 #debug
