@@ -29,11 +29,6 @@
 # bin
 bin/oxylus
 
-# constants
-
-**/configuration/configuration_constants.h
-configuration_constants.h
-
 
 #debug
 debug/*
