@@ -42,8 +42,9 @@ int ImageStructure::GetSizeOf(ConfigurationObject* configObject) {
   int integerDataMembersBytes = sizeof(int) * 5;
   int treesIdsBytes = totalTrees * sizeof(int);
   int depthImageSize = this->depthImage.total() * this->depthImage.elemSize();
+  int pointerPointsVec = sizeof(this->pointsVector);
   return (pointPositionBytes + pointsStructuresBytes + treesIdsBytes +
-          integerDataMembersBytes + depthImageSize) / KILOBYTE;
+          + pointerPointsVec + integerDataMembersBytes + depthImageSize) / KILOBYTE;
 }
 
 
