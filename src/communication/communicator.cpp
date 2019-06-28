@@ -74,6 +74,7 @@ void Communicator::BeginTraining(){
   std::vector<NodeVectors> gatheredNodeVectors;
   std::vector<Matrix<Cell>> vecNodeHistograms;
   std::vector<int> leafNodesList;
+  std::vector<int> unusedNodesList;
   std::vector<int> pointsCount;
   for (int treeId = 0; treeId < numOfTrees; treeId++) {
     Tree tree(treeId);
@@ -81,32 +82,32 @@ void Communicator::BeginTraining(){
       currentNode = j;
 
       /* check if current node is already in list of leaf nodes */
-      if (tree.NodeExistsInLeafNodesList(currentNode, leafNodesList)) {
-        leafNodesList = tree.InsertChildrenToLeafNodesList(currentNode, leafNodesList);
+      if (tree.NodeExistsInLeafNodesList(currentNode, unusedNodesList)) {
+        unusedNodesList = tree.InsertChildrenToLeafNodesList(currentNode, unusedNodesList);
         continue;
       }
 
-      /* if not, count the number of points for the given node */
-      int pointsPerNode = ImageOperations::GetNumberOfPointsForNode(currentNode, imagesStructureVector);
-      mpi::gather(world, pointsPerNode, pointsCount, MPI_MASTER);
-      /* gather all counts of points for a given node and check if they have enough
-       * points needed for training */
-      if (rank == MPI_MASTER) {
-        isLeafNode = !trainer.NodeHasMinimunPoints(pointsCount);
-      }
-      mpi::broadcast(world, isLeafNode, MPI_MASTER);
-      /* std::cout << "Slave #" << rank << "has isLeafNode" << isLeafNode << std::endl; */
+      /* /1* if not, count the number of points for the given node *1/ */
+      /* int pointsPerNode = ImageOperations::GetNumberOfPointsForNode(currentNode, imagesStructureVector); */
+      /* mpi::gather(world, pointsPerNode, pointsCount, MPI_MASTER); */
+      /* /1* gather all counts of points for a given node and check if they have enough */
+      /*  * points needed for training *1/ */
+      /* if (rank == MPI_MASTER) { */
+      /*   isLeafNode = !trainer.NodeHasMinimunPoints(pointsCount); */
+      /* } */
+      /* mpi::broadcast(world, isLeafNode, MPI_MASTER); */
+      /* /1* std::cout << "Slave #" << rank << "has isLeafNode" << isLeafNode << std::endl; *1/ */
 
-      /* if master determined the node is a leaf node
-       * create leaf node and insert it to tree
-       * skip training
-       * insert its children to the leaf nodes list */
-      if (isLeafNode) {
-        tree.InsertChildrenToLeafNodesList(currentNode, leafNodesList);
-        LeafNode* leafNode = trainer.CreateLeafNode(currentNode, imagesStructureVector);
-        tree.Insert(leafNode);
-        continue;
-      }
+      /* /1* if master determined the node is a leaf node */
+      /*  * create leaf node and insert it to tree */
+      /*  * skip training */
+      /*  * insert its children to the leaf nodes list *1/ */
+      /* if (isLeafNode) { */
+      /*   tree.InsertChildrenToLeafNodesList(currentNode, unusedNodesList); */
+      /*   LeafNode* leafNode = trainer.CreateLeafNode(currentNode, imagesStructureVector); */
+      /*   tree.Insert(leafNode); */
+      /*   continue; */
+      /* } */
 
 
       NodeVectors nodeVectors = this->BroadcastNodeVectors(currentNode);
@@ -124,36 +125,28 @@ void Communicator::BeginTraining(){
         std::pair<int, int> bestFeatureAndThreshold = trainer.FindLowestArgMin(reducedHistograms);
         bestFeatureIndex = std::get<0>(bestFeatureAndThreshold);
         bestThresholdIndex = std::get<1>(bestFeatureAndThreshold);
-        /* Cell& bestCell = reducedHistograms[bestFeatureIndex][bestThresholdIndex]; */
-        /* WeakLearnerNode* weakNode = trainer.CreateTrainedNode(currentNode, */
-        /*                 bestFeatureIndex, bestThresholdIndex, nodeVectors); */
-        /* tree.Insert(weakNode); */
-        /* trainer.CheckForLeafNodes(currentNode, bestCell, tree, leafNodesList); */
-        /* mpi::broadcast(world, leafNodesList, MPI_MASTER); */
+        Cell& bestCell = reducedHistograms[bestFeatureIndex][bestThresholdIndex];
+        WeakLearnerNode* weakNode = trainer.CreateTrainedNode(currentNode,
+                        bestFeatureIndex, bestThresholdIndex, nodeVectors);
+        tree.Insert(weakNode);
+        trainer.CheckForLeafNodes(currentNode, bestCell, tree, unusedNodesList);
       }
+      mpi::broadcast(world, unusedNodesList, MPI_MASTER);
       mpi::broadcast(world, bestThresholdIndex, MPI_MASTER);
       mpi::broadcast(world, bestFeatureIndex, MPI_MASTER);
       WeakLearnerNode* weakLearnerNode = trainer.CreateTrainedNode(currentNode,
                         bestFeatureIndex, bestThresholdIndex, nodeVectors);
-      tree.Insert(weakLearnerNode);
       trainer.EvaluateImages(imagesStructureVector, weakLearnerNode);
       delete nodeVectors.featuresVec;
       delete nodeVectors.thresholdsVec;
     }
     ImageOperations::ResetPoints(imagesStructureVector);
+    
+    if (rank == MPI_MASTER) {
+      tree.Serialize();
+      tree.EraseTree();
+    }
 
-    /* std::string filename = "tree_dat_" + tree.GetName(); */
-    /* std::ofstream ofs(filename); */
-    /* { */
-    /*     boost::archive::text_oarchive oa(ofs); */
-    /*     // write class instance to archive */
-    /*     /1* oa.register_type<WeakLearnerNode>(); *1/ */
-    /*     /1* oa.register_type<WeakLearnerNode>(); *1/ */
-    /*     /1* oa.register_type<LeafNode>(); *1/ */
-    /*     oa << tree; */
-    /*       // archive and stream closed when destructors are called */
-    /* } */
-    tree.Serialize();
   }
 }
 
