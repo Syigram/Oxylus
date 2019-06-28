@@ -8,7 +8,8 @@ namespace rdf  {
   namespace bpc  {
     namespace defaults {
 
-      const std::string CONFIGFILE_PATH = "/home/manager/Oxylus/build/config.ini";
+      const std::string CONFIGFILE_PATH = "/home/agonzalez/tfg/oxylus_github/build/config.ini";
+      /* const std::string CONFIGFILE_PATH = "/home/manager/Oxylus/build/config.ini"; */
       const int IMAGES_ROWS = 300;
       const int IMAGES_COLS = 200;
       const int IMAGES_NUMBER = 100;
