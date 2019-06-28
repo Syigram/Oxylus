@@ -139,6 +139,7 @@ void Communicator::BeginTraining(){
       trainer.EvaluateImages(imagesStructureVector, weakLearnerNode);
       delete nodeVectors.featuresVec;
       delete nodeVectors.thresholdsVec;
+      delete weakLearnerNode;
     }
     ImageOperations::ResetPoints(imagesStructureVector);
     
@@ -197,8 +198,8 @@ void Communicator::ScatterImagesBatchMessage(ImageBatchMessage newImageBatchMess
   int newBatchLimit = 1;
   int i = 0;
   for(auto &memoryMessage: this->memoryMessageVec){
-    /* int batchSize = memoryMessage.GetBatchSize(); */ /* TODO: use real batch size calc */
-    int batchSize = 1;
+    int batchSize = memoryMessage.GetBatchSize(); /* TODO: use real batch size calc */
+    /* int batchSize = 1;*/
     int start = newBatchLimit;
     int end = newBatchLimit + batchSize;
     newImageBatchMessage.SetBatchSize(batchSize);

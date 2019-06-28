@@ -48,7 +48,7 @@ std::shared_ptr<ImagesVector> FileReader::ReadImages(int start, int end){
     std::string fileName = Helper::ImageFileNameHandler(this->fileBasePath, start);
     std::string labelFilename = baseFolder + labelFolder + fileName + fileExtension;
     std::string depthFilename = baseFolder + depthFolder + fileName + fileExtension;
-    /* std::cout << labelFilename << std::endl; */
+    std::cout << labelFilename << std::endl;
     /* std::cout << depthFilename << std::endl; */
     cv::Mat_<ushort> depthMat = this->ReadDepthImage(depthFilename);
     cv::Mat_<uchar> labelMat = this->ReadLabelImage(labelFilename, rows, cols, palette);
