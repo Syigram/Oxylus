@@ -302,7 +302,7 @@ void Trainer::CheckForLeafNodes(
     int parentNodeId, 
     Cell& bestCell,
     Tree& tree, 
-    std::vector<int> leafNodesList) {
+    std::vector<int>& leafNodesList) {
   int leftCount = bestCell.leftHistogramTotal;
   int rightCount = bestCell.rightHistogramTotal;
   if (!HasMinimunPoints(leftCount)) {

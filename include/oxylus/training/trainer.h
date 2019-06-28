@@ -33,7 +33,7 @@ namespace rdf {
                                            std::vector<int> histograms);
         void EvaluateImages(std::shared_ptr<ImagesVector> imagesVec, WeakLearnerNode* weakNode);
         void CheckForLeafNodes(int parentNodeId, Cell& bestCell, Tree& tree,
-            std::vector<int> leafNodesList);
+            std::vector<int>& leafNodesList);
         Matrix<Cell> ReduceHistograms(std::vector<NodeVectors> &gatheredNodeVectors);
         void UpdateHistogramsCount(Matrix<Cell>& nodeHistograms);
         int NodeHasMinimunPoints(std::vector<int> pointsCount);
