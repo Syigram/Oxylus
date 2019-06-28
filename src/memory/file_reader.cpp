@@ -50,9 +50,14 @@ std::shared_ptr<ImagesVector> FileReader::ReadImages(int start, int end){
     std::string depthFilename = baseFolder + depthFolder + fileName + fileExtension;
     std::cout << labelFilename << std::endl;
     /* std::cout << depthFilename << std::endl; */
+    if (start == 239) {
+      start++;
+      continue;
+    }
     cv::Mat_<ushort> depthMat = this->ReadDepthImage(depthFilename);
     cv::Mat_<uchar> labelMat = this->ReadLabelImage(labelFilename, rows, cols, palette);
     int imageId = start;
+
     ImageStructure imageData(this->configObject, depthMat, imageId);
     imageData.SetPointsVector(ImageOperations::GenerateRandomPoints(imageData, depthMat, labelMat, palette));
     imagesVector->push_back(imageData);
