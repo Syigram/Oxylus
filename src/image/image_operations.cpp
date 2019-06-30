@@ -96,16 +96,24 @@ std::shared_ptr<PointStructureVec> ImageOperations::GenerateRandomPoints(ImageSt
   for (auto& colorPoints: vecColorHistogram){
     int totalColorPoints = colorPoints.second.size();
     index++;
+    /* std::cout << "newLimit" << newLimit << std::endl; */
+    /* std::cout << "TotalColorPoints" << totalColorPoints << std::endl; */
+    /* std::cout << "index" << index << std::endl; */
     while (newCounter <= newLimit){
-      if (tryoutsCounter == (totalColorPoints)){
+      /* std::cout << "newCounter=" << newCounter << "<" << "newLimit=" << newLimit << std::endl; */
+      if (tryoutsCounter >= (totalColorPoints - 1)){
         /* if points inserted are already at max for a color
          * we calculate the remaining points, then we calculate
          * the new limit according to those points and accounting
          * for the colors already used, with the index variable. */
         totalPoints = totalPoints - totalColorPoints;
-        newLimit = totalPoints / (totalColorsInImage - index);
+        if (index != totalColorsInImage) {
+          newLimit = totalPoints / (totalColorsInImage - index);
+        }
         break;
       }
+      /* std::cout << "tryouts: "  << tryoutsCounter << std::endl; */
+      /* std::cout << "totalColorPoints: "  << totalColorPoints << std::endl; */
       std::uniform_int_distribution<int> index_dist(0, totalColorPoints - 1);
       int randomIndex = index_dist(ImageOperations::mt_);
       auto point = colorPoints.second.at(randomIndex);
@@ -115,50 +123,20 @@ std::shared_ptr<PointStructureVec> ImageOperations::GenerateRandomPoints(ImageSt
           tryoutsCounter++;
           vectorOfPoints.push_back(point);
           continue;
+        } else {
+          int labelValue = (int) labelImage.at<uchar>(point);
+          PointStructure pointStructure(point, labelValue, imageId);
+          pointsStructVec->push_back(pointStructure);
+          vectorOfPoints.push_back(point);
+          tryoutsCounter++;
+          newCounter++;
         }
-        int labelValue = (int) labelImage.at<uchar>(point);
-        PointStructure pointStructure(point, labelValue, imageId);
-        pointsStructVec->push_back(pointStructure);
-        vectorOfPoints.push_back(point);
-        tryoutsCounter++;
-        newCounter++;
       }
     }
     tryoutsCounter = 0;
     newCounter = 0;
   }
   return pointsStructVec;
-}
-
-
-std::set<std::pair<int,int>> ImageOperations::RandomPointsSelection(int rows, int cols, int numberOfPoints) {
-  std::pair<std::set<std::pair<int,int>>::iterator,bool> ret;
-  std::uniform_int_distribution<int> rows_dist(0, rows - 1);
-  std::uniform_int_distribution<int> cols_dist(0, cols - 1);
-  int counter = 0;
-  std::set<std::pair<int,int>> setOfPoints;
-  while (counter < numberOfPoints){
-    int randomRow = rows_dist(mt_);
-    int randomCol = cols_dist(mt_);
-    std::pair<int, int> coords = std::make_pair(randomRow, randomCol);
-    ret = setOfPoints.insert(coords);
-    if (ret.second == true) {/* insert is successful */
-      counter++;
-    }
-  }
-  std::cout << "size of set" << setOfPoints.size() << std::endl;
-  /* Helper::PrintIterable(setOfPoints); */
-  for (auto& elem : setOfPoints) {
-    std::cout << elem.first << "\t" << elem.second << std::endl;
-  }
-  return setOfPoints;
-}
-
-
-std::mt19937 ImageOperations::InitRandomSeed() {
-    std::random_device rd;
-    std::mt19937 mt(rd());
-    return mt;
 }
 
 bool ImageOperations::PointExistsInVector(std::vector<cv::Point> pointsVector, cv::Point point){
@@ -230,6 +208,13 @@ int ImageOperations::AssignImagesToTrees(std::shared_ptr<ImagesVector> imagesVec
     }
     imageCount = 0;
   }
+}
+
+
+std::mt19937 ImageOperations::InitRandomSeed() {
+    std::random_device rd;
+    std::mt19937 mt(rd());
+    return mt;
 }
 
 

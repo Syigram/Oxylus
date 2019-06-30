@@ -55,7 +55,6 @@ namespace rdf  {
         static MapPalette InitializePalette();
         static void PrintPalette(MapPalette palette);
         static void SavePaletteTo(std::string filepath, MapPalette& palette);
-        static std::set<std::pair<int,int>> RandomPointsSelection(int rows, int cols, int n);
         static std::shared_ptr<PointStructureVec> GenerateRandomPoints(ImageStructure& imageData,
                                                  cv::Mat_<ushort>& depthImage,
                                                  cv::Mat_<uchar>& labelImage,
