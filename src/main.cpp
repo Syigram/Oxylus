@@ -1,5 +1,12 @@
 #define BOOST_LOG_DYN_LINK 1
 
+#include <cstdlib>
+#include <string>
+#include <iostream>
+#include <vector>
+#include <fstream>
+#include <chrono>
+
 #include <boost/mpi.hpp>
 #include <boost/mpi/datatype.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
@@ -10,11 +17,6 @@
 #include <boost/log/utility/setup/common_attributes.hpp>
 #include <boost/log/support/date_time.hpp>
 #include <boost/serialization/export.hpp>
-#include <cstdlib>
-#include <string>
-#include <iostream>
-#include <vector>
-#include <fstream>
 
 #include <oxylus/configuration/configuration_object.h>
 #include <oxylus/configuration/configuration_constants.h>
@@ -25,8 +27,6 @@
 #include <oxylus/memory/helper.h>
 #include <oxylus/training/cell.h>
 #include <oxylus/communication/communicator.h>
-/* #include <oxylus/training/thresholds_vector.h> */
-/* #include <oxylus/training/features_vector.h> */
 #include <oxylus/training/features.h>
 #include <oxylus/training/matrix.h>
 #include <oxylus/training/weak_learner_node.h>
@@ -88,7 +88,11 @@ int main(int argc, char const *argv[]) {
   rdf::bpc::Communicator comm(config);
   comm.AssignImagesToEachNode();
   comm.LoadImagesToStructures();
+  auto start = chrono::high_resolution_clock::now();
   comm.BeginTraining();
+  auto end = chrono::high_resolution_clock::now();
+  std::chrono::duration<double> elapsed = end - start;
+  std::cout << "Elapsed time: " << elapsed.count() << "s" << std::endl;
   cout << "rank: " << comm.GetRank() << "... ended\n";
   delete config;
 
