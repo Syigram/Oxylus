@@ -57,6 +57,7 @@ void Trainer::TrainNode(std::shared_ptr<ImagesVector> imagesVec, NodeVectors& no
     }
   }
   nodeVectors.nodeHistograms = nodeHistograms;
+  nodeHistograms.clear();
 }
 
 

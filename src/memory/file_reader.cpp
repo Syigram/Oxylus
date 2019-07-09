@@ -44,6 +44,7 @@ std::shared_ptr<ImagesVector> FileReader::ReadImages(int start, int end){
   int batchSize = (start - end) + 1;
   std::shared_ptr<ImagesVector> imagesVector =
                 std::make_shared<ImagesVector>();
+  imagesVector->reserve((end - start) + 1);
   while (start <= end){
     std::string fileName = Helper::ImageFileNameHandler(this->fileBasePath, start);
     std::string labelFilename = baseFolder + labelFolder + fileName + fileExtension;

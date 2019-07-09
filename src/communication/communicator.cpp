@@ -139,7 +139,9 @@ void Communicator::BeginTraining(){
       trainer.EvaluateImages(imagesStructureVector, weakLearnerNode);
       delete nodeVectors.featuresVec;
       delete nodeVectors.thresholdsVec;
+      nodeVectors.nodeHistograms.clear();
       delete weakLearnerNode;
+
     }
     ImageOperations::ResetPoints(imagesStructureVector);
     
