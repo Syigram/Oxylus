@@ -200,8 +200,8 @@ void Communicator::ScatterImagesBatchMessage(ImageBatchMessage newImageBatchMess
   int newBatchLimit = 1;
   int i = 0;
   for(auto &memoryMessage: this->memoryMessageVec){
-    int batchSize = memoryMessage.GetBatchSize(); /* TODO: use real batch size calc */
-    /* int batchSize = 1;*/
+    /* int batchSize = memoryMessage.GetBatchSize(); /1* TODO: use real batch size calc *1/ */
+    int batchSize = 5000;
     int start = newBatchLimit;
     int end = newBatchLimit + batchSize;
     newImageBatchMessage.SetBatchSize(batchSize);
