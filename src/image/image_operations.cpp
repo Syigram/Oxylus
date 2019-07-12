@@ -87,7 +87,6 @@ std::shared_ptr<PointStructureVec> ImageOperations::GenerateRandomPoints(ImageSt
   std::set<cv::Point> setOfPoints;
   std::vector<cv::Point> vectorOfPoints;
   std::shared_ptr<PointStructureVec> pointsStructVec = std::make_shared<PointStructureVec>();
-  pointStructure->reserve(totalPoints);
   VecColorsHistogram vecColorHistogram = ImageOperations::GenerateColorsHistogramForImage(labelImage, rows, cols);
   int totalColorsInImage = vecColorHistogram.size();
   int newLimit = totalPoints / totalColorsInImage;
@@ -118,25 +117,19 @@ std::shared_ptr<PointStructureVec> ImageOperations::GenerateRandomPoints(ImageSt
       std::uniform_int_distribution<int> index_dist(0, totalColorPoints - 1);
       int randomIndex = index_dist(ImageOperations::mt_);
       auto point = colorPoints.second.at(randomIndex);
-      if (!ImageOperations::PointExistsInVector(vectorOfPoints, point)){
-        int depthValue = (int) depthImage.at<ushort>(point);
-        if (depthValue == 0){
-          tryoutsCounter++;
-          vectorOfPoints.push_back(point);
-          continue;
-        } else {
-          int labelValue = (int) labelImage.at<uchar>(point);
-          PointStructure pointStructure(point, labelValue, imageId);
-          pointsStructVec->push_back(pointStructure);
-          vectorOfPoints.push_back(point);
-          tryoutsCounter++;
-          newCounter++;
-        }
+      int depthValue = (int) depthImage.at<ushort>(point);
+      if (depthValue != 0) {
+        int labelValue = (int) labelImage.at<uchar>(point);
+        PointStructure pointStructure(point, labelValue, imageId);
+        pointsStructVec->push_back(pointStructure);
+        newCounter++;
       }
+      tryoutsCounter++;
     }
     tryoutsCounter = 0;
     newCounter = 0;
   }
+
   return pointsStructVec;
 }
 
