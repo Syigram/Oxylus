@@ -87,7 +87,7 @@ std::shared_ptr<PointStructureVec> ImageOperations::GenerateRandomPoints(ImageSt
   std::set<cv::Point> setOfPoints;
   std::vector<cv::Point> vectorOfPoints;
   std::shared_ptr<PointStructureVec> pointsStructVec = std::make_shared<PointStructureVec>();
-  pointStructure->reserve(totalPoints);
+  pointsStructVec->reserve(totalPoints);
   VecColorsHistogram vecColorHistogram = ImageOperations::GenerateColorsHistogramForImage(labelImage, rows, cols);
   int totalColorsInImage = vecColorHistogram.size();
   int newLimit = totalPoints / totalColorsInImage;
