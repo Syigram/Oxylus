@@ -1,3 +1,5 @@
+#include <omp.h>
+
 #include <oxylus/training/trainer.h>
 #include <oxylus/configuration/configuration_constants.h>
 
@@ -27,6 +29,7 @@ void Trainer::TrainNode(std::shared_ptr<ImagesVector> imagesVec, NodeVectors& no
   Cell myCell;
   /* Matrix<Cell> nodeHistograms(featuresSize, thresholdsSize, Cell()); */
   Matrix<Cell> nodeHistograms(featuresSize, thresholdsSize, myCell);
+  omp_set_num_threads(4);
   #pragma omp parallel for
   for (int imgIndex = 0; imgIndex < imagesSize; imgIndex++) {
   /* for (auto& imageStructure: *imagesVec) { */
