@@ -1,3 +1,5 @@
+#include <omp.h>
+
 #include <oxylus/training/trainer.h>
 #include <oxylus/configuration/configuration_constants.h>
 
@@ -23,34 +25,40 @@ void Trainer::TrainNode(std::shared_ptr<ImagesVector> imagesVec, NodeVectors& no
   int featuresSize = configurationObject->GetFeaturesSize();
   int thresholdsSize = configurationObject->GetThresholdsSize();
   int trainingNodeId = nodeVectors.nodeId;
+  int imagesSize = imagesVec->size();
   Cell myCell;
   /* Matrix<Cell> nodeHistograms(featuresSize, thresholdsSize, Cell()); */
   Matrix<Cell> nodeHistograms(featuresSize, thresholdsSize, myCell);
-  int featuresIndex = 0;
-  int thresholdIndex = 0;
-  for (auto& imageStructure: *imagesVec) {
+  omp_set_num_threads(4);
+  #pragma omp parallel for
+  for (int imgIndex = 0; imgIndex < imagesSize; imgIndex++) {
+  /* for (auto& imageStructure: *imagesVec) { */
+    auto& imageStructure = imagesVec->at(imgIndex);
     if (imageStructure.treesId.at(treeId) == 1) {
-      for (auto& pointStructure: *(imageStructure.pointsVector)) {
+      int pointsSize = imageStructure.pointsVector->size();
+      for (int pointIndex = 0; pointIndex < pointsSize; pointIndex++) {
+        auto& pointStructure = imageStructure.pointsVector->at(pointIndex);
+      /* for (auto& pointStructure: *(imageStructure.pointsVector)) { */
         if (trainingNodeId == pointStructure.GetCurrentNode()){
           cv::Mat_<ushort>& depthImage = imageStructure.depthImage;
           int z_u = (int) depthImage.at<ushort>(pointStructure.GetPoint());
-          featuresIndex = 0;
-          for (auto& features: *(nodeVectors.featuresVec)) {
+          for (int fi = 0; fi < featuresSize; fi++) {
+            auto features = nodeVectors.featuresVec->at(fi);
+          /* for (auto& features: *(nodeVectors.featuresVec)) { */
             cv::Point point1 = CalculateFeatureResponsePoint(features.GetDelta1(), pointStructure, z_u);
             cv::Point point2 = CalculateFeatureResponsePoint(features.GetDelta2(), pointStructure, z_u);
             int featureResponse = CalculateFeatureResponse(depthImage, point1, point2);
-            thresholdIndex = 0;
-            for (auto thresholdN: *(nodeVectors.thresholdsVec)) {
-              Cell& cell = nodeHistograms[featuresIndex][thresholdIndex];
+            for (int ti = 0; ti < thresholdsSize; ti++) {
+            /* for (auto thresholdN: *(nodeVectors.thresholdsVec)) { */
+              Cell& cell = nodeHistograms[fi][ti];
               int labelValue = pointStructure.GetLabelPixelValue();
+              int thresholdN = nodeVectors.thresholdsVec->at(ti);
               if (featureResponse >= thresholdN){
                 cell.rightHistogram[labelValue]++;
               } else {
                 cell.leftHistogram[labelValue]++;
               }
-              thresholdIndex++;
             }
-            featuresIndex++;
           }
         }
       }
