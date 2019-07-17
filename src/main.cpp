@@ -96,8 +96,8 @@ int main(int argc, char const *argv[]) {
   cout << "rank: " << comm.GetRank() << "... ended\n";
   if (!comm.GetRank()) {
     std::cout << "No. Processes: " << comm.GetSize() << std::endl;
+    config->Print();
   }
-  config->Print();
   delete config;
 
   /* WeakLearnerNode* node1 = new WeakLearnerNode(1); */
