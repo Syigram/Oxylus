@@ -36,6 +36,7 @@ namespace rdf  {
       std::string GetFileExtension();
       std::string GetFilePrefix();
       std::string GetOutputFolder();
+      void Print();
       ~ConfigurationObject(){};
     private:
       std::shared_ptr<ConfigurationParser> configParser;

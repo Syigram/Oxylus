@@ -35,6 +35,7 @@ namespace rdf{
         void ExecutePointsSelection();
         void StartDistributedTraining();
         int GetRank();
+        size_t GetSize();
         virtual ~Communicator(){}
 
       private:

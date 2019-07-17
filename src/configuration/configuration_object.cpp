@@ -17,6 +17,17 @@ ConfigurationObject::ConfigurationObject(std::string filename) {
   LoadConfiguration();
 }
 
+void ConfigurationObject::Print() {
+  std::cout << "imagesPerNode: " << imagesPerNode << std::endl;
+  std::cout << "pointsSize: " << pointsSize << std::endl;
+  std::cout << "numberOfTrees: " << numberOfTrees << std::endl;
+  std::cout << "maxTreeLevels: " << maxTreeLevels << std::endl;
+  std::cout << "featuresSize: " << featuresSize << std::endl;
+  std::cout << "thresholdsSize: " << thresholdsSize << std::endl;
+  std::cout << "stopCondition: " << stopCondition << std::endl;
+
+}
+
 int ConfigurationObject::GetDeltaMinXOffset() {
   return this->deltaMinXOffset;
 }

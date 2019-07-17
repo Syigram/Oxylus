@@ -94,6 +94,10 @@ int main(int argc, char const *argv[]) {
   std::chrono::duration<double> elapsed = end - start;
   std::cout << "Rank: " << comm.GetRank() << " -- Elapsed time: " << elapsed.count() << "s" << std::endl;
   cout << "rank: " << comm.GetRank() << "... ended\n";
+  if (!comm.GetRank()) {
+    std::cout << "No. Processes: " << comm.GetSize() << std::endl;
+  }
+  config->Print();
   delete config;
 
   /* WeakLearnerNode* node1 = new WeakLearnerNode(1); */

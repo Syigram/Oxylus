@@ -34,6 +34,10 @@ int Communicator::GetRank(){
   return this->rank;
 }
 
+size_t Communicator::GetSize() {
+  return this->size;
+}
+
 void Communicator::AssignImagesToEachNode(){
   this->GatherMemoryInformationMessage();
   ImageBatchMessage imageBatchForScatter;
