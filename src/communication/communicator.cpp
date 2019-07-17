@@ -34,6 +34,10 @@ int Communicator::GetRank(){
   return this->rank;
 }
 
+size_t Communicator::GetSize() {
+  return this->size;
+}
+
 void Communicator::AssignImagesToEachNode(){
   this->GatherMemoryInformationMessage();
   ImageBatchMessage imageBatchForScatter;
@@ -146,7 +150,7 @@ void Communicator::BeginTraining(){
     ImageOperations::ResetPoints(imagesStructureVector);
     
     if (rank == MPI_MASTER) {
-      tree.Serialize();
+      tree.Serialize(this->configObject);
       tree.EraseTree();
     }
 
@@ -201,7 +205,7 @@ void Communicator::ScatterImagesBatchMessage(ImageBatchMessage newImageBatchMess
   int i = 0;
   for(auto &memoryMessage: this->memoryMessageVec){
     /* int batchSize = memoryMessage.GetBatchSize(); /1* TODO: use real batch size calc *1/ */
-    int batchSize = 5000;
+    int batchSize = configObject->GetImagesPerNode();
     int start = newBatchLimit;
     int end = newBatchLimit + batchSize;
     newImageBatchMessage.SetBatchSize(batchSize);

@@ -17,6 +17,17 @@ ConfigurationObject::ConfigurationObject(std::string filename) {
   LoadConfiguration();
 }
 
+void ConfigurationObject::Print() {
+  std::cout << "imagesPerNode: " << imagesPerNode << std::endl;
+  std::cout << "pointsSize: " << pointsSize << std::endl;
+  std::cout << "numberOfTrees: " << numberOfTrees << std::endl;
+  std::cout << "maxTreeLevels: " << maxTreeLevels << std::endl;
+  std::cout << "featuresSize: " << featuresSize << std::endl;
+  std::cout << "thresholdsSize: " << thresholdsSize << std::endl;
+  std::cout << "stopCondition: " << stopCondition << std::endl;
+
+}
+
 int ConfigurationObject::GetDeltaMinXOffset() {
   return this->deltaMinXOffset;
 }
@@ -117,6 +128,11 @@ std::string ConfigurationObject::GetFilePrefix(){
   return this->filePrefix;
 }
 
+std::string ConfigurationObject::GetOutputFolder(){
+  return this->outputFolder;
+}
+
+
 int ConfigurationObject::LoadConfiguration()  {
   this->imagesCols = configParser->LoadImagesCols();
   this->imagesRows = configParser->LoadImagesRows();
@@ -143,5 +159,6 @@ int ConfigurationObject::LoadConfiguration()  {
   this->deltaMaxXOffset = configParser->LoadDeltaMaxXOffset();
   this->deltaMinYOffset = configParser->LoadDeltaMinYOffset();
   this->deltaMaxYOffset = configParser->LoadDeltaMaxYOffset();
+  this->outputFolder = configParser->LoadOutputFolder();
   return 0;
 }

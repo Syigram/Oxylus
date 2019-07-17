@@ -28,9 +28,10 @@ add_subdirectory (training)
 
 set_property(GLOBAL PROPERTY oxylus_libs_property "${OXYLUS_LIBRARIES}")
 
+
 add_executable(${CMAKE_PROJECT_NAME} main.cpp)
-target_link_libraries(${CMAKE_PROJECT_NAME}
+target_link_libraries(${CMAKE_PROJECT_NAME} 
+  ${MPI_CXX_LIBRARIES} 
   ${OXYLUS_LIBRARIES}
-  ${MPI_LIBRARIES}
   ${OpenCV_LIBRARIES}
   ${Boost_LIBRARIES})

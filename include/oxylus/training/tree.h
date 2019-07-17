@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 
+#include <oxylus/configuration/configuration_object.h>
 #include <oxylus/training/weak_learner_node.h>
 #include <oxylus/training/leaf_node.h>
 
@@ -35,7 +36,7 @@ namespace rdf {
         bool NodeExistsInLeafNodesList(int nodeId, std::vector<int>& leafNodes);
         void SetRoot(Node* node);
         Node* GetRoot();
-        void Serialize();
+        void Serialize(ConfigurationObject* configObject);
         Tree Deserialize(std::string filename);
         std::string GetName() { return name; }
         virtual ~Tree(){};

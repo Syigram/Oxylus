@@ -90,6 +90,17 @@ std::string ConfigurationParser::LoadFilePrefix(){
   return placeholder;
 }
 
+std::string ConfigurationParser::LoadOutputFolder(){
+  std::string placeholder = "";
+  try{
+    placeholder = this->parseTree.get<std::string>("images.outputFolder");
+  } catch (const boost::property_tree::ptree_error &e){
+    placeholder = e.what();
+    std::cout << placeholder << std::endl;
+  }
+  return placeholder;
+}
+
 int ConfigurationParser::LoadPointsSize(){
   int value = 0;
   try{
