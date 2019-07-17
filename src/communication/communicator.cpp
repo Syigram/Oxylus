@@ -201,7 +201,7 @@ void Communicator::ScatterImagesBatchMessage(ImageBatchMessage newImageBatchMess
   int i = 0;
   for(auto &memoryMessage: this->memoryMessageVec){
     /* int batchSize = memoryMessage.GetBatchSize(); /1* TODO: use real batch size calc *1/ */
-    int batchSize = 5000;
+    int batchSize = configObject->GetImagesPerNode();
     int start = newBatchLimit;
     int end = newBatchLimit + batchSize;
     newImageBatchMessage.SetBatchSize(batchSize);

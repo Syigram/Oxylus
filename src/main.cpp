@@ -92,7 +92,7 @@ int main(int argc, char const *argv[]) {
   comm.BeginTraining();
   auto end = chrono::high_resolution_clock::now();
   std::chrono::duration<double> elapsed = end - start;
-  std::cout << "Elapsed time: " << elapsed.count() << "s" << std::endl;
+  std::cout << "Rank: " << comm.GetRank() << " -- Elapsed time: " << elapsed.count() << "s" << std::endl;
   cout << "rank: " << comm.GetRank() << "... ended\n";
   delete config;
 
