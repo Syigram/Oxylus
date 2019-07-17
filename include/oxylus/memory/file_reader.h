@@ -28,6 +28,9 @@ namespace rdf{
                                        int cols, MapPalette& palette);
         int ReadImage(std::string fullPath, MapPalette& palette);
         int ReadImages();
+        void DisplayImages(int start, int end);
+        void ScaleAndDisplayImage(std::string path);
+        void DisplayImage(std::string path);
         std::shared_ptr<ImagesVector> ReadImages(int indexStart, int indexEnd);
         cv::Mat ScanImage(cv::Mat& image, MapPalette& palette);
         cv::Mat& ShowImage(cv::Mat& image);

@@ -23,6 +23,18 @@ FileReader::FileReader(int start, int end){
   this->indexEnd = end;
 }
 
+void FileReader::DisplayImages(int indexStart, int indexEnd) {
+  while (indexStart <= indexEnd){
+    std::string fileName = Helper::ImageFileNameHandler(this->fileBasePath, indexStart);
+    std::string labelFilename = baseFolder + labelFolder + fileName + fileExtension;
+    std::string depthFilename = baseFolder + depthFolder + fileName + fileExtension;
+    std::cout <<  depthFilename << std::endl;
+    this->ScaleAndDisplayImage(depthFilename);
+    this->DisplayImage(labelFilename);
+    indexStart++;
+  }
+}
+
 int FileReader::ProcessImages(int indexStart, int indexEnd) {
   MapPalette palette = ImageOperations::InitializePalette();
   while (indexStart <= indexEnd){
@@ -101,9 +113,30 @@ int FileReader::ReadImageTest(std::string fullPath) {
     }
   }
   cv::namedWindow( "Display window", cv::WINDOW_AUTOSIZE );// Create a window for display.
-  cv::imshow( "Display window", image );                   // Show our image inside it.
+  cv::imshow( "Display window", image);                   // Show our image inside it.
   cv::waitKey(0);
   return 0;
+}
+
+void FileReader::DisplayImage(std::string path) {
+  cv::Mat image = cv::imread(path, CV_LOAD_IMAGE_ANYDEPTH | CV_LOAD_IMAGE_ANYCOLOR);
+  cv::namedWindow( "Display window", cv::WINDOW_NORMAL );// Create a window for display.
+  cv::resizeWindow( "Display window", 320, 240);
+  cv::imshow( "Display window", image);                   // Show our image inside it.
+  cv::waitKey(0);
+}
+
+void FileReader::ScaleAndDisplayImage(std::string path) {
+  cv::Mat image = cv::imread(path, CV_LOAD_IMAGE_ANYDEPTH | CV_LOAD_IMAGE_ANYCOLOR);
+  double min;
+  double max;
+  cv::minMaxIdx(image, &min, &max);
+  cv::Mat normalizedImg;
+  cv::convertScaleAbs(image, normalizedImg, 255 / max);
+  cv::namedWindow( "Display window", cv::WINDOW_NORMAL );// Create a window for display.
+  cv::resizeWindow( "Display window", 320, 240);
+  cv::imshow( "Display window", normalizedImg );                   // Show our image inside it.
+  cv::waitKey(0);
 }
 
 
@@ -113,7 +146,6 @@ cv::Mat FileReader::ScanImage(cv::Mat& image, MapPalette& palette) {
   const int depth = image.depth();
 
   static const cv::Vec3b Black(0u,0u,0u);
-
 
   /* Ensure that at least the black color is in the palete with the
      zero label */

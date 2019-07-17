@@ -85,6 +85,8 @@ int main(int argc, char const *argv[]) {
   /* BOOST_LOG_TRIVIAL(error) << "ERRor test"; */
 
   rdf::ConfigurationObject* config = new rdf::ConfigurationObject();
+  /* FileReader fileReader(config); */
+  /* fileReader.DisplayImages(55,1000); */
   rdf::bpc::Communicator comm(config);
   comm.AssignImagesToEachNode();
   comm.LoadImagesToStructures();
