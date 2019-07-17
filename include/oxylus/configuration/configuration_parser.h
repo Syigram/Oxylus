@@ -46,6 +46,7 @@ namespace rdf  {
       std::string LoadDepthFolder();
       std::string LoadFileExtension();
       std::string LoadFilePrefix();
+      std::string LoadOutputFolder();
       int WriteDefaultConfigurationFile();
       ~ConfigurationParser(){};
 

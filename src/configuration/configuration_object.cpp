@@ -117,6 +117,11 @@ std::string ConfigurationObject::GetFilePrefix(){
   return this->filePrefix;
 }
 
+std::string ConfigurationObject::GetOutputFolder(){
+  return this->outputFolder;
+}
+
+
 int ConfigurationObject::LoadConfiguration()  {
   this->imagesCols = configParser->LoadImagesCols();
   this->imagesRows = configParser->LoadImagesRows();
@@ -143,5 +148,6 @@ int ConfigurationObject::LoadConfiguration()  {
   this->deltaMaxXOffset = configParser->LoadDeltaMaxXOffset();
   this->deltaMinYOffset = configParser->LoadDeltaMinYOffset();
   this->deltaMaxYOffset = configParser->LoadDeltaMaxYOffset();
+  this->outputFolder = configParser->LoadOutputFolder();
   return 0;
 }

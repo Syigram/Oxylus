@@ -146,7 +146,7 @@ void Communicator::BeginTraining(){
     ImageOperations::ResetPoints(imagesStructureVector);
     
     if (rank == MPI_MASTER) {
-      tree.Serialize();
+      tree.Serialize(this->configObject);
       tree.EraseTree();
     }
 

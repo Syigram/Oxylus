@@ -1,9 +1,11 @@
 #include <fstream>
 #include <algorithm>
 #include <string>
+#include <sys/stat.h>
 
 
 #include <oxylus/training/tree.h>
+#include <boost/filesystem.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/export.hpp>
@@ -139,8 +141,15 @@ void Tree::PrintTree(Node* node) {
 }
 
 
-void Tree::Serialize() {
-  std::string filename = "tree" + this->name + ".dat";
+void Tree::Serialize(ConfigurationObject* configObject) {
+  std::string folder = configObject->GetOutputFolder();
+  char folderC[folder.size() + 1];
+  folder.copy(folderC, folder.size() + 1);
+  folderC[folder.size()] = '\0';
+  std::string filename = folder + "/tree" + this->name + ".dat";
+  if (!boost::filesystem::exists(folder)) {
+    mkdir(folderC, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+  }
   std::ofstream ofs(filename);
   std::cout << "Serializing tree to file: " << filename << std::endl;
   {

@@ -35,6 +35,7 @@ namespace rdf  {
       std::string GetDepthFolder();
       std::string GetFileExtension();
       std::string GetFilePrefix();
+      std::string GetOutputFolder();
       ~ConfigurationObject(){};
     private:
       std::shared_ptr<ConfigurationParser> configParser;
@@ -63,6 +64,7 @@ namespace rdf  {
       std::string depthFolder;
       std::string fileExtension;
       std::string filePrefix;
+      std::string outputFolder;
       int LoadConfiguration();
   };
 
