@@ -20,6 +20,8 @@ namespace rdf{
         std::vector<int> GetLeftHistogram() const;
         std::vector<int> GetRightHistogram() const;
         void PrintHistograms();
+        void PrintLeft();
+        void PrintRight();
         Cell& operator=(const Cell& rhs) {
           this->leftHistogram = rhs.leftHistogram;
           this->rightHistogram = rhs.rightHistogram;

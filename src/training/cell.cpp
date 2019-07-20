@@ -43,14 +43,21 @@ void Cell::AddToRightHistogram(int index){
   this->rightHistogram[index] += 1;
 }
 
-void Cell::PrintHistograms(){
-  for (auto &i: leftHistogram){
-    std::cout << i << "\n";
-  }
-
+void Cell::PrintRight(){
   for (auto &i: rightHistogram){
     std::cout << i << "\n";
   }
+}
+
+void Cell::PrintLeft(){
+  for (auto &i: leftHistogram){
+    std::cout << i << "\n";
+  }
+}
+
+void Cell::PrintHistograms(){
+  PrintRight();
+  PrintLeft();
 }
 
 std::vector<int> Cell::GetRightHistogram() const {
