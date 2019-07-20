@@ -32,6 +32,8 @@
 #include <oxylus/training/weak_learner_node.h>
 #include <oxylus/training/leaf_node.h>
 #include <oxylus/training/tree.h>
+#include <oxylus/training/predictor.h>
+
 
 
 #define MPI_MASTER 0
@@ -85,21 +87,27 @@ int main(int argc, char const *argv[]) {
   /* BOOST_LOG_TRIVIAL(error) << "ERRor test"; */
 
   rdf::ConfigurationObject* config = new rdf::ConfigurationObject();
+  /* std::string test = "/home/agonzalez/tfg/oxylus_images/depth/Data_0000252.png"; */
+  rdf::bpc::Communicator comm(config);
+  Predictor predictor(config);
+  predictor.PredictBatchOfImages(1, 100);
+  /* predictor.BeginPredictionForImage(test); */
+
   /* FileReader fileReader(config); */
   /* fileReader.DisplayImages(55,1000); */
-  rdf::bpc::Communicator comm(config);
-  comm.AssignImagesToEachNode();
-  comm.LoadImagesToStructures();
-  auto start = chrono::high_resolution_clock::now();
-  comm.BeginTraining();
-  auto end = chrono::high_resolution_clock::now();
-  std::chrono::duration<double> elapsed = end - start;
-  std::cout << "Rank: " << comm.GetRank() << " -- Elapsed time: " << elapsed.count() << "s" << std::endl;
-  cout << "rank: " << comm.GetRank() << "... ended\n";
-  if (!comm.GetRank()) {
-    std::cout << "No. Processes: " << comm.GetSize() << std::endl;
-    config->Print();
-  }
+  /* rdf::bpc::Communicator comm(config); */
+  /* comm.AssignImagesToEachNode(); */
+  /* comm.LoadImagesToStructures(); */
+  /* auto start = chrono::high_resolution_clock::now(); */
+  /* comm.BeginTraining(); */
+  /* auto end = chrono::high_resolution_clock::now(); */
+  /* std::chrono::duration<double> elapsed = end - start; */
+  /* std::cout << "Rank: " << comm.GetRank() << " -- Elapsed time: " << elapsed.count() << "s" << std::endl; */
+  /* cout << "rank: " << comm.GetRank() << "... ended\n"; */
+  /* if (!comm.GetRank()) { */
+  /*   std::cout << "No. Processes: " << comm.GetSize() << std::endl; */
+  /*   config->Print(); */
+  /* } */
   delete config;
 
   /* WeakLearnerNode* node1 = new WeakLearnerNode(1); */
