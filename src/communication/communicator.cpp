@@ -73,13 +73,16 @@ void Communicator::BeginTraining(){
   int bestThresholdIndex = 0;
   int bestFeatureIndex = 0;
   int isLeafNode = 0;
-  int maxNodesN = pow(2, configObject->GetMaxTreeLevels());
+  int maxTreeLevels = configObject->GetMaxTreeLevels();
+  int maxNodesN = pow(2, maxTreeLevels);
+  int leafNodesLevel = pow(2, maxTreeLevels - 1);
   Trainer trainer(configObject);
   std::vector<NodeVectors> gatheredNodeVectors;
   std::vector<Matrix<Cell>> vecNodeHistograms;
   std::vector<int> leafNodesList;
   std::vector<int> unusedNodesList;
   std::vector<int> pointsCount;
+  std::vector<std::vector<int>> allHistograms;
   for (int treeId = 0; treeId < numOfTrees; treeId++) {
     Tree tree(treeId);
     for (int j = 1; j < maxNodesN; j++) {
@@ -99,6 +102,21 @@ void Communicator::BeginTraining(){
       /* if (rank == MPI_MASTER) { */
       /*   isLeafNode = !trainer.NodeHasMinimunPoints(pointsCount); */
       /* } */
+      if (currentNode >=  leafNodesLevel) {
+        std::cout << "Slave #" << rank << "creating leaf node node at: " << currentNode << std::endl;
+        std::vector<int> histogram = trainer.GetHistogramForNode(currentNode, treeId, imagesStructureVector);
+        mpi::gather(world, histogram, allHistograms, MPI_MASTER);
+        if (rank == MPI_MASTER) {
+          std::vector<int> histogramResult = trainer.SumAllHistograms(allHistograms);
+          /* for (int i = 0; i < histogramResult.size(); ++i) { */
+          /*   std::cout << "Histo[" << i << "]: " << histogramResult.at(i) << std::endl; */
+            
+          /* } */
+          LeafNode* leafNode = new LeafNode(currentNode, histogramResult);
+          tree.Insert(leafNode);
+        }
+        continue;
+      }
       /* mpi::broadcast(world, isLeafNode, MPI_MASTER); */
       /* /1* std::cout << "Slave #" << rank << "has isLeafNode" << isLeafNode << std::endl; *1/ */
 

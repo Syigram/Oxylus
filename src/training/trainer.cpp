@@ -1,5 +1,3 @@
-#include <omp.h>
-
 #include <oxylus/training/trainer.h>
 #include <oxylus/configuration/configuration_constants.h>
 
@@ -27,17 +25,19 @@ void Trainer::TrainNode(std::shared_ptr<ImagesVector> imagesVec, NodeVectors& no
   int trainingNodeId = nodeVectors.nodeId;
   int imagesSize = imagesVec->size();
   Cell myCell;
+  /* ImageStructure& imageStructure; */
   /* Matrix<Cell> nodeHistograms(featuresSize, thresholdsSize, Cell()); */
   Matrix<Cell> nodeHistograms(featuresSize, thresholdsSize, myCell);
+  /* #pragma omp parallel for private(imageStructure) shared(imagesSize, imagesVec) */
   #pragma omp parallel for
   for (int imgIndex = 0; imgIndex < imagesSize; imgIndex++) {
   /* for (auto& imageStructure: *imagesVec) { */
     auto& imageStructure = imagesVec->at(imgIndex);
     if (imageStructure.treesId.at(treeId) == 1) {
-      int pointsSize = imageStructure.pointsVector->size();
-      for (int pointIndex = 0; pointIndex < pointsSize; pointIndex++) {
-        auto& pointStructure = imageStructure.pointsVector->at(pointIndex);
-      /* for (auto& pointStructure: *(imageStructure.pointsVector)) { */
+      /* int pointsSize = imageStructure.pointsVector->size(); */
+      for (auto& pointStructure: *(imageStructure.pointsVector)) {
+      /* for (int pointIndex = 0; pointIndex < pointsSize; pointIndex++) { */
+        /* auto& pointStructure = imageStructure.pointsVector->at(pointIndex); */
         if (trainingNodeId == pointStructure.GetCurrentNode()){
           cv::Mat_<ushort>& depthImage = imageStructure.depthImage;
           int z_u = (int) depthImage.at<ushort>(pointStructure.GetPoint());
@@ -90,6 +90,27 @@ int Trainer::CalculateDepthValue(cv::Mat_<ushort>& depthImage, cv::Point point) 
 }
 
 
+cv::Point Trainer::FeatureResponsePixel(cv::Point point, int x, int y, int z) {
+
+  int deltaX = point.x;
+  int deltaY = point.y;
+  float deltaXNormalized = (float) deltaX / (float) z;
+  float deltaYNormalized = (float) deltaY / (float) z;
+  /* std::cout << "offsetX: " << deltaXNormalized << std::endl; */
+  /* std::cout << "offsetY: " << deltaYNormalized << std::endl; */
+  /* if (deltaXNormalized > 1000 || deltaXNormalized < -1000) { */
+  /*   std::cout << "x: " << uX << std::endl; */
+  /* } */
+  /* if (deltaYNormalized > 1000 || deltaYNormalized < -1000) { */
+  /*   std::cout << "y: " << uY << std::endl; */
+  /* } */
+  int pointX = x + (int) deltaXNormalized;
+  int pointY = y + (int) deltaYNormalized;
+  cv::Point myPoint(pointX, pointY);
+  return myPoint;
+}
+
+
 cv::Point Trainer::CalculateFeatureResponsePoint(cv::Point point, 
                                   PointStructure& pointStruct, int z_u){
   int uX = pointStruct.GetX();
@@ -125,6 +146,35 @@ WeakLearnerNode* Trainer::CreateTrainedNode(
 
 }
 
+std::vector<int> Trainer::SumAllHistograms(std::vector<std::vector<int>> allHistograms) {
+  std::vector<int> result(constants::BODY_PARTS, 0);
+  for (auto& histogram: allHistograms) {
+    for (int i = 0; i < constants::BODY_PARTS; i++) {
+      result[i] += histogram[i];
+    }
+  }
+  return result;
+}
+
+
+std::vector<int> Trainer::GetHistogramForNode(int nodeId, int treeId,
+    std::shared_ptr<ImagesVector> imagesVec) {
+  std::vector<int> histogram(constants::BODY_PARTS, 0);
+  int imagesSize = imagesVec->size();
+  #pragma omp parallel for
+  for (int imgIndex = 0; imgIndex < imagesSize; imgIndex++) {
+    auto& imageStructure = imagesVec->at(imgIndex);
+    if (imageStructure.treesId.at(treeId) == 1) {
+      for (auto& pointStructure: *(imageStructure.pointsVector)) {
+        if (pointStructure.GetCurrentNode() == nodeId){
+          int labelValue = pointStructure.GetLabelPixelValue();
+          histogram[labelValue]++;
+        }
+      }
+    }
+  }
+  return histogram;    
+}
 
 LeafNode* Trainer::CreateLeafNode(int nodeId, std::shared_ptr<ImagesVector> imagesVec) {
   LeafNode* node = new LeafNode(nodeId);
@@ -315,13 +365,15 @@ void Trainer::CheckForLeafNodes(
   int rightCount = bestCell.rightHistogramTotal;
   if (!HasMinimunPoints(leftCount)) {
     int leftNodeId = parentNodeId * 2;
-    LeafNode* leftNode = CreateLeafNodeFromParent(leftNodeId, bestCell.leftHistogram);       
+    LeafNode* leftNode = new LeafNode(leftNodeId, bestCell.leftHistogram);
+    /* LeafNode* leftNode = CreateLeafNodeFromParent(leftNodeId, bestCell.leftHistogram); */       
     tree.Insert(leftNode);
     leafNodesList.push_back(leftNodeId);
   }
   if (!HasMinimunPoints(rightCount)) {
     int rightNodeId = (parentNodeId * 2) + 1;
-    LeafNode* rightNode = CreateLeafNodeFromParent(rightNodeId, bestCell.rightHistogram);       
+    LeafNode* rightNode = new LeafNode(rightNodeId, bestCell.rightHistogram);
+    /* LeafNode* rightNode = CreateLeafNodeFromParent(rightNodeId, bestCell.rightHistogram); */       
     tree.Insert(rightNode);
     leafNodesList.push_back(rightNodeId);
   }

@@ -39,15 +39,20 @@ namespace rdf {
         int NodeHasMinimunPoints(std::vector<int> pointsCount);
         std::pair<int, int> FindLowestArgMin(Matrix<Cell>& nodeHistograms);
         ~Trainer(){};
-
-      private:
         int CalculateFeatureResponse(cv::Mat_<ushort>& depthImage,
                                      cv::Point point1, cv::Point point2);
         cv::Point CalculateFeatureResponsePoint(cv::Point point,
                                                 PointStructure& pointStruct,
                                                 int z_u);
+        cv::Point FeatureResponsePixel(cv::Point point, int x, int y, int z);
         int CalculateDepthValue(cv::Mat_<ushort>& depthImage, cv::Point point);
+        std::vector<int> SumAllHistograms(std::vector<std::vector<int>> allHistograms);
 
+        std::vector<int> GetHistogramForNode(int nodeId, int treeId,
+            std::shared_ptr<ImagesVector> imagesVec);
+
+
+      private:
 
         double ClassificationObjectiveFunction(std::vector<int> histogram,
                                                double magnitude);
@@ -64,6 +69,7 @@ namespace rdf {
         bool HasMinimunPoints(int count);
 
         double GetPositiveResult(double result);
+
 
 
         ConfigurationObject* configurationObject;
